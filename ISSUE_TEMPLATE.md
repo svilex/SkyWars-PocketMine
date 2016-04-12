@@ -1,13 +1,13 @@
-##Issue description
+## Issue description
 <!--- write a description of the issue -->
 
-##Errors - CrashDumps
+## Errors - CrashDumps
 <!--- paste here your error or CrashDump -->
 ```
 paste here or delete these lines
 ```
 
-##Versions
+## Versions
 <!--- write the plugin version ex. v0.1 -->
 - **SW_VERSION**: 
 
