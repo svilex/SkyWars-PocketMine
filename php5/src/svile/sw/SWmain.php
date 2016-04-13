@@ -160,8 +160,11 @@ class SWmain extends PluginBase
             'banned_commands_while_in_game' => array('/hub', '/lobby', '/spawn', '/tpa', '/tp', '/tpaccept', '/back', '/home', '/f'),
             'banned_command_message' => '@b→@cYou can\'t use this command here',
             'starvation_can_damage_inArena_players' => false,
-            'clear_inventory_on_respawn&join' => false,
+            'clear_inventory_on_respawn&join' => false,//many people don't know on respawn means also on join
             'clear_inventory_on_arena_join' => true,
+            'clear_effects_on_respawn&join' => false,//many people don't know on respawn means also on join
+            'clear_effects_on_arena_join' => true,
+            'needed_players_to_run_countdown' => 1,
             'always_spawn_in_defaultLevel' => true,
             'sign_knockBack' => true,
             'knockBack_radius_from_sign' => 1,

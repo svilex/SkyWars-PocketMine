@@ -25,14 +25,16 @@ _Benefits: You will be credited in the source code as a generous **donor**_ :smi
 ---
 ###Releases - Downloads
 
+* **Release [_0.2_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.2) (April 13, 2016)**
+
+>Now removing players effects on respawn, arena join, quit.<br>
+>Added a config option to set the needed players for the countdown start.<br>
+>Now players are no more able to interact before the game start.<br>
+>Added a sound for the last 10 seconds of the countdown.<br>
+
 * **Release [_0.1_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.1) (April 12, 2016)**
 
 >First release
-
-* **Release [_0.0_](release link) (Month x, xxxx)**
-
->Write changes here<br/>
->Release template
 
 _Click [**here**](https://github.com/svilex/SkyWars-PocketMine/releases) for other releases_.
 

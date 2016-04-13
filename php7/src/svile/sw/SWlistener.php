@@ -121,14 +121,25 @@ class SWlistener implements Listener
         unset($SWname, $world);
     }
 
-    public function onSignTap(PlayerInteractEvent $ev)
+    public function onInteract(PlayerInteractEvent $ev)
     {
         if ($ev->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK)
             return;
-        if (!array_key_exists(($ev->getBlock()->getX() + 0) . ':' . ($ev->getBlock()->getY() + 0) . ':' . ($ev->getBlock()->getZ() + 0) . ':' . $ev->getPlayer()->getLevel()->getName(), $this->pg->signs)) {
-            return;
+
+        //In-arena Tap
+        foreach ($this->pg->arenas as $a) {
+            if ($a->inArena($ev->getPlayer()->getName())) {
+                if ($a->GAME_STATE == 0)
+                    $ev->setCancelled();
+                return;
+            }
         }
-        $this->pg->arenas[$this->pg->signs[($ev->getBlock()->getX() + 0) . ':' . ($ev->getBlock()->getY() + 0) . ':' . ($ev->getBlock()->getZ() + 0) . ':' . $ev->getPlayer()->getLevel()->getName()]]->join($ev->getPlayer());
+
+        //Join sign Tap check
+        $key = $ev->getBlock()->x . ':' . $ev->getBlock()->y . ':' . $ev->getBlock()->z . ':' . $ev->getBlock()->getLevel()->getName();
+        if (array_key_exists($key, $this->pg->signs))
+            $this->pg->arenas[$this->pg->signs[$key]]->join($ev->getPlayer());
+        unset($key);
     }
 
     public function onMove(PlayerMoveEvent $ev)
@@ -309,8 +320,11 @@ class SWlistener implements Listener
     {
         if ($this->pg->configs['always_spawn_in_defaultLevel'])
             $ev->setRespawnPosition($this->pg->getServer()->getDefaultLevel()->getSpawnLocation());
+        //Removes player things
         if ($this->pg->configs['clear_inventory_on_respawn&join'])
             $ev->getPlayer()->getInventory()->clearAll();
+        if ($this->pg->configs['clear_effects_on_respawn&join'])
+            $ev->getPlayer()->removeAllEffects();
     }
 
     public function onBreak(BlockBreakEvent $ev)

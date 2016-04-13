@@ -99,7 +99,7 @@ class SWcommands
                 if ($fworld == $world) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'Using the world were you are now: ' . TextFormat::AQUA . $world . TextFormat::RED . ' ,expected lag');
                 } else {
-                    $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'There is a problem with the world name !');
+                    $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'There is a problem with the world name, try to restart your server');
                     unset($fworld);
                     break;
                 }
