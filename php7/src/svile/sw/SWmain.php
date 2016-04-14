@@ -60,7 +60,7 @@ use pocketmine\math\Vector3;
 class SWmain extends PluginBase
 {
     /** Plugin Version */
-    const SW_VERSION = 0.2;
+    const SW_VERSION = 0.3;
 
     /** @var SWcommands */
     private $commands;

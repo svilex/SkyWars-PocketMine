@@ -25,6 +25,11 @@ _Benefits: You will be credited in the source code as a generous **donor**_ :smi
 ---
 ###Releases - Downloads
 
+* **Release [_0.3_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.3) (April 14, 2016)**
+
+>Maybe fixed #3
+>Added a sound on arena join
+
 * **Release [_0.2_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.2) (April 13, 2016)**
 
 >Now removing players effects on respawn, arena join, quit.<br>

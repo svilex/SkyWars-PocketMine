@@ -255,8 +255,7 @@ class SWcommands
                         $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'New spawn: ' . TextFormat::WHITE . $slot . TextFormat::GREEN . ' In arena: ' . TextFormat::WHITE . $SWname);
                         if ($this->pg->arenas[$SWname]->setSpawn(true, ''))
                             $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'I found all the spawns for Arena: ' . TextFormat::WHITE . $SWname . TextFormat::GREEN . ' , now you can create a join sign!');
-                    } else
-                        $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'An error occured setting the spawn, pls contact the developer');
+                    }
                 }
                 break;
 

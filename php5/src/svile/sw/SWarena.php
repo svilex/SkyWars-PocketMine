@@ -207,17 +207,13 @@ class SWarena
     public function setSpawn($check = false, $player, $slot = 1)
     {
         if ($check) {
-            $r = true;
-            if (empty($this->spawns)) {
+            if (empty($this->spawns))
                 return false;
-            }
             foreach ($this->spawns as $key => $val) {
-                if (!is_array($val) or count($val) != 5 or $this->slot != count($this->spawns) or in_array('n.a', $val, true) or $val['x'] == 'n.a' or $val['y'] == 'n.a' or $val['z'] == 'n.a' or $val['yaw'] == 'n.a' or $val['pitch'] == 'n.a') {
-                    $r = false;
-                    break;
-                }
+                if (!is_array($val) or count($val) != 5 or $this->slot != count($this->spawns) or in_array('n.a', $val, true))
+                    return false;
             }
-            return $r;
+            return true;
         } else {
             if ($slot > $this->slot) {
                 $player->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'This arena have only got ' . TextFormat::WHITE . $this->slot . TextFormat::RED . ' slots');
@@ -231,30 +227,31 @@ class SWarena
                     $keys[] = $i;
                 }
                 unset($i);
-                $config->set('spawns', array_fill_keys(array_reverse($keys), array(
+                $config->set('spawns', array_fill_keys(array_reverse($keys), [
                     'x' => 'n.a',
                     'y' => 'n.a',
                     'z' => 'n.a',
                     'yaw' => 'n.a',
                     'pitch' => 'n.a'
-                )));
+                ]));
                 unset($keys);
             }
             $s = $config->get('spawns');
-            $s[$slot] = array(
+            $s[$slot] = [
                 'x' => floor($player->x),
                 'y' => floor($player->y),
                 'z' => floor($player->z),
                 'yaw' => $player->yaw,
                 'pitch' => $player->pitch
-            );
+            ];
             $config->set('spawns', $s);
             $this->spawns = $s;
             $config->save();
             unset($config, $s);
-            if (count($this->spawns) != $this->slot)
+            if (count($this->spawns) != $this->slot) {
+                $player->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'An error occured setting the spawn, pls contact the developer');
                 return false;
-            else
+            } else
                 return true;
         }
     }
@@ -341,6 +338,8 @@ class SWarena
             $player->sendMessage($this->pg->lang['sign.game_full']);
             return;
         }
+        //Sound
+        $player->getLevel()->addSound((new \pocketmine\level\sound\EndermanTeleportSound($player)), [$player]);
 
         //Removes player things
         if ($this->pg->configs['clear_inventory_on_arena_join'])
@@ -417,6 +416,7 @@ class SWarena
 
             }
         }
+        $this->pg->getServer()->loadLevel($this->world);
         foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p)
             $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
         $this->reload();
