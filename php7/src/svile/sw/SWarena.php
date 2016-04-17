@@ -340,7 +340,10 @@ class SWarena
         }
         //Sound
         $player->getLevel()->addSound((new \pocketmine\level\sound\EndermanTeleportSound($player)), [$player]);
-
+        
+        //Set gamemode to 0
+        $player->setGamemode(0);
+        
         //Removes player things
         if ($this->pg->configs['clear_inventory_on_arena_join'])
             $player->getInventory()->clearAll();
