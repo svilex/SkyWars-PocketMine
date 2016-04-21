@@ -92,9 +92,8 @@ class SWmain extends PluginBase
                     $nbt = new NBT(NBT::BIG_ENDIAN);
                     $nbt->readCompressed(file_get_contents($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74"));
                     $levelData = $nbt->getData();
-                    if ($levelData->Data instanceof Compound) {
+                    if ($levelData->Data instanceof Compound)
                         $levelData = $levelData->Data;
-                    }
                     if ($levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] != $worldDir) {
                         $levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] = $worldDir;
                         $nbt->setData(new Compound
@@ -110,16 +109,15 @@ class SWmain extends PluginBase
                 }
             }
         } catch (\Exception $e) {
-            $this->getLogger()->critical($e->getMessage() . 'in §b' . $e->getFile() . '§con line §b' . $e->getLine());
+            $this->getLogger()->critical($e->getMessage() . ' in §b' . $e->getFile() . '§c on line §b' . $e->getLine());
             $this->getLogger()->critical('There are problems with your worlds names, can\'t fix them');
         }
     }
 
     public function onEnable()
     {
-        if ($this->getDescription()->getVersion() != self::SW_VERSION) {
+        if ($this->getDescription()->getVersion() != self::SW_VERSION)
             $this->getLogger()->critical(@gzinflate(@base64_decode('C8lILUpVyCxWSFQoKMpPyknNVSjPLMlQKMlIVSjIKU3PzFMoSy0qzszPAwA=')));
-        }
         if (@array_shift($this->getDescription()->getAuthors()) != "\x73\x76\x69\x6c\x65" or $this->getDescription()->getName() != "\x53\x57\x5f\x73\x76\x69\x6c\x65" or $this->getDescription()->getVersion() != self::SW_VERSION) {
             $this->getLogger()->notice(@gzinflate(@base64_decode('LYxBDsIwDAS/sg8ozb1/QEICiXOo3NhKiKvYqeD3hcJtNaPZGxNid9YGXeAshrX0JBWfZZsUGrCJif9ckZrhikRfQGgUyz+YwO6rTSEkce6PcdZnOB5e4Zrf99jsdNE5k5+l0g4=')));
             $this->getServer()->getPluginManager()->disablePlugin($this);
@@ -127,16 +125,16 @@ class SWmain extends PluginBase
 
         //Creates the database that is needed to store signs info
         try {
-            if (!file_exists($this->getDataFolder() . 'SW_signs.db')) {
+            if (!is_file($this->getDataFolder() . 'SW_signs.db')) {
                 $this->db = new \SQLite3($this->getDataFolder() . 'SW_signs.db', SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
             } else {
                 $this->db = new \SQLite3($this->getDataFolder() . 'SW_signs.db', SQLITE3_OPEN_READWRITE);
             }
+            $this->db->exec("CREATE TABLE IF NOT EXISTS signs (arena TEXT PRIMARY KEY COLLATE NOCASE, x INTEGER , y INTEGER , z INTEGER, world TEXT);");
         } catch (\Exception $e) {
-            $this->getLogger()->critical($e->getMessage() . 'in §b' . $e->getFile() . '§con line §b' . $e->getLine());
+            $this->getLogger()->critical($e->getMessage() . ' in §b' . $e->getFile() . '§c on line §b' . $e->getLine());
             $this->getServer()->getPluginManager()->disablePlugin($this);
         }
-        $this->db->exec("CREATE TABLE IF NOT EXISTS signs (arena TEXT PRIMARY KEY COLLATE NOCASE, x INTEGER , y INTEGER , z INTEGER, world TEXT);");
 
         //Checks config file version...
         if ($c = ((new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML))->get('CONFIG_VERSION', '1st')) != '1st' and $c != self::SW_VERSION) {

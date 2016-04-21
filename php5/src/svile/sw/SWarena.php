@@ -108,16 +108,28 @@ class SWarena
     private function reload()
     {
         //Map reset
-        if ($this->pg->getServer()->isLevelLoaded($this->world))
-            $this->pg->getServer()->unloadLevel($this->pg->getServer()->getLevelByName($this->world));
         if (!is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.zip'))
             return false;
-        $zip = new \ZipArchive;
-        $zip->open($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.zip');
-        $zip->extractTo($this->pg->getServer()->getDataPath() . 'worlds');
-        $zip->close();
-        unset($zip);
-        $this->pg->getServer()->loadLevel($this->world);
+        if ($this->pg->getServer()->isLevelLoaded($this->world)) {
+            if ($this->pg->getServer()->getLevelByName($this->world)->getAutoSave()) {
+                $this->pg->getServer()->unloadLevel($this->pg->getServer()->getLevelByName($this->world));
+                $zip = new \ZipArchive;
+                $zip->open($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.zip');
+                $zip->extractTo($this->pg->getServer()->getDataPath() . 'worlds');
+                $zip->close();
+                unset($zip);
+                $this->pg->getServer()->loadLevel($this->world);
+            }
+            $this->pg->getServer()->unloadLevel($this->pg->getServer()->getLevelByName($this->world));
+            $this->pg->getServer()->loadLevel($this->world);
+            $this->pg->getServer()->getLevelByName($this->world)->setAutoSave(false);
+        } else {
+            $zip = new \ZipArchive;
+            $zip->open($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.zip');
+            $zip->extractTo($this->pg->getServer()->getDataPath() . 'worlds');
+            $zip->close();
+            unset($zip);
+        }
 
         $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', CONFIG::YAML, array(//TODO: put descriptions
             'name' => $this->SWname,

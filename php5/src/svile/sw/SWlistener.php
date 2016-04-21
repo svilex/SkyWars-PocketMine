@@ -112,7 +112,7 @@ class SWlistener implements Listener
             $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'SW join sign created !');
 
         //Sets format
-        $format = new \pocketmine\utils\Config($this->getDataFolder() . 'sign_format.yml', 2, array(
+        $format = new \pocketmine\utils\Config($this->pg->getDataFolder() . 'sign_format.yml', 2, array(
             '1st line' => '§l§c[§bSW§c]',
             '2nd line' => '§l§e{SWNAME}',
         ));
