@@ -129,6 +129,7 @@ class SWarena
             $zip->extractTo($this->pg->getServer()->getDataPath() . 'worlds');
             $zip->close();
             unset($zip);
+            $this->pg->getServer()->loadLevel($this->world);
         }
 
         $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', CONFIG::YAML, array(//TODO: put descriptions
