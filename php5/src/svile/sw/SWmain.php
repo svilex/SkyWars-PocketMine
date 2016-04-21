@@ -208,6 +208,11 @@ class SWmain extends PluginBase
         $this->lang = $newlang;
         unset($newlang);
 
+        new Config($this->getDataFolder() . 'sign_format.yml', CONFIG::YAML, array(
+            '1st line' => '§l§c[§bSW§c]',
+            '2nd line' => '§l§e{SWNAME}',
+        ));
+
         //svile\sw\SWcommands object
         $this->commands = new SWcommands($this);
 
