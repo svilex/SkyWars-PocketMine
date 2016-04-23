@@ -73,7 +73,7 @@ Command | Description
 #####Here there are some videos that explains how to create an arena in different languages:
 - [Deutsch](//TODO add a video) no video yet
 - [English](//TODO add a video) no video yet
-- [Español](https://youtu.be/tlaYV3V7qBU)
+- [Español]() no video yet
 - [Français](//TODO add a video) no video yet
 - [Italiano](//TODO add a video) no video yet
 
