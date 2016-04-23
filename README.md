@@ -3,7 +3,7 @@
 
 ---
 ###About
-This is a [PocketMine-MP](https://github.com/PocketMine/PocketMine-MP) (or forks) plugin that allows you to simply create multiple SkyWars mini-games for mcpe 0.14! :grin:
+This is a [PocketMine-MP](https://github.com/PocketMine/PocketMine-MP) (or forks) plugin that allows you to simply create multiple SkyWars mini-games for mcpe 0.15! :grin:
 
 ######This plugin was tested (and should work) on:
 - [ ] **[PocketMine-MP](https://github.com/PocketMine/PocketMine-MP)**
@@ -73,7 +73,7 @@ Command | Description
 #####Here there are some videos that explains how to create an arena in different languages:
 - [Deutsch](//TODO add a video) no video yet
 - [English](//TODO add a video) no video yet
-- [Español]() no video yet
+- [Español](//TODO add a video) no video yet
 - [Français](//TODO add a video) no video yet
 - [Italiano](//TODO add a video) no video yet
 
