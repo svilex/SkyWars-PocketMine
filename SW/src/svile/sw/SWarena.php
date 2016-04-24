@@ -194,7 +194,7 @@ class SWarena
      */
     public function getWorld($spawn = false, $playerName = '')
     {
-        if ($spawn and array_key_exists($playerName, $this->players))
+        if ($spawn && array_key_exists($playerName, $this->players))
             return $this->players[$playerName];
         else
             return $this->world;
@@ -223,7 +223,7 @@ class SWarena
             if (empty($this->spawns))
                 return false;
             foreach ($this->spawns as $key => $val) {
-                if (!is_array($val) or count($val) != 5 or $this->slot != count($this->spawns) or in_array('n.a', $val, true))
+                if (!is_array($val) || count($val) != 5 || $this->slot != count($this->spawns) || in_array('n.a', $val, true))
                     return false;
             }
             return true;
@@ -293,29 +293,29 @@ class SWarena
     /** VOID */
     public function tick()
     {
-        if ($this->GAME_STATE == 0 and count($this->players) < ($this->pg->configs['needed_players_to_run_countdown'] + 0))
+        if ($this->GAME_STATE == 0 && count($this->players) < ($this->pg->configs['needed_players_to_run_countdown'] + 0))
             return;
         $this->time++;
 
         //START and STOP
-        if ($this->GAME_STATE == 0 and $this->pg->configs['start.when_full'] and $this->slot <= count($this->players)) {
+        if ($this->GAME_STATE == 0 && $this->pg->configs['start.when_full'] && $this->slot <= count($this->players)) {
             $this->start();
             return;
         }
-        if ($this->GAME_STATE == 1 and 2 > count($this->players)) {
+        if ($this->GAME_STATE == 1 && 2 > count($this->players)) {
             $this->stop();
             return;
         }
-        if ($this->GAME_STATE == 0 and $this->time >= $this->countdown) {
+        if ($this->GAME_STATE == 0 && $this->time >= $this->countdown) {
             $this->start();
             return;
         }
-        if ($this->GAME_STATE == 1 and $this->time >= $this->maxtime) {
+        if ($this->GAME_STATE == 1 && $this->time >= $this->maxtime) {
             $this->stop();
             return;
         }
 
-        if ($this->GAME_STATE == 1 and $this->pg->configs['chest.refill'] and ($this->time % $this->pg->configs['chest.refill_rate']) == 0) {
+        if ($this->GAME_STATE == 1 && $this->pg->configs['chest.refill'] && ($this->time % $this->pg->configs['chest.refill_rate']) == 0) {
             $this->refillChests();
             foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
                 $p->sendMessage($this->pg->lang['game.chest_refill']);
@@ -324,7 +324,7 @@ class SWarena
         }
 
         //Chat and Popup messanges
-        if ($this->GAME_STATE == 0 and $this->time % 30 == 0) {
+        if ($this->GAME_STATE == 0 && $this->time % 30 == 0) {
             foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
                 $p->sendMessage(str_replace('{N}', date('i:s', ($this->countdown - $this->time)), $this->pg->lang['chat.countdown']));
             }
@@ -347,7 +347,7 @@ class SWarena
             $player->sendMessage($this->pg->lang['sign.game_running']);
             return;
         }
-        if (count($this->players) >= $this->slot or empty($this->spawns)) {
+        if (count($this->players) >= $this->slot || empty($this->spawns)) {
             $player->sendMessage($this->pg->lang['sign.game_full']);
             return;
         }

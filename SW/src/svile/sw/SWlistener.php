@@ -76,7 +76,7 @@ class SWlistener implements Listener
 
     public function onSignChange(SignChangeEvent $ev)
     {
-        if ($ev->getLine(0) != 'sw' or $ev->getPlayer()->isOp() == false)
+        if ($ev->getLine(0) != 'sw' || $ev->getPlayer()->isOp() == false)
             return;
 
         //Checks if the arena exists
@@ -155,7 +155,7 @@ class SWlistener implements Listener
                         $ev->setTo(new Location($spawn['x'], $spawn['y'], $spawn['z']));
                     break;
                 }
-                if ($a->void >= $ev->getPlayer()->getFloorY() and $ev->getPlayer()->isAlive()) {
+                if ($a->void >= $ev->getPlayer()->getFloorY() && $ev->getPlayer()->isAlive()) {
                     $event = new EntityDamageEvent($ev->getPlayer(), EntityDamageEvent::CAUSE_VOID, 10);
                     $ev->getPlayer()->attack($event->getFinalDamage(), $event);
                     unset($event);
@@ -172,10 +172,10 @@ class SWlistener implements Listener
                     $z = $ev->getPlayer()->getFloorZ();
                     $radius = $this->pg->configs['knockBack_radius_from_sign'];
                     //If is inside the sign radius, knockBack
-                    if (($x >= ($ex[0] - $radius) and $x <= ($ex[0] + $radius)) and ($z >= ($ex[2] - $radius) and $z <= ($ex[2] + $radius))) {
+                    if (($x >= ($ex[0] - $radius) && $x <= ($ex[0] + $radius)) && ($z >= ($ex[2] - $radius) && $z <= ($ex[2] + $radius))) {
                         //If the block is not a sign, break
                         $block = $ev->getPlayer()->getLevel()->getBlock(new Vector3($ex[0], $ex[1], $ex[2]));
-                        if ($block->getId() != 63 and $block->getId() != 68)
+                        if ($block->getId() != 63 && $block->getId() != 68)
                             break;
                         //Finds sign yaw
                         switch ($block->getId()):
@@ -280,7 +280,7 @@ class SWlistener implements Listener
         foreach ($this->pg->arenas as $a) {
             if ($a->quit($ev->getEntity()->getName())) {
                 $ev->setDeathMessage('');
-                if (($ev->getEntity()->getLastDamageCause() instanceof EntityDamageByEntityEvent) and $ev->getEntity()->getLastDamageCause()->getDamager() instanceof \pocketmine\Player) {
+                if (($ev->getEntity()->getLastDamageCause() instanceof EntityDamageByEntityEvent) && $ev->getEntity()->getLastDamageCause()->getDamager() instanceof \pocketmine\Player) {
                     foreach ($this->pg->getServer()->getLevelByName($a->getWorld())->getPlayers() as $p) {
                         $p->sendMessage(str_replace('{COUNT}', '[' . $a->getSlot(true) . '/' . $a->getSlot() . ']', str_replace('{KILLER}', $ev->getEntity()->getLastDamageCause()->getDamager()->getName(), str_replace('{PLAYER}', $ev->getEntity()->getName(), $this->pg->lang['player.kill']))));
                     }
@@ -302,14 +302,14 @@ class SWlistener implements Listener
 
     public function onDamage(EntityDamageEvent $ev)
     {
-        if ($ev->getCause() == 0b100 or $ev->getCause() == 0b1100 or $ev->getCause() == 0b11) {
+        if ($ev->getCause() == 0b100 || $ev->getCause() == 0b1100 || $ev->getCause() == 0b11) {
             $ev->setCancelled();
             return;
         }
         foreach ($this->pg->arenas as $a) {
             if ($ev->getEntity() instanceof Player) {
                 if ($a->inArena($ev->getEntity()->getName())) {
-                    if ($ev->getCause() == 0b1111 and $this->pg->configs['starvation_can_damage_inArena_players'] == false)
+                    if ($ev->getCause() == 0b1111 && $this->pg->configs['starvation_can_damage_inArena_players'] == false)
                         $ev->setCancelled();
                     if ($a->GAME_STATE == 0)
                         $ev->setCancelled();

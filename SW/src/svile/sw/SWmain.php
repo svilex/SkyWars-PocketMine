@@ -47,7 +47,12 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 
 use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\CompoundTag;
+        #Use these for PHP7
+use pocketmine\nbt\tag\CompoundTag as Compound;
+use pocketmine\nbt\tag\StringTag as Str;
+        #Use these for PHP5
+//use pocketmine\nbt\tag\Compound as Compound;
+//use pocketmine\nbt\tag\String as Str;
 
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
@@ -60,7 +65,7 @@ use pocketmine\math\Vector3;
 class SWmain extends PluginBase
 {
     /** Plugin Version */
-    const SW_VERSION = 0.3;
+    const SW_VERSION = 0.4;
 
     /** @var SWcommands */
     private $commands;
@@ -88,29 +93,26 @@ class SWmain extends PluginBase
         //This changes worlds NBT name with folders ones to avoid problems
         try {
             foreach (scandir($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73") as $worldDir) {
-                if (is_dir($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir) and is_file($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74")) {
+                if (is_dir($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir) && is_file($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74")) {
                     $nbt = new NBT(NBT::BIG_ENDIAN);
                     $nbt->readCompressed(file_get_contents($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74"));
                     $levelData = $nbt->getData();
-                    if ($levelData->Data instanceof CompoundTag)
-                        $levelData = $levelData->Data;
-                    if ($levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] != $worldDir) {
-                        $levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] = $worldDir;
-                        $nbt->setData(new CompoundTag
-                        ('', [
-                            "\x44\x61\x74\x61" => $levelData
-                        ]));
-                        $buffer = $nbt->writeCompressed();
-                        file_put_contents($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74", $buffer);
-                        unset($worldDir, $buffer, $levelData, $nbt);
+                    if (array_key_exists('Data', $levelData) && $levelData['Data'] instanceof Compound) {
+                        $levelData = $levelData['Data'];
+                        if (array_key_exists("\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65", $levelData) && $levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] != $worldDir) {
+                            $levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] = new Str("\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65", $worldDir);
+                            $nbt->setData(new Compound('', ["\x44\x61\x74\x61" => $levelData]));
+                            file_put_contents($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74", $nbt->writeCompressed());
+                        }
+                        unset($worldDir, $levelData, $nbt);
                     } else {
+                        $this->getLogger()->critical('There is a problem with the "level.dat" of the world: ' . $worldDir);
                         unset($worldDir, $levelData, $nbt);
                     }
                 }
             }
         } catch (\Throwable $e) {
             $this->getLogger()->critical($e->getMessage() . ' in §b' . $e->getFile() . '§c on line §b' . $e->getLine());
-            $this->getLogger()->critical('There are problems with your worlds names, can\'t fix them');
         }
     }
 
@@ -118,7 +120,7 @@ class SWmain extends PluginBase
     {
         if ($this->getDescription()->getVersion() != self::SW_VERSION)
             $this->getLogger()->critical(@gzinflate(@base64_decode('C8lILUpVyCxWSFQoKMpPyknNVSjPLMlQKMlIVSjIKU3PzFMoSy0qzszPAwA=')));
-        if (@array_shift($this->getDescription()->getAuthors()) != "\x73\x76\x69\x6c\x65" or $this->getDescription()->getName() != "\x53\x57\x5f\x73\x76\x69\x6c\x65" or $this->getDescription()->getVersion() != self::SW_VERSION) {
+        if (@array_shift($this->getDescription()->getAuthors()) != "\x73\x76\x69\x6c\x65" || $this->getDescription()->getName() != "\x53\x57\x5f\x73\x76\x69\x6c\x65" || $this->getDescription()->getVersion() != self::SW_VERSION) {
             $this->getLogger()->notice(@gzinflate(@base64_decode('LYxBDsIwDAS/sg8ozb1/QEICiXOo3NhKiKvYqeD3hcJtNaPZGxNid9YGXeAshrX0JBWfZZsUGrCJif9ckZrhikRfQGgUyz+YwO6rTSEkce6PcdZnOB5e4Zrf99jsdNE5k5+l0g4=')));
             $this->getServer()->getPluginManager()->disablePlugin($this);
         }
@@ -137,11 +139,13 @@ class SWmain extends PluginBase
         }
 
         //Checks config file version...
-        if ($c = ((new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML))->get('CONFIG_VERSION', '1st')) != '1st' and $c != self::SW_VERSION) {
+        $v = ((new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML))->get('CONFIG_VERSION', '1st'));
+        if ($v != '1st' && $v != self::SW_VERSION) {
             $this->getLogger()->notice('You are using old configs, deleting them.Make sure to delete old arenas if aren\'t working');
             @unlink($this->getDataFolder() . 'SW_configs.yml');
             @unlink($this->getDataFolder() . 'SW_lang.yml');
         }
+        unset($v);
 
         //Config files: /SW_configs.yml /SW_lang.yml & for arenas: /arenas/SWname/settings.yml
 
@@ -219,7 +223,7 @@ class SWmain extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(new SWlistener($this), $this);
 
         //Calls loadArenas() & loadSigns() to loads arenas & signs...
-        if (!($this->loadSigns() and $this->loadArenas())) {
+        if (!($this->loadSigns() && $this->loadArenas())) {
             $this->getLogger()->error('An error occurred loading the SW_svile plugin, try deleting the plugin folder');
             $this->getServer()->getPluginManager()->disablePlugin($this);
         }
@@ -249,10 +253,10 @@ class SWmain extends PluginBase
     /**
      * @return bool
      */
-    public function loadArenas() : bool
+    public function loadArenas()
     {
         foreach (scandir($this->getDataFolder() . 'arenas/') as $arenadir) {
-            if ($arenadir != '..' and $arenadir != '.' and is_dir($this->getDataFolder() . 'arenas/' . $arenadir)) {
+            if ($arenadir != '..' && $arenadir != '.' && is_dir($this->getDataFolder() . 'arenas/' . $arenadir)) {
                 if (is_file($this->getDataFolder() . 'arenas/' . $arenadir . '/settings.yml')) {
                     $config = new Config($this->getDataFolder() . 'arenas/' . $arenadir . '/settings.yml', CONFIG::YAML, array(
                         'name' => 'default',
@@ -277,14 +281,14 @@ class SWmain extends PluginBase
     /**
      * @return bool
      */
-    public function loadSigns() : bool
+    public function loadSigns()
     {
         $this->signs = [];
         $r = $this->db->query("SELECT * FROM signs;");
         while ($array = $r->fetchArray(SQLITE3_ASSOC)) {
             $this->signs[$array['x'] . ':' . $array['y'] . ':' . $array['z'] . ':' . $array['world']] = $array['arena'];
         }
-        if (empty($this->signs) and !empty($array))
+        if (empty($this->signs) && !empty($array))
             return false;
         else
             return true;
@@ -339,13 +343,13 @@ class SWmain extends PluginBase
             $ex = explode(':', array_search($SWname, $this->signs));
             if (count($ex) == 0b100) {
                 $this->getServer()->loadLevel($ex[0b11]);
-                if ($this->getServer()->getLevelByName($ex[0b11]) instanceof \pocketmine\level\Level) {
+                if ($this->getServer()->getLevelByName($ex[0b11]) != null) {
                     $tile = $this->getServer()->getLevelByName($ex[0b11])->getTile(new Vector3($ex[0], $ex[1], $ex[0b10]));
-                    if ($tile instanceof Sign) {
+                    if ($tile != null && $tile instanceof Sign) {
                         $text = $tile->getText();
                         $tile->setText($text[0], $text[1], TextFormat::GREEN . $players . TextFormat::BOLD . TextFormat::DARK_GRAY . '/' . TextFormat::RESET . TextFormat::GREEN . $slot, $state);
                     } else {
-                        $this->getLogger()->critical('Can\'t get ' . $SWname . ' sign.Error finding sign on level: ' . $ex[0b11] . ' x' . $ex[0] . ' : y' . $ex[1] . ' : z' . $ex[2]);
+                        $this->getLogger()->critical('Can\'t get ' . $SWname . ' sign.Error finding sign on level: ' . $ex[0b11] . ' x:' . $ex[0] . ' y:' . $ex[1] . ' z:' . $ex[2]);
                     }
                 }
             }
@@ -359,7 +363,7 @@ class SWmain extends PluginBase
                         $text = $tile->getText();
                         $tile->setText($text[0], $text[1], TextFormat::GREEN . $this->arenas[$val]->getSlot(true) . TextFormat::BOLD . TextFormat::DARK_GRAY . '/' . TextFormat::RESET . TextFormat::GREEN . $this->arenas[$val]->getSlot(), $text[3]);
                     } else {
-                        $this->getLogger()->critical('Can\'t get ' . $val . ' sign.Error finding sign on level: ' . $ex[0b11] . ' x' . $ex[0] . ' : y' . $ex[1] . ' : z' . $ex[2]);
+                        $this->getLogger()->critical('Can\'t get ' . $val . ' sign.Error finding sign on level: ' . $ex[0b11] . ' x:' . $ex[0] . ' y:' . $ex[1] . ' z:' . $ex[2]);
                     }
                 }
             }
@@ -369,7 +373,7 @@ class SWmain extends PluginBase
     /**
      * @return array
      */
-    public function getChestContents() : array //TODO: rewrite this and let the owner decide the contents of the chest
+    public function getChestContents() //TODO: rewrite this and let the owner decide the contents of the chest
     {
         $items = array(
             //ARMOR

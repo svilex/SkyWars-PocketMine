@@ -70,7 +70,7 @@ class SWcommands
      */
     public function onCommand(CommandSender $sender, Command $command, $label, array $args)
     {
-        if (!($sender instanceof Player) or !$sender->isOp()) {
+        if (!($sender instanceof Player) || !$sender->isOp()) {
             //Can't use this command, non OP or non Player
             return true;
         }
@@ -88,7 +88,7 @@ class SWcommands
                  \___||_|    \___| \__,_| \__| \___|
 
                 */
-                if (!(count($args) > 0b11 and count($args) < 0b101)) {
+                if (!(count($args) > 0b11 && count($args) < 0b101)) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Usage: /sw ' . TextFormat::GREEN . 'create [SWname] [slots] [countdown] [maxGameTime]');
                     break;
                 }
@@ -100,13 +100,18 @@ class SWcommands
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'Using the world were you are now: ' . TextFormat::AQUA . $world . TextFormat::RED . ' ,expected lag');
                 } else {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'There is a problem with the world name, try to restart your server');
-                    unset($fworld);
+                    $provider = $sender->getLevel()->getProvider();
+                    if ($provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
+                        $provider->getLevelData()->LevelName = new \pocketmine\nbt\tag\StringTag('LevelName', $fworld);
+                        $provider->saveLevelData();
+                    }
+                    unset($fworld, $world, $provider);
                     break;
                 }
                 unset($fworld);
 
                 //Checks if the world is default
-                if ($sender->getServer()->getConfigString('level-name', 'world') == $world or $sender->getServer()->getDefaultLevel()->getName() == $world or $sender->getServer()->getDefaultLevel()->getFolderName() == $world) {
+                if ($sender->getServer()->getConfigString('level-name', 'world') == $world || $sender->getServer()->getDefaultLevel()->getName() == $world || $sender->getServer()->getDefaultLevel()->getFolderName() == $world) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'You can\'t create an arena in the default world');
                     break;
                 }
@@ -123,7 +128,7 @@ class SWcommands
 
                 //SW NAME
                 $SWname = array_shift($args);
-                if (!($SWname and ctype_alpha($SWname) and strlen($SWname) < 0x10 and strlen($SWname) > 0b10)) {
+                if (!($SWname && ctype_alpha($SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[SWname]' . TextFormat::RED . ' must consists of all letters (min3-max15)');
                     unset($SWname);
                     break;
@@ -137,7 +142,7 @@ class SWcommands
 
                 //ARENA SLOT
                 $slot = array_shift($args);
-                if (!($slot and is_numeric($slot) and is_int(($slot + 0)) and $slot < 0x33 and $slot > 1)) {
+                if (!($slot && is_numeric($slot) && is_int(($slot + 0)) && $slot < 0x33 && $slot > 1)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[slots]' . TextFormat::RED . ' must be an integer >= 50 and >= 2');
                     unset($SWname, $slot);
                     break;
@@ -146,7 +151,7 @@ class SWcommands
 
                 //ARENA COUNTDOWN
                 $countdown = array_shift($args);
-                if (!($countdown and is_numeric($countdown) and is_int(($countdown + 0)) and $countdown > 0b1001 and $countdown < 0x12d)) {
+                if (!($countdown && is_numeric($countdown) && is_int(($countdown + 0)) && $countdown > 0b1001 && $countdown < 0x12d)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[countdown]' . TextFormat::RED . ' must be an integer <= 300 seconds (5 minutes) and >= 10');
                     unset($SWname, $slot, $countdown);
                     break;
@@ -155,7 +160,7 @@ class SWcommands
 
                 //ARENA MAX EXECUTION TIME
                 $maxtime = array_shift($args);
-                if (!($maxtime and is_numeric($maxtime) and is_int(($maxtime + 0)) and $maxtime > 0x12b and $maxtime < 0x259)) {
+                if (!($maxtime && is_numeric($maxtime) && is_int(($maxtime + 0)) && $maxtime > 0x12b && $maxtime < 0x259)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[maxGameTime]' . TextFormat::RED . ' must be an integer <= 600 (10 minutes) and >= 300');
                     unset($SWname, $slot, $countdown, $maxtime);
                     break;
@@ -169,7 +174,7 @@ class SWcommands
                         for ($z = 0; $z < 0x10; $z++) {
                             for ($y = 0; $y <= 0x7f; $y++) {
                                 $block = $chunk->getBlockId($x, $y, $z);
-                                if ($block !== 0 and $last > $y) {
+                                if ($block !== 0 && $last > $y) {
                                     $last = $y;
                                     break;
                                 }
@@ -236,14 +241,14 @@ class SWcommands
                         break;
                     }
                 }
-                if (!($SWname and ctype_alpha($SWname) and strlen($SWname) < 0x10 and strlen($SWname) > 0b10 and array_key_exists($SWname, $this->pg->arenas))) {
+                if (!($SWname && ctype_alpha($SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10 && array_key_exists($SWname, $this->pg->arenas))) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena not found here');
                     unset($SWname);
                     break;
                 }
 
                 $slot = array_shift($args);
-                if (!($slot and is_numeric($slot) and is_int(($slot + 0)) and $slot < 0x33 and $slot > 0)) {
+                if (!($slot && is_numeric($slot) && is_int(($slot + 0)) && $slot < 0x33 && $slot > 0)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[slot]' . TextFormat::RED . ' must be an integer <= than 50 and >= 1');
                     unset($SWname, $slot);
                     break;
@@ -294,13 +299,13 @@ class SWcommands
                 }
 
                 $SWname = array_shift($args);
-                if (!($SWname and ctype_alpha($SWname) and strlen($SWname) < 0x10 and strlen($SWname) > 0b10 and array_key_exists($SWname, $this->pg->arenas))) {
+                if (!($SWname && ctype_alpha($SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10 && array_key_exists($SWname, $this->pg->arenas))) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena: ' . TextFormat::WHITE . $SWname . TextFormat::RED . ' doesn\'t exist');
                     unset($SWname);
                     break;
                 }
 
-                if (!(is_dir($this->pg->getDataFolder() . 'arenas/' . $SWname) and is_file($this->pg->getDataFolder() . 'arenas/' . $SWname . '/settings.yml'))) {
+                if (!(is_dir($this->pg->getDataFolder() . 'arenas/' . $SWname) && is_file($this->pg->getDataFolder() . 'arenas/' . $SWname . '/settings.yml'))) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena files doesn\'t exists');
                     unset($SWname);
                     break;
@@ -313,7 +318,7 @@ class SWcommands
                         $ex = explode(':', $loc);
                         if ($this->pg->getServer()->loadLevel($ex[0b11])) {
                             $block = $this->pg->getServer()->getLevelByName($ex[0b11])->getBlock(new Vector3($ex[0], $ex[1], $ex[0b10]));
-                            if ($block->getId() == 0x3f or $block->getId() == 0x44)
+                            if ($block->getId() == 0x3f || $block->getId() == 0x44)
                                 $this->pg->getServer()->getLevelByName($ex[0b11])->setBlock((new Vector3($ex[0], $ex[1], $ex[0b10])), Block::get(0));
                         }
                     }
@@ -322,7 +327,7 @@ class SWcommands
                 unset($this->pg->arenas[$SWname]);
 
                 foreach (scandir($this->pg->getDataFolder() . 'arenas/' . $SWname) as $file) {
-                    if ($file != '.' and $file != '..' and is_file($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $file)) {
+                    if ($file != '.' && $file != '..' && is_file($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $file)) {
                         @unlink($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $file);
                     }
                 }
@@ -348,14 +353,14 @@ class SWcommands
                 }
 
                 $SWname = array_shift($args);
-                if (!($SWname and ctype_alpha($SWname) and strlen($SWname) < 0x10 and strlen($SWname) > 0b10 and array_key_exists($SWname, $this->pg->arenas))) {
+                if (!($SWname && ctype_alpha($SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10 && array_key_exists($SWname, $this->pg->arenas))) {
                     if ($SWname == 'all') {
                         //Deleting SW signs blocks
                         foreach ($this->pg->signs as $loc => $name) {
                             $ex = explode(':', $loc);
                             if ($this->pg->getServer()->loadLevel($ex[0b11])) {
                                 $block = $this->pg->getServer()->getLevelByName($ex[0b11])->getBlock(new Vector3($ex[0], $ex[1], $ex[0b10]));
-                                if ($block->getId() == 0x3f or $block->getId() == 0x44)
+                                if ($block->getId() == 0x3f || $block->getId() == 0x44)
                                     $this->pg->getServer()->getLevelByName($ex[0b11])->setBlock((new Vector3($ex[0], $ex[1], $ex[0b10])), Block::get(0));
                             }
                         }
@@ -374,7 +379,7 @@ class SWcommands
                         $ex = explode(':', $loc);
                         if ($this->pg->getServer()->loadLevel($ex[0b11])) {
                             $block = $this->pg->getServer()->getLevelByName($ex[0b11])->getBlock(new Vector3($ex[0], $ex[1], $ex[0b10]));
-                            if ($block->getId() == 0x3f or $block->getId() == 0x44)
+                            if ($block->getId() == 0x3f || $block->getId() == 0x44)
                                 $this->pg->getServer()->getLevelByName($ex[0b11])->setBlock((new Vector3($ex[0], $ex[1], $ex[0b10])), Block::get(0));
                         }
                     }
@@ -382,19 +387,6 @@ class SWcommands
                 $this->pg->setSign($SWname, 0, 0, 0, 'world', true, false);
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Deleted signs for arena: ' . TextFormat::DARK_GREEN . $SWname);
                 unset($SWname, $loc, $name, $ex, $block);
-                break;
-
-
-            case 'n.a':
-                /*
-                        _
-                  ___  | |   ___    ___    ___
-                 / __| | |  / _ \  / __|  / _ \
-                | (__  | | | (_) | \__ \ |  __/
-                 \___| |_|  \___/  |___/  \___|
-
-                */
-                //TODO: delete this
                 break;
 
 
