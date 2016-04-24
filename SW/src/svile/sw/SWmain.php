@@ -305,7 +305,7 @@ class SWmain extends PluginBase
      * @param bool $all
      * @return bool
      */
-    public function setSign($SWname, $x, $y, $z, $world, $delete = false, $all = true) : bool
+    public function setSign($SWname, $x, $y, $z, $world, $delete = false, $all = true)
     {
         if ($delete) {
             if ($all)
