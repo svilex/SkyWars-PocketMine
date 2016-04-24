@@ -111,7 +111,7 @@ class SWmain extends PluginBase
                     }
                 }
             }
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             $this->getLogger()->critical($e->getMessage() . ' in §b' . $e->getFile() . '§c on line §b' . $e->getLine());
         }
     }
@@ -133,7 +133,7 @@ class SWmain extends PluginBase
                 $this->db = new \SQLite3($this->getDataFolder() . 'SW_signs.db', SQLITE3_OPEN_READWRITE);
             }
             $this->db->exec("CREATE TABLE IF NOT EXISTS signs (arena TEXT PRIMARY KEY COLLATE NOCASE, x INTEGER , y INTEGER , z INTEGER, world TEXT);");
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             $this->getLogger()->critical($e->getMessage() . ' in §b' . $e->getFile() . '§c on line §b' . $e->getLine());
             $this->getServer()->getPluginManager()->disablePlugin($this);
         }
@@ -174,7 +174,8 @@ class SWmain extends PluginBase
             'drops_in_arena' => false,
             'start.when_full' => true,
             'chest.refill' => true,
-            'chest.refill_rate' => 0xf0
+            'chest.refill_rate' => 0xf0,
+            'air_world_generator' => true
         ));
         touch($this->getDataFolder() . 'SW_configs.yml');
         $this->configs = $this->configs->getAll();

@@ -50,6 +50,11 @@ use pocketmine\utils\TextFormat;
 use pocketmine\math\Vector3;
 use pocketmine\block\Block;
 
+        #Use this for PHP7
+use pocketmine\nbt\tag\StringTag as Str;
+        #Use this for PHP5
+//use pocketmine\nbt\tag\String as Str;
+
 
 class SWcommands
 {
@@ -102,7 +107,7 @@ class SWcommands
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'There is a problem with the world name, try to restart your server');
                     $provider = $sender->getLevel()->getProvider();
                     if ($provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
-                        $provider->getLevelData()->LevelName = new \pocketmine\nbt\tag\StringTag('LevelName', $fworld);
+                        $provider->getLevelData()->LevelName = new Str('LevelName', $fworld);
                         $provider->saveLevelData();
                     }
                     unset($fworld, $world, $provider);
@@ -183,6 +188,14 @@ class SWcommands
                     }
                 }
                 $void = ($last - 1);
+
+                //Air world generator
+                $provider = $sender->getLevel()->getProvider();
+                if ($this->pg->configs['air_world_generator'] && $provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
+                    $provider->getLevelData()->generatorName = new Str('generatorName', 'flat');
+                    $provider->getLevelData()->generatorOptions = new Str('generatorOptions', '0;0;0');
+                    $provider->saveLevelData();
+                }
 
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::LIGHT_PURPLE . 'I\'m creating a backup of the world...teleporting to hub');
                 $sender->teleport($sender->getServer()->getDefaultLevel()->getSpawnLocation());
