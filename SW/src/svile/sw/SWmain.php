@@ -97,8 +97,8 @@ class SWmain extends PluginBase
                     $nbt = new NBT(NBT::BIG_ENDIAN);
                     $nbt->readCompressed(file_get_contents($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74"));
                     $levelData = $nbt->getData();
-                    if (array_key_exists('Data', $levelData) && $levelData['Data'] instanceof Compound) {
-                        $levelData = $levelData['Data'];
+                    if (array_key_exists("\x44\x61\x74\x61", $levelData) && $levelData["\x44\x61\x74\x61"] instanceof Compound) {
+                        $levelData = $levelData["\x44\x61\x74\x61"];
                         if (array_key_exists("\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65", $levelData) && $levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] != $worldDir) {
                             $levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] = new Str("\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65", $worldDir);
                             $nbt->setData(new Compound('', ["\x44\x61\x74\x61" => $levelData]));
@@ -127,10 +127,10 @@ class SWmain extends PluginBase
 
         //Creates the database that is needed to store signs info
         try {
-            if (!is_file($this->getDataFolder() . 'SW_signs.db')) {
-                $this->db = new \SQLite3($this->getDataFolder() . 'SW_signs.db', SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+            if (!is_file($this->getDataFolder() . "\x53\x57\x5f\x73\x69\x67\x6e\x73\x2e\x64\x62")) {
+                $this->db = new \SQLite3($this->getDataFolder() . "\x53\x57\x5f\x73\x69\x67\x6e\x73\x2e\x64\x62", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
             } else {
-                $this->db = new \SQLite3($this->getDataFolder() . 'SW_signs.db', SQLITE3_OPEN_READWRITE);
+                $this->db = new \SQLite3($this->getDataFolder() . "\x53\x57\x5f\x73\x69\x67\x6e\x73\x2e\x64\x62", SQLITE3_OPEN_READWRITE);
             }
             $this->db->exec("CREATE TABLE IF NOT EXISTS signs (arena TEXT PRIMARY KEY COLLATE NOCASE, x INTEGER , y INTEGER , z INTEGER, world TEXT);");
         } catch (\Exception $e) {
@@ -234,7 +234,7 @@ class SWmain extends PluginBase
 
     public function onCommand(CommandSender $sender, Command $command, $label, array $args)
     {
-        if (strtolower($command->getName()) == 'sw') {
+        if (strtolower($command->getName()) == "\x73\x77") {
             //If SW command, just call svile\sw\SWcommands->onCommand();
             $this->commands->onCommand($sender, $command, $label, $args);
         }

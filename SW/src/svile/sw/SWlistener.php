@@ -151,7 +151,7 @@ class SWlistener implements Listener
             if ($a->inArena($ev->getPlayer()->getName())) {
                 if ($a->GAME_STATE == 0) {
                     $spawn = $a->getWorld(true, $ev->getPlayer()->getName());
-                    if ($ev->getPlayer()->getPosition()->distanceSquared(new Position($spawn['x'], $spawn['y'], $spawn['z'])) > 2)
+                    if ($ev->getPlayer()->getPosition()->distanceSquared(new Position($spawn['x'], $spawn['y'], $spawn['z'])) > 4)
                         $ev->setTo(new Location($spawn['x'], $spawn['y'], $spawn['z']));
                     break;
                 }
