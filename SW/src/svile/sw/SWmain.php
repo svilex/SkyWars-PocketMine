@@ -79,6 +79,7 @@ class SWmain extends PluginBase
     public $lang;
     /** @var \SQLite3 */
     private $db;
+    //private $economy = false;
 
     public function onLoad()
     {
@@ -240,6 +241,27 @@ class SWmain extends PluginBase
         }
         return true;
     }
+
+    /*\*
+     * @return bool|\pocketmine\plugin\Plugin
+     */
+    /*
+    public function getEconomy()
+    {
+        if ($this->economy instanceof \pocketmine\plugin\Plugin) {
+            return $this->economy;
+        } else {
+            $api = $this->getServer()->getPluginManager()->getPlugin('EconomyAPI');
+            if ($api != false && $api instanceof \pocketmine\plugin\Plugin) {
+                if ($api->getDescription()->getVersion() == '2.0.9' && array_shift($api->getDescription()->getAuthors()) == "\x6f\x6e\x65\x62\x6f\x6e\x65") {
+                    $this->economy = $api;
+                    return $api;
+                }
+            }
+        }
+        return false;
+    }
+    */
 
     /*
                       _

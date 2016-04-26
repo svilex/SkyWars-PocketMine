@@ -213,10 +213,7 @@ class SWcommands
                 $zip = new \ZipArchive;
                 @mkdir($this->pg->getDataFolder() . 'arenas/' . $SWname, 0755);
                 $zip->open($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $world . '.zip', $zip::CREATE | $zip::OVERWRITE);
-                $files = new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($path),
-                    \RecursiveIteratorIterator::LEAVES_ONLY
-                );
+                $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path), \RecursiveIteratorIterator::LEAVES_ONLY);
                 foreach ($files as $nu => $file) {
                     if (!$file->isDir()) {
                         $relativePath = $world . '/' . substr($file, strlen($path) + 1);
