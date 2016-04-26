@@ -98,26 +98,13 @@ class SWcommands
                     break;
                 }
 
-                //ARENA LEVEL NAME
                 $fworld = $sender->getLevel()->getFolderName();
                 $world = $sender->getLevel()->getName();
-                if ($fworld == $world) {
-                    $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'Using the world were you are now: ' . TextFormat::AQUA . $world . TextFormat::RED . ' ,expected lag');
-                } else {
-                    $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'There is a problem with the world name, try to restart your server');
-                    $provider = $sender->getLevel()->getProvider();
-                    if ($provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
-                        $provider->getLevelData()->LevelName = new Str('LevelName', $fworld);
-                        $provider->saveLevelData();
-                    }
-                    unset($fworld, $world, $provider);
-                    break;
-                }
-                unset($fworld);
 
                 //Checks if the world is default
                 if ($sender->getServer()->getConfigString('level-name', 'world') == $world || $sender->getServer()->getDefaultLevel()->getName() == $world || $sender->getServer()->getDefaultLevel()->getFolderName() == $world) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'You can\'t create an arena in the default world');
+                    unset($fworld, $world);
                     break;
                 }
 
@@ -127,6 +114,7 @@ class SWcommands
                         $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'You can\'t create 2 arenas in the same world try:');
                         $sender->sendMessage(TextFormat::RED . '→' . TextFormat::WHITE . '/sw list' . TextFormat::RED . ' for a list of arenas');
                         $sender->sendMessage(TextFormat::RED . '→' . TextFormat::WHITE . '/sw delete' . TextFormat::RED . ' to delete an arena');
+                        unset($fworld, $world);
                         break 2;
                     }
                 }
@@ -135,13 +123,14 @@ class SWcommands
                 $SWname = array_shift($args);
                 if (!($SWname && ctype_alpha($SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[SWname]' . TextFormat::RED . ' must consists of all letters (min3-max15)');
-                    unset($SWname);
+                    unset($fworld, $world, $SWname);
                     break;
                 }
 
                 //Checks if the arena already exists
                 if (array_key_exists($SWname, $this->pg->arenas)) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena with name: ' . TextFormat::WHITE . $SWname . TextFormat::RED . ' already exist');
+                    unset($fworld, $world, $SWname);
                     break;
                 }
 
@@ -149,7 +138,7 @@ class SWcommands
                 $slot = array_shift($args);
                 if (!($slot && is_numeric($slot) && is_int(($slot + 0)) && $slot < 0x33 && $slot > 1)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[slots]' . TextFormat::RED . ' must be an integer >= 50 and >= 2');
-                    unset($SWname, $slot);
+                    unset($fworld, $world, $SWname, $slot);
                     break;
                 }
                 $slot += 0;
@@ -158,7 +147,7 @@ class SWcommands
                 $countdown = array_shift($args);
                 if (!($countdown && is_numeric($countdown) && is_int(($countdown + 0)) && $countdown > 0b1001 && $countdown < 0x12d)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[countdown]' . TextFormat::RED . ' must be an integer <= 300 seconds (5 minutes) and >= 10');
-                    unset($SWname, $slot, $countdown);
+                    unset($fworld, $world, $SWname, $slot, $countdown);
                     break;
                 }
                 $countdown += 0;
@@ -167,17 +156,41 @@ class SWcommands
                 $maxtime = array_shift($args);
                 if (!($maxtime && is_numeric($maxtime) && is_int(($maxtime + 0)) && $maxtime > 0x12b && $maxtime < 0x259)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[maxGameTime]' . TextFormat::RED . ' must be an integer <= 600 (10 minutes) and >= 300');
-                    unset($SWname, $slot, $countdown, $maxtime);
+                    unset($fworld, $world, $SWname, $slot, $countdown, $maxtime);
                     break;
                 }
                 $maxtime += 0;
+
+                //ARENA LEVEL NAME
+                if ($fworld == $world) {
+                    $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'Using the world were you are now: ' . TextFormat::AQUA . $world . TextFormat::RED . ' ,expected lag');
+                } else {
+                    $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'There is a problem with the world name, try to restart your server');
+                    $provider = $sender->getLevel()->getProvider();
+                    if ($provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
+                        $provider->getLevelData()->LevelName = new Str('LevelName', $fworld);
+                        $provider->saveLevelData();
+                    }
+                    unset($fworld, $world, $SWname, $slot, $countdown, $maxtime);
+                    break;
+                }
+
+                //Air world generator
+                $provider = $sender->getLevel()->getProvider();
+                if ($this->pg->configs['air_world_generator'] && $provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
+                    $provider->getLevelData()->generatorName = new Str('generatorName', 'flat');
+                    $provider->getLevelData()->generatorOptions = new Str('generatorOptions', '0;0;0');
+                    $provider->saveLevelData();
+                }
+
+                $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::LIGHT_PURPLE . 'I\'m creating a backup of the world...teleporting to hub');
 
                 //This is the "fake void"
                 $last = 0x80;
                 foreach ($sender->getLevel()->getChunks() as $chunk) {
                     for ($x = 0; $x < 0x10; $x++) {
                         for ($z = 0; $z < 0x10; $z++) {
-                            for ($y = 0; $y <= 0x7f; $y++) {
+                            for ($y = 0; $y < 0x7f; $y++) {
                                 $block = $chunk->getBlockId($x, $y, $z);
                                 if ($block !== 0 && $last > $y) {
                                     $last = $y;
@@ -189,19 +202,9 @@ class SWcommands
                 }
                 $void = ($last - 1);
 
-                //Air world generator
-                $provider = $sender->getLevel()->getProvider();
-                if ($this->pg->configs['air_world_generator'] && $provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
-                    $provider->getLevelData()->generatorName = new Str('generatorName', 'flat');
-                    $provider->getLevelData()->generatorOptions = new Str('generatorOptions', '0;0;0');
-                    $provider->saveLevelData();
-                }
-
-                $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::LIGHT_PURPLE . 'I\'m creating a backup of the world...teleporting to hub');
                 $sender->teleport($sender->getServer()->getDefaultLevel()->getSpawnLocation());
-                foreach ($sender->getServer()->getLevelByName($world)->getPlayers() as $p) {
+                foreach ($sender->getServer()->getLevelByName($world)->getPlayers() as $p)
                     $p->close('', 'Please re-join');
-                }
                 $sender->getServer()->unloadLevel($sender->getServer()->getLevelByName($world));
 
                 //From here @vars are: $SWname , $slot , $world . Now i'm going to Zip the world and make a new arena
@@ -229,6 +232,7 @@ class SWcommands
                 $this->pg->arenas[$SWname] = new SWarena($this->pg, $SWname, $slot, $world, $countdown, $maxtime, $void);
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Arena: ' . TextFormat::DARK_GREEN . $SWname . TextFormat::GREEN . ' created successfully!');
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Now set spawns with ' . TextFormat::WHITE . '/sw setspawn [slot]');
+                unset($SWname, $slot, $world, $countdown, $maxtime, $void, $provider);
                 break;
 
 
@@ -329,10 +333,10 @@ class SWcommands
                 foreach ($this->pg->signs as $loc => $name) {
                     if ($SWname == $name) {
                         $ex = explode(':', $loc);
-                        if ($this->pg->getServer()->loadLevel($ex[0b11])) {
-                            $block = $this->pg->getServer()->getLevelByName($ex[0b11])->getBlock(new Vector3($ex[0], $ex[1], $ex[0b10]));
+                        if ($sender->getServer()->loadLevel($ex[0b11])) {
+                            $block = $sender->getServer()->getLevelByName($ex[0b11])->getBlock(new Vector3($ex[0], $ex[1], $ex[0b10]));
                             if ($block->getId() == 0x3f || $block->getId() == 0x44)
-                                $this->pg->getServer()->getLevelByName($ex[0b11])->setBlock((new Vector3($ex[0], $ex[1], $ex[0b10])), Block::get(0));
+                                $sender->getServer()->getLevelByName($ex[0b11])->setBlock((new Vector3($ex[0], $ex[1], $ex[0b10])), Block::get(0));
                         }
                     }
                 }
@@ -371,10 +375,10 @@ class SWcommands
                         //Deleting SW signs blocks
                         foreach ($this->pg->signs as $loc => $name) {
                             $ex = explode(':', $loc);
-                            if ($this->pg->getServer()->loadLevel($ex[0b11])) {
-                                $block = $this->pg->getServer()->getLevelByName($ex[0b11])->getBlock(new Vector3($ex[0], $ex[1], $ex[0b10]));
+                            if ($sender->getServer()->loadLevel($ex[0b11])) {
+                                $block = $sender->getServer()->getLevelByName($ex[0b11])->getBlock(new Vector3($ex[0], $ex[1], $ex[0b10]));
                                 if ($block->getId() == 0x3f || $block->getId() == 0x44)
-                                    $this->pg->getServer()->getLevelByName($ex[0b11])->setBlock((new Vector3($ex[0], $ex[1], $ex[0b10])), Block::get(0));
+                                    $sender->getServer()->getLevelByName($ex[0b11])->setBlock((new Vector3($ex[0], $ex[1], $ex[0b10])), Block::get(0));
                             }
                         }
                         //Deleting signs from db & array
@@ -390,10 +394,10 @@ class SWcommands
                 foreach ($this->pg->signs as $loc => $name) {
                     if ($SWname == $name) {
                         $ex = explode(':', $loc);
-                        if ($this->pg->getServer()->loadLevel($ex[0b11])) {
-                            $block = $this->pg->getServer()->getLevelByName($ex[0b11])->getBlock(new Vector3($ex[0], $ex[1], $ex[0b10]));
+                        if ($sender->getServer()->loadLevel($ex[0b11])) {
+                            $block = $sender->getServer()->getLevelByName($ex[0b11])->getBlock(new Vector3($ex[0], $ex[1], $ex[0b10]));
                             if ($block->getId() == 0x3f || $block->getId() == 0x44)
-                                $this->pg->getServer()->getLevelByName($ex[0b11])->setBlock((new Vector3($ex[0], $ex[1], $ex[0b10])), Block::get(0));
+                                $sender->getServer()->getLevelByName($ex[0b11])->setBlock((new Vector3($ex[0], $ex[1], $ex[0b10])), Block::get(0));
                         }
                     }
                 }

@@ -132,7 +132,7 @@ class SWarena
             $this->pg->getServer()->loadLevel($this->world);
         }
 
-        $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', CONFIG::YAML, array(//TODO: put descriptions
+        $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', CONFIG::YAML, [//TODO: put descriptions
             'name' => $this->SWname,
             'slot' => $this->slot,
             'world' => $this->world,
@@ -140,7 +140,7 @@ class SWarena
             'maxGameTime' => $this->maxtime,
             'void_Y' => $this->void,
             'spawns' => [],
-        ));
+        ]);
         $this->SWname = $config->get('name');
         $this->slot = ($config->get('slot') + 0);
         $this->world = $config->get('world');

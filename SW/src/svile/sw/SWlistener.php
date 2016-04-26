@@ -112,10 +112,10 @@ class SWlistener implements Listener
             $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'SW join sign created !');
 
         //Sets format
-        $format = new \pocketmine\utils\Config($this->pg->getDataFolder() . 'sign_format.yml', 2, array(
+        $format = new \pocketmine\utils\Config($this->pg->getDataFolder() . 'sign_format.yml', 2, [
             '1st line' => '§l§c[§bSW§c]',
             '2nd line' => '§l§e{SWNAME}',
-        ));
+        ]);
         $ev->setLine(0, $format->get('1st line', '§l§c[§bSW§c]'));
         $ev->setLine(1, str_replace('{SWNAME}', $SWname, $format->get('2nd line', '§l§e{SWNAME}')));
         $ev->setLine(2, TextFormat::GREEN . '0' . TextFormat::BOLD . TextFormat::DARK_GRAY . '/' . TextFormat::RESET . TextFormat::GREEN . $this->pg->arenas[$SWname]->getSlot());
@@ -294,7 +294,7 @@ class SWlistener implements Listener
                     }
                 }
                 if (!$this->pg->configs['drops_in_arena'])
-                    $ev->setDrops(array());
+                    $ev->setDrops([]);
                 break;
             }
         }

@@ -157,7 +157,7 @@ class SWmain extends PluginBase
                   \___| \___/ |_| |_||_|  |_| \__, ||___/(_) \__, ||_| |_| |_||_|
                                               |___/          |___/
         */
-        $this->configs = new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML, array(
+        $this->configs = new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML, [
             'CONFIG_VERSION' => self::SW_VERSION,
             'banned_commands_while_in_game' => array('/hub', '/lobby', '/spawn', '/tpa', '/tp', '/tpaccept', '/back', '/home', '/f'),
             'banned_command_message' => '@b→@cYou can\'t use this command here',
@@ -176,7 +176,7 @@ class SWmain extends PluginBase
             'chest.refill' => true,
             'chest.refill_rate' => 0xf0,
             'air_world_generator' => true
-        ));
+        ]);
         touch($this->getDataFolder() . 'SW_configs.yml');
         $this->configs = $this->configs->getAll();
 
@@ -188,7 +188,7 @@ class SWmain extends PluginBase
                  |_|  \__,_| |_| |_|  \__, | (_)  \__, | |_| |_| |_| |_|
                                       |___/       |___/
         */
-        $this->lang = new Config($this->getDataFolder() . 'SW_lang.yml', CONFIG::YAML, array(
+        $this->lang = new Config($this->getDataFolder() . 'SW_lang.yml', CONFIG::YAML, [
             'sign.game_full' => '@b→@cThis arena is full, please wait',
             'sign.game_running' => '@b→@cThe game is running, please wait',
             'game.join' => '@b→@f{PLAYER} @ejoined the game @b{COUNT}',
@@ -200,7 +200,7 @@ class SWmain extends PluginBase
             'game.left' => '@f→@7{PLAYER} left the game @b{COUNT}',
             'game.chest_refill' => '@b→@aChests has been refilled !',
             'server.broadcast_winner' => '@0•@f{PLAYER} @bwon the game on SW: @f{SWNAME}'
-        ));
+        ]);
         touch($this->getDataFolder() . 'SW_lang.yml');
         $this->lang = $this->lang->getAll();
         file_put_contents($this->getDataFolder() . 'SW_lang.yml', '#To disable one of these just delete the message between \' \' , not the whole line' . PHP_EOL . '#You can use " @ " to set colors' . PHP_EOL . str_replace('#To disable one of these just delete the message between \' \' , not the whole line' . PHP_EOL . '#You can use " @ " to set colors' . PHP_EOL, '', file_get_contents($this->getDataFolder() . 'SW_lang.yml')));
@@ -211,10 +211,10 @@ class SWmain extends PluginBase
         $this->lang = $newlang;
         unset($newlang);
 
-        new Config($this->getDataFolder() . 'sign_format.yml', CONFIG::YAML, array(
+        new Config($this->getDataFolder() . 'sign_format.yml', CONFIG::YAML, [
             '1st line' => '§l§c[§bSW§c]',
             '2nd line' => '§l§e{SWNAME}',
-        ));
+        ]);
 
         //svile\sw\SWcommands object
         $this->commands = new SWcommands($this);
@@ -259,7 +259,7 @@ class SWmain extends PluginBase
         foreach (scandir($this->getDataFolder() . 'arenas/') as $arenadir) {
             if ($arenadir != '..' && $arenadir != '.' && is_dir($this->getDataFolder() . 'arenas/' . $arenadir)) {
                 if (is_file($this->getDataFolder() . 'arenas/' . $arenadir . '/settings.yml')) {
-                    $config = new Config($this->getDataFolder() . 'arenas/' . $arenadir . '/settings.yml', CONFIG::YAML, array(
+                    $config = new Config($this->getDataFolder() . 'arenas/' . $arenadir . '/settings.yml', CONFIG::YAML, [
                         'name' => 'default',
                         'slot' => 0,
                         'world' => 'world_1',
@@ -267,7 +267,7 @@ class SWmain extends PluginBase
                         'maxGameTime' => 0x258,
                         'void_Y' => 0,
                         'spawns' => [],
-                    ));
+                    ]);
                     $this->arenas[$config->get('name')] = new SWarena($this, $config->get('name'), ($config->get('slot') + 0), $config->get('world'), ($config->get('countdown') + 0), ($config->get('maxGameTime') + 0), ($config->get('void_Y') + 0));
                     unset($config);
                 } else {
@@ -286,9 +286,8 @@ class SWmain extends PluginBase
     {
         $this->signs = [];
         $r = $this->db->query("SELECT * FROM signs;");
-        while ($array = $r->fetchArray(SQLITE3_ASSOC)) {
+        while ($array = $r->fetchArray(SQLITE3_ASSOC))
             $this->signs[$array['x'] . ':' . $array['y'] . ':' . $array['z'] . ':' . $array['world']] = $array['arena'];
-        }
         if (empty($this->signs) && !empty($array))
             return false;
         else
@@ -374,7 +373,7 @@ class SWmain extends PluginBase
     /**
      * @return array
      */
-    public function getChestContents() //TODO: rewrite this and let the owner decide the contents of the chest
+    public function getChestContents() //TODO: **rewrite** this and let the owner decide the contents of the chest
     {
         $items = array(
             //ARMOR
@@ -484,11 +483,9 @@ class SWmain extends PluginBase
             //BLOCKS
             'block' => array(
                 Item::STONE,
-                Item::WOODEN_PLANK
-                /*
+                Item::WOODEN_PLANK,
                 Item::COBBLESTONE,
                 Item::DIRT
-                */
             ),
 
             //OTHER
