@@ -79,7 +79,8 @@ class SWmain extends PluginBase
     public $lang;
     /** @var \SQLite3 */
     private $db;
-    //private $economy = false;
+    /** @var SWeconomy */
+    private $economy;
 
     public function onLoad()
     {
@@ -160,23 +161,25 @@ class SWmain extends PluginBase
         */
         $this->configs = new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML, [
             'CONFIG_VERSION' => self::SW_VERSION,
-            'banned_commands_while_in_game' => array('/hub', '/lobby', '/spawn', '/tpa', '/tp', '/tpaccept', '/back', '/home', '/f'),
-            'banned_command_message' => '@b→@cYou can\'t use this command here',
-            'starvation_can_damage_inArena_players' => false,
-            'clear_inventory_on_respawn&join' => false,//many people don't know on respawn means also on join
-            'clear_inventory_on_arena_join' => true,
-            'clear_effects_on_respawn&join' => false,//many people don't know on respawn means also on join
-            'clear_effects_on_arena_join' => true,
-            'needed_players_to_run_countdown' => 1,
-            'always_spawn_in_defaultLevel' => true,
-            'sign_knockBack' => true,
-            'knockBack_radius_from_sign' => 1,
-            'knockBack_intensity' => 0b10,
-            'drops_in_arena' => false,
-            'start.when_full' => true,
+            'banned.commands.while.in.game' => array('/hub', '/lobby', '/spawn', '/tpa', '/tp', '/tpaccept', '/back', '/home', '/f'),
+            'banned.command.message' => '@b→@cYou can\'t use this command here',
+            'starvation.can.damage.inArena.players' => false,
+            'clear.inventory.on.respawn&join' => false,//many people don't know on respawn means also on join
+            'clear.inventory.on.arena.join' => true,
+            'clear.effects.on.respawn&join' => false,//many people don't know on respawn means also on join
+            'clear.effects.on.arena.join' => true,
+            'needed.players.to.run.countdown' => 1,
+            'always.spawn.in.defaultLevel' => true,
+            'sign.knockBack' => true,
+            'knockBack.radius.from.sign' => 1,
+            'knockBack.intensity' => 0b10,
+            'drops.in.arena' => false,
+            'start.when.full' => true,
             'chest.refill' => true,
-            'chest.refill_rate' => 0xf0,
-            'air_world_generator' => true
+            'chest.refill.rate' => 0xf0,
+            'air.world.generator' => true,
+            'reward.winning.players' => false,
+            'reward.value' => 100
         ]);
         touch($this->getDataFolder() . 'SW_configs.yml');
         $this->configs = $this->configs->getAll();
@@ -190,8 +193,8 @@ class SWmain extends PluginBase
                                       |___/       |___/
         */
         $this->lang = new Config($this->getDataFolder() . 'SW_lang.yml', CONFIG::YAML, [
-            'sign.game_full' => '@b→@cThis arena is full, please wait',
-            'sign.game_running' => '@b→@cThe game is running, please wait',
+            'sign.game.full' => '@b→@cThis game is full, please wait',
+            'sign.game.running' => '@b→@cThe game is running, please wait',
             'game.join' => '@b→@f{PLAYER} @ejoined the game @b{COUNT}',
             'popup.countdown' => '@bThe game starts in @f{N}',
             'chat.countdown' => '@b→@7The game starts in @b{N}',
@@ -199,8 +202,10 @@ class SWmain extends PluginBase
             'player.kill' => '@c→@f{PLAYER} @cwas killed by @f{KILLER} @b{COUNT}',
             'void.kill' => '@c→@f{PLAYER} @cwas killed by @fVOID @b{COUNT}',
             'game.left' => '@f→@7{PLAYER} left the game @b{COUNT}',
-            'game.chest_refill' => '@b→@aChests has been refilled !',
-            'server.broadcast_winner' => '@0•@f{PLAYER} @bwon the game on SW: @f{SWNAME}'
+            'game.chest.refill' => '@b→@aChests has been refilled !',
+            'server.broadcast.winner' => '@0•@f{PLAYER} @bwon the game on SW: @f{SWNAME}',
+            'winner.reward.msg' => '@bYou won @f{VALUE}$ @7Your money: @f{MONEY}$',
+            'winner.reward.popup' => '@bYou won @f{VALUE}$ @7Your money: @f{MONEY}$'
         ]);
         touch($this->getDataFolder() . 'SW_lang.yml');
         $this->lang = $this->lang->getAll();
@@ -217,8 +222,10 @@ class SWmain extends PluginBase
             '2nd line' => '§l§e{SWNAME}',
         ]);
 
-        //svile\sw\SWcommands object
+        //svile\sw\SWcommands
         $this->commands = new SWcommands($this);
+        //svile\sw\SWeconomy
+        $this->economy = new SWeconomy($this);
 
         //Register timer and listener
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new SWtimer($this), 19);
@@ -233,6 +240,12 @@ class SWmain extends PluginBase
         $this->getLogger()->info(str_replace('\n', PHP_EOL, @gzinflate(@base64_decode("\x70\x5a\x42\x4e\x43\x6f\x4d\x77\x45\x45\x61\x76knVBs3dVS8VFWym00I0gUaZJMD8Sk1JP5D08WUlqFm7bWb7vzTcwtarVMotl7na/zLoMubNMmwwt83N8cQGRn3\x67fYBNoE/EdBFBDZFMa7YZgMGuHMcPYrlEqAW+qikQSLoJrGfhIwJ56lnZaRqvklrl200gD8tK38I1v/fQgZkyuuuvBXriKR9\x6f1QYNwlCvUTiis+D5SVPnhXBz//NcH"))));
     }
 
+    public function onDisable()
+    {
+        foreach ($this->arenas as $name => $arena)
+            $arena->stop();
+    }
+
     public function onCommand(CommandSender $sender, Command $command, $label, array $args)
     {
         if (strtolower($command->getName()) == "\x73\x77") {
@@ -241,27 +254,6 @@ class SWmain extends PluginBase
         }
         return true;
     }
-
-    /*\*
-     * @return bool|\pocketmine\plugin\Plugin
-     */
-    /*
-    public function getEconomy()
-    {
-        if ($this->economy instanceof \pocketmine\plugin\Plugin) {
-            return $this->economy;
-        } else {
-            $api = $this->getServer()->getPluginManager()->getPlugin('EconomyAPI');
-            if ($api != false && $api instanceof \pocketmine\plugin\Plugin) {
-                if ($api->getDescription()->getVersion() == '2.0.9' && array_shift($api->getDescription()->getAuthors()) == "\x6f\x6e\x65\x62\x6f\x6e\x65") {
-                    $this->economy = $api;
-                    return $api;
-                }
-            }
-        }
-        return false;
-    }
-    */
 
     /*
                       _

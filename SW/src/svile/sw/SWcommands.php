@@ -177,7 +177,7 @@ class SWcommands
 
                 //Air world generator
                 $provider = $sender->getLevel()->getProvider();
-                if ($this->pg->configs['air_world_generator'] && $provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
+                if ($this->pg->configs['air.world.generator'] && $provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
                     $provider->getLevelData()->generatorName = new Str('generatorName', 'flat');
                     $provider->getLevelData()->generatorOptions = new Str('generatorOptions', '0;0;0');
                     $provider->saveLevelData();

@@ -164,13 +164,13 @@ class SWlistener implements Listener
             }
         }
         //Checks if knockBack is enabled
-        if ($this->pg->configs['sign_knockBack']) {
+        if ($this->pg->configs['sign.knockBack']) {
             foreach ($this->pg->signs as $key => $val) {
                 $ex = explode(':', $key);
                 if ($ev->getPlayer()->getLevel()->getName() == $ex[3]) {
                     $x = $ev->getPlayer()->getFloorX();
                     $z = $ev->getPlayer()->getFloorZ();
-                    $radius = $this->pg->configs['knockBack_radius_from_sign'];
+                    $radius = $this->pg->configs['knockBack.radius.from.sign'];
                     //If is inside the sign radius, knockBack
                     if (($x >= ($ex[0] - $radius) && $x <= ($ex[0] + $radius)) && ($z >= ($ex[2] - $radius) && $z <= ($ex[2] + $radius))) {
                         //If the block is not a sign, break
@@ -258,7 +258,7 @@ class SWlistener implements Listener
                         endswitch;
                         //knockBack
                         $vector = (new Vector3((-(cos(deg2rad(90))) * sin(deg2rad($yaw))), (-sin(deg2rad(0))), ((cos(deg2rad(90))) * cos(deg2rad($yaw)))))->normalize();
-                        $ev->getPlayer()->knockBack($ev->getPlayer(), 0, $vector->getX(), $vector->getZ(), ($this->pg->configs['knockBack_intensity'] / 0xa));
+                        $ev->getPlayer()->knockBack($ev->getPlayer(), 0, $vector->getX(), $vector->getZ(), ($this->pg->configs['knockBack.intensity'] / 0xa));
                         break;
                     }
                     unset($ex, $block, $x, $z, $radius, $yaw, $vector);
@@ -293,7 +293,7 @@ class SWlistener implements Listener
                         $p->sendMessage(str_replace('{COUNT}', '[' . $a->getSlot(true) . '/' . $a->getSlot() . ']', str_replace('{PLAYER}', $ev->getEntity()->getName(), $this->pg->lang['game.left'])));
                     }
                 }
-                if (!$this->pg->configs['drops_in_arena'])
+                if (!$this->pg->configs['drops.in.arena'])
                     $ev->setDrops([]);
                 break;
             }
@@ -309,7 +309,7 @@ class SWlistener implements Listener
         foreach ($this->pg->arenas as $a) {
             if ($ev->getEntity() instanceof Player) {
                 if ($a->inArena($ev->getEntity()->getName())) {
-                    if ($ev->getCause() == 0b1111 && $this->pg->configs['starvation_can_damage_inArena_players'] == false)
+                    if ($ev->getCause() == 0b1111 && $this->pg->configs['starvation.can.damage.inArena.players'] == false)
                         $ev->setCancelled();
                     if ($a->GAME_STATE == 0)
                         $ev->setCancelled();
@@ -321,12 +321,12 @@ class SWlistener implements Listener
 
     public function onRespawn(PlayerRespawnEvent $ev)
     {
-        if ($this->pg->configs['always_spawn_in_defaultLevel'])
+        if ($this->pg->configs['always.spawn.in.defaultLevel'])
             $ev->setRespawnPosition($this->pg->getServer()->getDefaultLevel()->getSpawnLocation());
         //Removes player things
-        if ($this->pg->configs['clear_inventory_on_respawn&join'])
+        if ($this->pg->configs['clear.inventory.on.respawn&join'])
             $ev->getPlayer()->getInventory()->clearAll();
-        if ($this->pg->configs['clear_effects_on_respawn&join'])
+        if ($this->pg->configs['clear.effects.on.respawn&join'])
             $ev->getPlayer()->removeAllEffects();
     }
 
@@ -372,8 +372,8 @@ class SWlistener implements Listener
             $command = explode(' ', $command)[0];
             foreach ($this->pg->arenas as $a) {
                 if ($a->inArena($ev->getPlayer()->getName())) {
-                    if (in_array($command, $this->pg->configs['banned_commands_while_in_game'])) {
-                        $ev->getPlayer()->sendMessage(str_replace('@', '§', $this->pg->configs['banned_command_message']));
+                    if (in_array($command, $this->pg->configs['banned.commands.while.in.game'])) {
+                        $ev->getPlayer()->sendMessage(str_replace('@', '§', $this->pg->configs['banned.command.message']));
                         $ev->setCancelled();
                     }
                     break;

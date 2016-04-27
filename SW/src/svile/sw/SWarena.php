@@ -293,12 +293,12 @@ class SWarena
     /** VOID */
     public function tick()
     {
-        if ($this->GAME_STATE == 0 && count($this->players) < ($this->pg->configs['needed_players_to_run_countdown'] + 0))
+        if ($this->GAME_STATE == 0 && count($this->players) < ($this->pg->configs['needed.players.to.run.countdown'] + 0))
             return;
         $this->time++;
 
         //START and STOP
-        if ($this->GAME_STATE == 0 && $this->pg->configs['start.when_full'] && $this->slot <= count($this->players)) {
+        if ($this->GAME_STATE == 0 && $this->pg->configs['start.when.full'] && $this->slot <= count($this->players)) {
             $this->start();
             return;
         }
@@ -315,10 +315,10 @@ class SWarena
             return;
         }
 
-        if ($this->GAME_STATE == 1 && $this->pg->configs['chest.refill'] && ($this->time % $this->pg->configs['chest.refill_rate']) == 0) {
+        if ($this->GAME_STATE == 1 && $this->pg->configs['chest.refill'] && ($this->time % $this->pg->configs['chest.refill.rate']) == 0) {
             $this->refillChests();
             foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
-                $p->sendMessage($this->pg->lang['game.chest_refill']);
+                $p->sendMessage($this->pg->lang['game.chest.refill']);
             }
             return;
         }
@@ -344,20 +344,20 @@ class SWarena
     public function join(Player $player)
     {
         if ($this->GAME_STATE == 1) {
-            $player->sendMessage($this->pg->lang['sign.game_running']);
+            $player->sendMessage($this->pg->lang['sign.game.running']);
             return;
         }
         if (count($this->players) >= $this->slot || empty($this->spawns)) {
-            $player->sendMessage($this->pg->lang['sign.game_full']);
+            $player->sendMessage($this->pg->lang['sign.game.full']);
             return;
         }
         //Sound
         $player->getLevel()->addSound((new \pocketmine\level\sound\EndermanTeleportSound($player)), [$player]);
 
         //Removes player things
-        if ($this->pg->configs['clear_inventory_on_arena_join'])
+        if ($this->pg->configs['clear.inventory.on.arena.join'])
             $player->getInventory()->clearAll();
-        if ($this->pg->configs['clear_effects_on_arena_join'])
+        if ($this->pg->configs['clear.effects.on.arena.join'])
             $player->removeAllEffects();
 
         $this->pg->getServer()->loadLevel($this->world);
@@ -424,7 +424,7 @@ class SWarena
                 $p->removeAllEffects();
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
                 foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {
-                    $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast_winner'])));
+                    $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));
                 }
 
             }
