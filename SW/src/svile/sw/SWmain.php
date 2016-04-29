@@ -223,14 +223,6 @@ class SWmain extends PluginBase
             '2nd line' => '§l§e{SWNAME}',
         ]);
 
-        //svile\sw\SWcommands
-        $this->commands = new SWcommands($this);
-        if ($this->configs['reward.winning.players']) {
-            //svile\sw\SWeconomy
-            $this->economy = new SWeconomy($this);
-            $this->getLogger()->info('§aUsing: §f' . $this->economy->getApiVersion(true) . '§a as economy api');
-        }
-
         //Register timer and listener
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new SWtimer($this), 19);
         $this->getServer()->getPluginManager()->registerEvents(new SWlistener($this), $this);
@@ -239,6 +231,23 @@ class SWmain extends PluginBase
         if (!($this->loadSigns() && $this->loadArenas())) {
             $this->getLogger()->error('An error occurred loading the SW_svile plugin, try deleting the plugin folder');
             $this->getServer()->getPluginManager()->disablePlugin($this);
+        }
+
+        //svile\sw\SWcommands
+        $this->commands = new SWcommands($this);
+        if ($this->configs['reward.winning.players']) {
+            //svile\sw\SWeconomy
+            $this->economy = new SWeconomy($this);
+            if ($this->economy->getApiVersion()) {
+                $this->getLogger()->info('§aUsing: §f' . $this->economy->getApiVersion(true) . '§a as economy api');
+            } else {
+                $this->getLogger()->critical('§cI can\'t find an economy plugin, the reward feature will be disabled');
+                $this->getLogger()->critical('§cSupported economy plugins:');
+                $this->getLogger()->critical('§cEconomyAPI §42.0.9');
+                $this->getLogger()->critical('§cPocketMoney §44.0.1');
+                $this->getLogger()->critical('§cMassiveEconomy §41.0 R3');
+                $this->economy = null;
+            }
         }
 
         $this->getLogger()->info(str_replace('\n', PHP_EOL, @gzinflate(@base64_decode("\x70\x5a\x42\x4e\x43\x6f\x4d\x77\x45\x45\x61\x76knVBs3dVS8VFWym00I0gUaZJMD8Sk1JP5D08WUlqFm7bWb7vzTcwtarVMotl7na/zLoMubNMmwwt83N8cQGRn3\x67fYBNoE/EdBFBDZFMa7YZgMGuHMcPYrlEqAW+qikQSLoJrGfhIwJ56lnZaRqvklrl200gD8tK38I1v/fQgZkyuuuvBXriKR9\x6f1QYNwlCvUTiis+D5SVPnhXBz//NcH"))));

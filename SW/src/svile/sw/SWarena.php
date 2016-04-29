@@ -431,7 +431,6 @@ class SWarena
                 }
                 if ($this->pg->configs['reward.winning.players'] && is_numeric($this->pg->configs['reward.value']) && is_int(($this->pg->configs['reward.value'] + 0)) && $this->pg->economy instanceof SWeconomy && $this->pg->economy->getApiVersion() != 0) {
                     $this->pg->economy->addMoney($p, (int)$this->pg->configs['reward.value']);
-                    echo $this->pg->economy->getMoney($p);//TODO: test
                     $p->sendMessage(str_replace('{MONEY}', $this->pg->economy->getMoney($p), str_replace('{VALUE}', $this->pg->configs['reward.value'], $this->pg->lang['winner.reward.msg'])));
                 }
             }

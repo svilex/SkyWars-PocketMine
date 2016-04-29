@@ -60,19 +60,19 @@ class SWeconomy
     {
         $this->pg = $plugin;
         $api = $this->pg->getServer()->getPluginManager()->getPlugin('EconomyAPI');
-        if ($api != false && $api instanceof \pocketmine\plugin\Plugin && $api->getDescription()->getVersion() == '2.0.9' && array_shift($api->getDescription()->getAuthors()) == "\x6f\x6e\x65\x62\x6f\x6e\x65") {
+        if ($api != false && $api instanceof \pocketmine\plugin\Plugin && $api->getDescription()->getVersion() == '2.0.9') {
             $this->ver = self::EconomyAPI;
             $this->api = $api;
             return;
         }
         $api = $this->pg->getServer()->getPluginManager()->getPlugin('PocketMoney');
-        if ($api != false && $api instanceof \pocketmine\plugin\Plugin && $api->getDescription()->getVersion() == '4.0.1' && array_shift($api->getDescription()->getAuthors()) == "\x4d\x69\x6e\x65\x63\x72\x61\x66\x74\x65\x72\x4a\x50\x4e") {
+        if ($api != false && $api instanceof \pocketmine\plugin\Plugin && $api->getDescription()->getVersion() == '4.0.1') {
             $this->ver = self::PocketMoney;
             $this->api = $api;
             return;
         }
         $api = $this->pg->getServer()->getPluginManager()->getPlugin('MassiveEconomy');
-        if ($api != false && $api instanceof \pocketmine\plugin\Plugin && $api->getDescription()->getVersion() == '1.0 R3' && array_shift($api->getDescription()->getAuthors()) == "\x45\x76\x6f\x6c\x53\x6f\x66\x74") {
+        if ($api != false && $api instanceof \pocketmine\plugin\Plugin && $api->getDescription()->getVersion() == '1.0 R3') {
             $this->ver = self::MassiveEconomy;
             $this->api = $api;
             return;
