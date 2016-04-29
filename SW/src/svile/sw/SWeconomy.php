@@ -51,7 +51,6 @@ class SWeconomy
     const MassiveEconomy = 3;
     /** @var int */
     private $ver = 0;
-
     /** @var SWmain */
     private $pg;
     /** @var bool|\pocketmine\plugin\Plugin */
@@ -180,13 +179,15 @@ class SWeconomy
     {
         switch ($this->ver) {
             case 1:
-                if ($money = $this->api->myMoney($player) != false)
-                    return $money;
+                $money = $this->api->myMoney($player);
+                if ($money != false)
+                    return (int)$money;
                 break;
             case 2:
             case 3:
-                if ($money = $this->api->getMoney($player->getName()) != false)
-                    return $money;
+                $money = $this->api->getMoney($player->getName());
+                if ($money != false)
+                    return (int)$money;
                 break;
             default:
                 return false;

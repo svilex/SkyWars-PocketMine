@@ -179,8 +179,8 @@ class SWmain extends PluginBase
             'chest.refill.rate' => 0xf0,
             'world.generator.air' => true,
             'world.reset.from.zip' => true,
-            'reward.winning.players' => false,//not used yet
-            'reward.value' => 100//not used yet
+            'reward.winning.players' => false,
+            'reward.value' => 100
         ]);
         touch($this->getDataFolder() . 'SW_configs.yml');
         $this->configs = $this->configs->getAll();
@@ -206,15 +206,14 @@ class SWmain extends PluginBase
             'game.left' => '@f→@7{PLAYER} left the game @b{COUNT}',
             'game.chest.refill' => '@b→@aChests has been refilled !',
             'server.broadcast.winner' => '@0•@f{PLAYER} @bwon the game on SW: @f{SWNAME}',
-            'winner.reward.msg' => '@bYou won @f{VALUE}$ @7Your money: @f{MONEY}$',
-            'winner.reward.popup' => '@bYou won @f{VALUE}$ @7Your money: @f{MONEY}$'
+            'winner.reward.msg' => '@bYou won @f{VALUE}$_EOL_@7Your money: @f{MONEY}$'
         ]);
         touch($this->getDataFolder() . 'SW_lang.yml');
         $this->lang = $this->lang->getAll();
-        file_put_contents($this->getDataFolder() . 'SW_lang.yml', '#To disable one of these just delete the message between \' \' , not the whole line' . PHP_EOL . '#You can use " @ " to set colors' . PHP_EOL . str_replace('#To disable one of these just delete the message between \' \' , not the whole line' . PHP_EOL . '#You can use " @ " to set colors' . PHP_EOL, '', file_get_contents($this->getDataFolder() . 'SW_lang.yml')));
+        file_put_contents($this->getDataFolder() . 'SW_lang.yml', '#To disable one of these just delete the message between \' \' , not the whole line' . PHP_EOL . '#You can use " @ " to set colors and _EOL_ as EndOfLine' . PHP_EOL . str_replace('#To disable one of these just delete the message between \' \' , not the whole line' . PHP_EOL . '#You can use " @ " to set colors and _EOL_ as EndOfLine' . PHP_EOL, '', file_get_contents($this->getDataFolder() . 'SW_lang.yml')));
         $newlang = [];
         foreach ($this->lang as $key => $val) {
-            $newlang[$key] = str_replace('  ', ' ', str_replace('@', '§', trim($val)));
+            $newlang[$key] = str_replace('  ', ' ', str_replace('_EOL_', "\n", str_replace('@', '§', trim($val))));
         }
         $this->lang = $newlang;
         unset($newlang);
@@ -226,8 +225,11 @@ class SWmain extends PluginBase
 
         //svile\sw\SWcommands
         $this->commands = new SWcommands($this);
-        //svile\sw\SWeconomy
-        $this->economy = new SWeconomy($this);//TODO: maybe after, need test
+        if ($this->configs['reward.winning.players']) {
+            //svile\sw\SWeconomy
+            $this->economy = new SWeconomy($this);
+            $this->getLogger()->info('§aUsing: §f' . $this->economy->getApiVersion(true) . '§a as economy api');
+        }
 
         //Register timer and listener
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new SWtimer($this), 19);

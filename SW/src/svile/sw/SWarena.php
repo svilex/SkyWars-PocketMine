@@ -429,11 +429,10 @@ class SWarena
                 foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {
                     $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));
                 }
-                //TODO: is this working?
-                if ($this->pg->configs['reward.winning.players'] && is_numeric($this->pg->configs['reward.value']) && is_int(($this->pg->configs['reward.value'] + 0)) && $this->pg->economy->getApiVersion() != 0) {
+                if ($this->pg->configs['reward.winning.players'] && is_numeric($this->pg->configs['reward.value']) && is_int(($this->pg->configs['reward.value'] + 0)) && $this->pg->economy instanceof SWeconomy && $this->pg->economy->getApiVersion() != 0) {
                     $this->pg->economy->addMoney($p, (int)$this->pg->configs['reward.value']);
+                    echo $this->pg->economy->getMoney($p);//TODO: test
                     $p->sendMessage(str_replace('{MONEY}', $this->pg->economy->getMoney($p), str_replace('{VALUE}', $this->pg->configs['reward.value'], $this->pg->lang['winner.reward.msg'])));
-                    $p->sendPopup(str_replace('{MONEY}', $this->pg->economy->getMoney($p), str_replace('{VALUE}', $this->pg->configs['reward.value'], $this->pg->lang['winner.reward.popup'])));
                 }
             }
         }
