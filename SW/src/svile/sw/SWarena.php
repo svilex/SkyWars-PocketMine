@@ -362,6 +362,7 @@ class SWarena
         if ($this->pg->configs['clear.effects.on.arena.join'])
             $player->removeAllEffects();
         $player->setHealth($player->getMaxHealth());
+        $player->setFood($player->getMaxFood());
 
         $this->pg->getServer()->loadLevel($this->world);
         $level = $this->pg->getServer()->getLevelByName($this->world);
@@ -425,6 +426,7 @@ class SWarena
                 $p->getInventory()->clearAll();
                 $p->removeAllEffects();
                 $p->setHealth($p->getMaxHealth());
+                $p->setFood($p->getMaxFood());
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
                 foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {
                     $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));

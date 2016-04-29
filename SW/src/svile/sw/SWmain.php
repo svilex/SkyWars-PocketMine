@@ -108,7 +108,7 @@ class SWmain extends PluginBase
                         }
                         unset($worldDir, $levelData, $nbt);
                     } else {
-                        $this->getLogger()->critical('There is a problem with the "level.dat" of the world: ' . $worldDir);
+                        $this->getLogger()->critical('There is a problem with the "level.dat" of the world: §f' . $worldDir);
                         unset($worldDir, $levelData, $nbt);
                     }
                 }
@@ -140,12 +140,14 @@ class SWmain extends PluginBase
             $this->getServer()->getPluginManager()->disablePlugin($this);
         }
 
-        //Checks config file version...
+        //Config file...
         $v = ((new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML))->get('CONFIG_VERSION', '1st'));
         if ($v != '1st' && $v != self::SW_VERSION) {
             $this->getLogger()->notice('You are using old configs, deleting them.Make sure to delete old arenas if aren\'t working');
             @unlink($this->getDataFolder() . 'SW_configs.yml');
             @unlink($this->getDataFolder() . 'SW_lang.yml');
+        } else {
+            $this->saveResource('SW_configs.yml', true);
         }
         unset($v);
 
@@ -162,27 +164,26 @@ class SWmain extends PluginBase
         $this->configs = new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML, [
             'CONFIG_VERSION' => self::SW_VERSION,
             'banned.commands.while.in.game' => array('/hub', '/lobby', '/spawn', '/tpa', '/tp', '/tpaccept', '/back', '/home', '/f'),
+            'starvation.can.damage.inArena.players' => false,
+            'drops.in.arena' => false,
+            'start.when.full' => true,
+            'needed.players.to.run.countdown' => 1,
+            'chest.refill' => true,
+            'chest.refill.rate' => 0xf0,
+            'reward.winning.players' => false,
+            'reward.value' => 100,
+            'sign.knockBack' => true,
+            'knockBack.radius.from.sign' => 1,
+            'knockBack.intensity' => 0b10,
+            'knockBack.follow.sign.direction' => false,
             'always.spawn.in.defaultLevel' => true,
             'clear.inventory.on.respawn&join' => false,//many people don't know on respawn means also on join
             'clear.inventory.on.arena.join' => true,
             'clear.effects.on.respawn&join' => false,//many people don't know on respawn means also on join
             'clear.effects.on.arena.join' => true,
-            'starvation.can.damage.inArena.players' => false,
-            'drops.in.arena' => false,
-            'start.when.full' => true,
-            'needed.players.to.run.countdown' => 1,
-            'sign.knockBack' => true,
-            'knockBack.radius.from.sign' => 1,
-            'knockBack.intensity' => 0b10,
-            'knockBack.follow.sign.direction' => false,
-            'chest.refill' => true,
-            'chest.refill.rate' => 0xf0,
             'world.generator.air' => true,
-            'world.reset.from.zip' => true,
-            'reward.winning.players' => false,
-            'reward.value' => 100
+            'world.reset.from.zip' => true
         ]);
-        touch($this->getDataFolder() . 'SW_configs.yml');
         $this->configs = $this->configs->getAll();
 
         /*
@@ -241,11 +242,11 @@ class SWmain extends PluginBase
             if ($this->economy->getApiVersion()) {
                 $this->getLogger()->info('§aUsing: §f' . $this->economy->getApiVersion(true) . '§a as economy api');
             } else {
-                $this->getLogger()->critical('§cI can\'t find an economy plugin, the reward feature will be disabled');
-                $this->getLogger()->critical('§cSupported economy plugins:');
-                $this->getLogger()->critical('§cEconomyAPI §42.0.9');
-                $this->getLogger()->critical('§cPocketMoney §44.0.1');
-                $this->getLogger()->critical('§cMassiveEconomy §41.0 R3');
+                $this->getLogger()->critical('I can\'t find an economy plugin, the reward feature will be disabled');
+                $this->getLogger()->critical('Supported economy plugins:');
+                $this->getLogger()->critical('EconomyAPI §42.0.9');
+                $this->getLogger()->critical('PocketMoney §44.0.1');
+                $this->getLogger()->critical('MassiveEconomy §41.0 R3');
                 $this->economy = null;
             }
         }

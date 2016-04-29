@@ -178,7 +178,7 @@ class SWcommands
                 //Air world generator
                 $provider = $sender->getLevel()->getProvider();
                 if ($this->pg->configs['world.generator.air'] && $provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
-                    $provider->getLevelData()->generatorName = new Str('generatorName', 'flat');//TODO: will this create the Tag if not exists?
+                    $provider->getLevelData()->generatorName = new Str('generatorName', 'flat');
                     $provider->getLevelData()->generatorOptions = new Str('generatorOptions', '0;0;0');
                     $provider->saveLevelData();
                 }
@@ -345,7 +345,7 @@ class SWcommands
                         @unlink($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $file);
                     }
                 }
-                @unlink($this->pg->getDataFolder() . 'arenas/' . $SWname);
+                @rmdir($this->pg->getDataFolder() . 'arenas/' . $SWname);
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Arena: ' . TextFormat::DARK_GREEN . $SWname . TextFormat::GREEN . ' Deleted !');
                 unset($SWname, $loc, $name, $ex, $block);
                 break;
