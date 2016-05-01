@@ -146,7 +146,7 @@ class SWmain extends PluginBase
             $this->getLogger()->notice('You are using old configs, deleting them.Make sure to delete old arenas if aren\'t working');
             @unlink($this->getDataFolder() . 'SW_configs.yml');
             @unlink($this->getDataFolder() . 'SW_lang.yml');
-        } else {
+        } elseif ($v == '1st') {
             $this->saveResource('SW_configs.yml', true);
         }
         unset($v);
@@ -219,7 +219,7 @@ class SWmain extends PluginBase
         $this->lang = $newlang;
         unset($newlang);
 
-        new Config($this->getDataFolder() . 'sign_format.yml', CONFIG::YAML, [
+        new Config($this->getDataFolder() . 'sign_format.yml', CONFIG::YAML, [//TODO: move this
             '1st line' => '§l§c[§bSW§c]',
             '2nd line' => '§l§e{SWNAME}',
         ]);
