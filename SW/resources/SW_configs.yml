@@ -1,8 +1,25 @@
 ---
-#SkyWars config file, @LINK: https://github.com/svilex/SkyWars-PocketMine
+#                _   _
+#  ___  __   __ (_) | |   ___
+# / __| \ \ / / | | | |  / _ \
+# \__ \  \ / /  | | | | |  __/
+# |___/   \_/   |_| |_|  \___|
+#
+# SkyWars plugin for PocketMine-MP & forks
+#
+# @Author: svile
+# @Kik: _svile_
+# @Telegram_Gruop: https://telegram.me/svile
+# @E-mail: thesville@gmail.com
+# @Github: https://github.com/svilex/SkyWars-PocketMine
+
 CONFIG_VERSION: 0.500000
 
-##########_GAME_#############
+
+####################_GAME_####################
+
+# Players playing a SkyWars game won't be able to run these commands.
+# You can add or delete commands but make sure to respect syntax.
 banned.commands.while.in.game:
 - /hub
 - /lobby
@@ -13,29 +30,81 @@ banned.commands.while.in.game:
 - /back
 - /home
 - /f
-starvation.can.damage.inArena.players: false
-drops.in.arena: false
+
+# If this option is "true" , the game will start once all the slots will be finished , regardless from countdown.
 start.when.full: true
+
+# The countdown will only run when there will be N players in the arena.
 needed.players.to.run.countdown: 1
+
+# The players health will be set to this value when joining a SkyWars game
+# N.B : No checks are done on this value , so , to avoid problems , don't use values like 0.
+# N.B : This value can increase for players with HEALTH BOOST effects
+join.health: 20
+
+# Players playing a SkyWars game won't be damaged from starvation if this option is "false".
+starvation.can.damage.inArena.players: false
+
+# Players playing a SkyWars game won't drop anything on death.
+drops.in.arena: false
+
+# This is the refill chests' switch. You can decide to refill chests or not.
 chest.refill: true
+
+# If "chest.refill" (the above option) is "true" :
+# chests will be refilled on game start & , according to this option , each N seconds from the start.
 chest.refill.rate: 240
+
+# Award winning players' switch.
+# N.B : You need a supported economy plugin for this to work.
 reward.winning.players: false
+
+# How many money-coins should this player win?
 reward.value: 100
 
-##########_JOIN-SIGN_#############
+
+####################_JOIN-SIGNS_####################
+
+# Signs format.
+1st line: '§l§c[§bSW§c]'
+2nd line: '§l§e{SWNAME}'
+
+# This pushes players away from signs , like when damaged in PvP.
 sign.knockBack: true
+
+# Radius in blocks from signs.
+# Players inside this radius will be pushed.
+# N.B : The involved area is not a circle but a square. XD
 knockBack.radius.from.sign: 1
+
+# This is: how much strong is the push.
+# Recommended values are from 0 to 50.
 knockBack.intensity: 2
+
+# Should the push follow the sign direction?
 knockBack.follow.sign.direction: false
 
-##########_RESPAWN_#############
+
+####################_RESPAWN_####################
+
 always.spawn.in.defaultLevel: true
+
 clear.inventory.on.respawn&join: false
+
 clear.inventory.on.arena.join: true
+
 clear.effects.on.respawn&join: false
+
 clear.effects.on.arena.join: true
 
-##########_WORLD_#############
+
+####################_WORLD_####################
+
+# When new chunks are generated , this option fills them with air blocks.
+# N.B : This only happens after the arena is created.
 world.generator.air: true
+
+# Experimental: if you change this to "false" , the worlds won't save changes. This is the fastest way.
+# If you have trouble with world reset , just put this back to "true".
 world.reset.from.zip: true
 ...

@@ -111,13 +111,9 @@ class SWlistener implements Listener
         else
             $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'SW join sign created !');
 
-        //Sets format
-        $format = new \pocketmine\utils\Config($this->pg->getDataFolder() . 'sign_format.yml', 2, [
-            '1st line' => '§l§c[§bSW§c]',
-            '2nd line' => '§l§e{SWNAME}',
-        ]);
-        $ev->setLine(0, $format->get('1st line', '§l§c[§bSW§c]'));
-        $ev->setLine(1, str_replace('{SWNAME}', $SWname, $format->get('2nd line', '§l§e{SWNAME}')));
+        //Sets sign format
+        $ev->setLine(0, $this->pg->configs['1st line']);
+        $ev->setLine(1, str_replace('{SWNAME}', $SWname, $this->pg->configs['2nd line']));
         $ev->setLine(2, TextFormat::GREEN . '0' . TextFormat::BOLD . TextFormat::DARK_GRAY . '/' . TextFormat::RESET . TextFormat::GREEN . $this->pg->arenas[$SWname]->getSlot());
         $ev->setLine(3, TextFormat::WHITE . 'Tap to join');
         $this->pg->refreshSigns(true);

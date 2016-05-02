@@ -361,7 +361,9 @@ class SWarena
             $player->getInventory()->clearAll();
         if ($this->pg->configs['clear.effects.on.arena.join'])
             $player->removeAllEffects();
-        $player->setHealth($player->getMaxHealth());
+        $player->setMaxHealth($this->pg->configs['join.health']);
+        $player->setMaxHealth($player->getMaxHealth());
+        $player->setHealth($this->pg->configs['join.health']);
         $player->setFood($player->getMaxFood());
 
         $this->pg->getServer()->loadLevel($this->world);
@@ -403,6 +405,10 @@ class SWarena
         if ($this->pg->configs['chest.refill'])
             $this->refillChests();
         foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
+            $p->setMaxHealth($this->pg->configs['join.health']);
+            $p->setMaxHealth($p->getMaxHealth());
+            $p->setHealth($this->pg->configs['join.health']);
+            $p->setFood($p->getMaxFood());
             $p->sendMessage($this->pg->lang['game.start']);
             if ($p->getLevel()->getBlock($p->floor()->subtract(0, 2))->getId() == 20)
                 $p->getLevel()->setBlock($p->floor()->subtract(0, 2), Block::get(0), true, false);
@@ -425,6 +431,8 @@ class SWarena
                 //Removes player things
                 $p->getInventory()->clearAll();
                 $p->removeAllEffects();
+                $p->setMaxHealth(20);
+                $p->setMaxHealth($p->getMaxHealth());
                 $p->setHealth($p->getMaxHealth());
                 $p->setFood($p->getMaxFood());
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());

@@ -164,14 +164,17 @@ class SWmain extends PluginBase
         $this->configs = new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML, [
             'CONFIG_VERSION' => self::SW_VERSION,
             'banned.commands.while.in.game' => array('/hub', '/lobby', '/spawn', '/tpa', '/tp', '/tpaccept', '/back', '/home', '/f'),
-            'starvation.can.damage.inArena.players' => false,
-            'drops.in.arena' => false,
             'start.when.full' => true,
             'needed.players.to.run.countdown' => 1,
+            'join.health' => 20,
+            'starvation.can.damage.inArena.players' => false,
+            'drops.in.arena' => false,
             'chest.refill' => true,
             'chest.refill.rate' => 0xf0,
             'reward.winning.players' => false,
             'reward.value' => 100,
+            '1st line' => '§l§c[§bSW§c]',
+            '2nd line' => '§l§e{SWNAME}',
             'sign.knockBack' => true,
             'knockBack.radius.from.sign' => 1,
             'knockBack.intensity' => 0b10,
@@ -218,11 +221,6 @@ class SWmain extends PluginBase
         }
         $this->lang = $newlang;
         unset($newlang);
-
-        new Config($this->getDataFolder() . 'sign_format.yml', CONFIG::YAML, [//TODO: move this
-            '1st line' => '§l§c[§bSW§c]',
-            '2nd line' => '§l§e{SWNAME}',
-        ]);
 
         //Register timer and listener
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new SWtimer($this), 19);
