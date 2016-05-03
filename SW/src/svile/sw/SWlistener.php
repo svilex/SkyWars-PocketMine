@@ -275,7 +275,7 @@ class SWlistener implements Listener
     public function onQuit(PlayerQuitEvent $ev)
     {
         foreach ($this->pg->arenas as $a) {
-            if ($a->quit($ev->getPlayer()->getName(), true))
+            if ($a->closePlayer($ev->getPlayer(), true))
                 break;
         }
     }
@@ -283,7 +283,7 @@ class SWlistener implements Listener
     public function onDeath(PlayerDeathEvent $ev)
     {
         foreach ($this->pg->arenas as $a) {
-            if ($a->quit($ev->getEntity()->getName())) {
+            if ($a->closePlayer($ev->getEntity())) {
                 $ev->setDeathMessage('');
                 if (($ev->getEntity()->getLastDamageCause() instanceof EntityDamageByEntityEvent) && $ev->getEntity()->getLastDamageCause()->getDamager() instanceof \pocketmine\Player) {
                     foreach ($this->pg->getServer()->getLevelByName($a->getWorld())->getPlayers() as $p) {

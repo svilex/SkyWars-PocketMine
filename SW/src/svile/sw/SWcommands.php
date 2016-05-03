@@ -76,7 +76,47 @@ class SWcommands
     public function onCommand(CommandSender $sender, Command $command, $label, array $args)
     {
         if (!($sender instanceof Player) || !$sender->isOp()) {
-            //Can't use this command, non OP or non Player
+            switch (strtolower(array_shift($args))):
+
+
+                case 'join':
+                    if (!(count($args) > 0 && count($args) < 0b11)) {
+                        $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Usage: /sw ' . TextFormat::GREEN . 'join [SWname]' . TextFormat::GRAY . ' [Player]');
+                        break;
+                    }
+
+                    //SW NAME
+                    $SWname = array_shift($args);
+                    if (!array_key_exists($SWname, $this->pg->arenas)) {
+                        $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena with name: ' . TextFormat::WHITE . $SWname . TextFormat::RED . ' doesn\'t exist');
+                        break;
+                    }
+                    //TODO
+                    break;
+
+
+                case 'quit':
+                    if (!empty($args)) {
+                        $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Usage: /sw ' . TextFormat::GREEN . 'quit');
+                        break;
+                    }
+
+                    foreach ($this->pg->arenas as $name => $arena) {
+                        if ($arena->inArena($sender->getName())) {
+                            $arena->closePlayer($sender, true);
+                            break;
+                        }
+                    }
+                    break;
+
+
+                default:
+                    //No option found, usage
+                    $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Usage: /sw [join|quit]');
+                    break;
+
+
+            endswitch;
             return true;
         }
 

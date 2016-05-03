@@ -357,6 +357,7 @@ class SWarena
         $player->getLevel()->addSound((new \pocketmine\level\sound\EndermanTeleportSound($player)), [$player]);
 
         //Removes player things
+        $player->setGamemode(0);
         if ($this->pg->configs['clear.inventory.on.arena.join'])
             $player->getInventory()->clearAll();
         if ($this->pg->configs['clear.effects.on.arena.join'])
@@ -381,7 +382,7 @@ class SWarena
      * @param bool|false $left
      * @return bool
      */
-    public function quit($playerName, $left = false)
+    private function quit($playerName, $left = false)
     {
         if (!array_key_exists($playerName, $this->players))
             return false;
@@ -394,9 +395,28 @@ class SWarena
                 $p->sendMessage(str_replace('{COUNT}', '[' . $this->getSlot(true) . '/' . $this->slot . ']', str_replace('{PLAYER}', $playerName, $this->pg->lang['game.left'])));
             }
         }
-        $this->pg->getServer()->getPlayer($playerName)->getInventory()->clearAll();
-        $this->pg->getServer()->getPlayer($playerName)->removeAllEffects();
         return true;
+    }
+
+
+    /**
+     * @param Player $p
+     * @param bool $left
+     * @return bool
+     */
+    public function closePlayer(Player $p, $left = false)
+    {
+        if ($this->quit($p->getName(), $left)) {
+            $p->getInventory()->clearAll();
+            $p->removeAllEffects();
+            $p->setMaxHealth(20);
+            $p->setMaxHealth($p->getMaxHealth());//TODO: useless : effects are removed before
+            $p->setHealth($p->getMaxHealth());
+            $p->setFood($p->getMaxFood());
+            $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
+            return true;
+        }
+        return false;
     }
 
     /** VOID */
@@ -428,14 +448,7 @@ class SWarena
         foreach ($this->players as $name => $spawn) {
             $p = $this->pg->getServer()->getPlayer($name);
             if ($p instanceof Player) {
-                //Removes player things
-                $p->getInventory()->clearAll();
-                $p->removeAllEffects();
-                $p->setMaxHealth(20);
-                $p->setMaxHealth($p->getMaxHealth());//TODO: useless : effects are removed before
-                $p->setHealth($p->getMaxHealth());
-                $p->setFood($p->getMaxFood());
-                $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
+                $this->closePlayer($p);
                 foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {
                     $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));
                 }
