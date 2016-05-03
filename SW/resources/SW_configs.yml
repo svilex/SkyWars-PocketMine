@@ -16,7 +16,7 @@
 CONFIG_VERSION: 0.500000
 
 
-####################_GAME_####################
+###########################################_GAME_###########################################
 
 # Players playing a SkyWars game won't be able to run these commands.
 # You can add or delete commands but make sure to respect syntax.
@@ -37,10 +37,19 @@ start.when.full: true
 # The countdown will only run when there will be N players in the arena.
 needed.players.to.run.countdown: 1
 
-# The players health will be set to this value when joining a SkyWars game
-# N.B : No checks are done on this value , so , to avoid problems , don't use values like 0.
+# ------------------------------------------HEALTH------------------------------------------
+#              1 = half a heart
+#                2 = 1 heart
+#                 ...etc...
+
+# The players max health will be set to this value when joining a SkyWars game.
 # N.B : This value can increase for players with HEALTH BOOST effects
-join.health: 20
+join.max.health: 20
+
+# The players health will be set to this value when joining a SkyWars game.
+# N.B : If greater than the player max health , max health will be used instead.
+join.health: 99
+# ------------------------------------------\HEALTH-----------------------------------------
 
 # Players playing a SkyWars game won't be damaged from starvation if this option is "false".
 starvation.can.damage.inArena.players: false
@@ -55,6 +64,7 @@ chest.refill: true
 # chests will be refilled on game start & , according to this option , each N seconds from the start.
 chest.refill.rate: 240
 
+# ------------------------------------------REWARDS------------------------------------------
 # Award winning players' switch.
 # N.B : You need a supported economy plugin for this to work.
 reward.winning.players: false
@@ -62,8 +72,14 @@ reward.winning.players: false
 # How many money-coins should this player win?
 reward.value: 100
 
+# If you want you can write a command here , it will be executed when a player wins.
+# N.B : You can use {PLAYER} as the player name. EXAMPLE: '/tell {PLAYER} You won!'
+# N:B : The command is executed as console
+reward.command: '/'
+# ------------------------------------------\REWARDS-----------------------------------------
 
-####################_JOIN-SIGNS_####################
+
+########################################_JOIN-SIGNS_########################################
 
 # Signs format.
 1st line: '§l§c[§bSW§c]'
@@ -85,7 +101,7 @@ knockBack.intensity: 2
 knockBack.follow.sign.direction: false
 
 
-####################_RESPAWN_####################
+##########################################_RESPAWN_##########################################
 
 always.spawn.in.defaultLevel: true
 
@@ -98,7 +114,7 @@ clear.effects.on.respawn&join: false
 clear.effects.on.arena.join: true
 
 
-####################_WORLD_####################
+###########################################_WORLD_###########################################
 
 # When new chunks are generated , this option fills them with air blocks.
 # N.B : This only happens after the arena is created.

@@ -361,7 +361,7 @@ class SWarena
             $player->getInventory()->clearAll();
         if ($this->pg->configs['clear.effects.on.arena.join'])
             $player->removeAllEffects();
-        $player->setMaxHealth($this->pg->configs['join.health']);
+        $player->setMaxHealth($this->pg->configs['join.max.health']);
         $player->setMaxHealth($player->getMaxHealth());
         $player->setHealth($this->pg->configs['join.health']);
         $player->setFood($player->getMaxFood());
@@ -405,7 +405,7 @@ class SWarena
         if ($this->pg->configs['chest.refill'])
             $this->refillChests();
         foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
-            $p->setMaxHealth($this->pg->configs['join.health']);
+            $p->setMaxHealth($this->pg->configs['join.max.health']);
             $p->setMaxHealth($p->getMaxHealth());
             $p->setHealth($this->pg->configs['join.health']);
             $p->setFood($p->getMaxFood());
@@ -432,7 +432,7 @@ class SWarena
                 $p->getInventory()->clearAll();
                 $p->removeAllEffects();
                 $p->setMaxHealth(20);
-                $p->setMaxHealth($p->getMaxHealth());
+                $p->setMaxHealth($p->getMaxHealth());//TODO: useless : effects are removed before
                 $p->setHealth($p->getMaxHealth());
                 $p->setFood($p->getMaxFood());
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
@@ -442,6 +442,10 @@ class SWarena
                 if ($this->pg->configs['reward.winning.players'] && is_numeric($this->pg->configs['reward.value']) && is_int(($this->pg->configs['reward.value'] + 0)) && $this->pg->economy instanceof SWeconomy && $this->pg->economy->getApiVersion() != 0) {
                     $this->pg->economy->addMoney($p, (int)$this->pg->configs['reward.value']);
                     $p->sendMessage(str_replace('{MONEY}', $this->pg->economy->getMoney($p), str_replace('{VALUE}', $this->pg->configs['reward.value'], $this->pg->lang['winner.reward.msg'])));
+                }
+                $command = trim($this->pg->configs['reward.command']);
+                if (strlen($command) > 1 && $command{0} == '/') {
+                    $this->pg->getServer()->dispatchCommand(new \pocketmine\command\ConsoleCommandSender(), str_replace('{PLAYER}', $p->getName(), substr($command, 1)));
                 }
             }
         }
