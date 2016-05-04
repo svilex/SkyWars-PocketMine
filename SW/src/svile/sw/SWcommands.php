@@ -93,7 +93,7 @@ class SWcommands
                     }
 
                     $player = TextFormat::clean(array_shift($args));
-                    if (is_string($player)) {
+                    if (strlen($player) > 0) {
                         $p = $sender->getServer()->getPlayer($player);
                         if ($p instanceof Player) {
                             if ($this->pg->inArena($p->getName())) {
@@ -122,11 +122,13 @@ class SWcommands
                         break;
                     }
 
-                    foreach ($this->pg->arenas as $a) {
-                        if ($a->inArena($sender->getName())) {
-                            $a->closePlayer($sender, true);
-                            break;
+                    if ($sender instanceof Player) {
+                        foreach ($this->pg->arenas as $a) {
+                            if ($a->closePlayer($sender, true))
+                                break;
                         }
+                    } else {
+                        $sender->sendMessage('This command is only avaible in game');
                     }
                     break;
 
@@ -273,9 +275,9 @@ class SWcommands
                 }
                 $void = ($last - 1);
 
-                foreach ($sender->getLevel()->getPlayers() as $p)
-                    $p->close('', 'Please re-join');
                 $sender->teleport($sender->getServer()->getDefaultLevel()->getSpawnLocation());
+                foreach ($sender->getServer()->getLevelByName($world)->getPlayers() as $p)
+                    $p->close('', 'Please re-join');
                 $sender->getServer()->unloadLevel($sender->getServer()->getLevelByName($world));
 
                 //From here @vars are: $SWname , $slot , $world . Now i'm going to Zip the world and make a new arena
@@ -300,7 +302,7 @@ class SWcommands
                 $this->pg->arenas[$SWname] = new SWarena($this->pg, $SWname, $slot, $world, $countdown, $maxtime, $void);
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Arena: ' . TextFormat::DARK_GREEN . $SWname . TextFormat::GREEN . ' created successfully!');
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Now set spawns with ' . TextFormat::WHITE . '/sw setspawn [slot]');
-                unset($fworld, $world, $SWname, $slot, $countdown, $maxtime, $provider);
+                unset($fworld, $world, $SWname, $slot, $countdown, $maxtime, $provider, $void);
                 break;
 
 

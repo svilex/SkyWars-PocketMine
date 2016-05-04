@@ -64,6 +64,11 @@ chest.refill: true
 # chests will be refilled on game start & , according to this option , each N seconds from the start.
 chest.refill.rate: 240
 
+# Spectator gamemode for killed players.
+# N.B : Players will be able to fly far away.
+# N.B : So , I recommend you to set "world.generator.air" to true.
+death.spectator: true
+
 # ------------------------------------------REWARDS------------------------------------------
 # Award winning players' switch.
 # N.B : You need a supported economy plugin for this to work.

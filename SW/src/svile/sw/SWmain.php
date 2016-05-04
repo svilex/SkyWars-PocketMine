@@ -172,6 +172,7 @@ class SWmain extends PluginBase
             'drops.in.arena' => false,
             'chest.refill' => true,
             'chest.refill.rate' => 0xf0,
+            'death.spectator' => true,
             'reward.winning.players' => false,
             'reward.value' => 100,
             'reward.command' => '/',
@@ -207,10 +208,13 @@ class SWmain extends PluginBase
             'popup.countdown' => '@bThe game starts in @f{N}',
             'chat.countdown' => '@b→@7The game starts in @b{N}',
             'game.start' => '@b→@dThe game start now, good luck !',
-            'player.kill' => '@c→@f{PLAYER} @cwas killed by @f{KILLER} @b{COUNT}',
-            'void.kill' => '@c→@f{PLAYER} @cwas killed by @fVOID @b{COUNT}',
-            'game.left' => '@f→@7{PLAYER} left the game @b{COUNT}',
             'game.chest.refill' => '@b→@aChests has been refilled !',
+            'game.left' => '@f→@7{PLAYER} left the game @b{COUNT}',
+            'death.player' => '@c→@f{PLAYER} @cwas killed by @f{KILLER} @b{COUNT}',
+            'death.arrow' => '@c→@f{PLAYER} @cwas killed by @f{KILLER} @b{COUNT}',
+            'death.void' => '@c→@f{PLAYER} @cwas killed by @fVOID @b{COUNT}',
+            'death.lava' => '@c→@f{PLAYER} @cwas killed by @fLAVA @b{COUNT}',//TODO: add more?
+            'death.spectator' => '@f→@bYou are now a spectator!_EOL_@f→@bType @f/sw quit @bto exit from the game',
             'server.broadcast.winner' => '@0•@f{PLAYER} @bwon the game on SW: @f{SWNAME}',
             'winner.reward.msg' => '@bYou won @f{VALUE}$_EOL_@7Your money: @f{MONEY}$'
         ]);

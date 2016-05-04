@@ -75,6 +75,8 @@ class SWarena
     private $spawns = [];
     /** @var array */
     private $players = [];
+    /** @var array */
+    private $spectators = [];
     /** @var int */
     public $void = 0;//This is used to check "fake void" to avoid fall (stunck in air) bug
 
@@ -150,6 +152,7 @@ class SWarena
         $this->void = ($config->get('void_Y') + 0);
         unset($config);
         $this->players = [];
+        $this->spectators = [];
         $this->time = 0;
         $this->GAME_STATE = 0;
 
@@ -190,9 +193,9 @@ class SWarena
     }
 
     /**
-     * @param bool|false $spawn
+     * @param bool $spawn
      * @param string $playerName
-     * @return string|array
+     * @return string
      */
     public function getWorld($spawn = false, $playerName = '')
     {
@@ -204,17 +207,19 @@ class SWarena
 
     /**
      * @param string $playerName
-     * @return bool
+     * @return int
      */
     public function inArena($playerName = '')
     {
         if (array_key_exists($playerName, $this->players))
-            return true;
-        return false;
+            return 1;
+        if (in_array($playerName, $this->spectators))
+            return 2;
+        return 0;
     }
 
     /**
-     * @param bool|false $check
+     * @param bool $check
      * @param Player|string $player
      * @param int $slot
      * @return bool
@@ -357,7 +362,7 @@ class SWarena
         $player->getLevel()->addSound((new \pocketmine\level\sound\EndermanTeleportSound($player)), [$player]);
 
         //Removes player things
-        $player->setGamemode(0);
+        $player->setGamemode(Player::SURVIVAL);
         if ($this->pg->configs['clear.inventory.on.arena.join'])
             $player->getInventory()->clearAll();
         if ($this->pg->configs['clear.effects.on.arena.join'])
@@ -379,41 +384,68 @@ class SWarena
 
     /**
      * @param string $playerName
-     * @param bool|false $left
+     * @param bool $left
+     * @param bool $spectate
      * @return bool
      */
-    private function quit($playerName, $left = false)
+    private function quit($playerName, $left = false, $spectate = false)
     {
+        if (in_array($playerName, $this->spectators)) {
+            unset($this->spectators[array_search($playerName, $this->spectators)]);
+            return true;
+        }
         if (!array_key_exists($playerName, $this->players))
             return false;
         if ($this->GAME_STATE == 0)
             $this->spawns[] = $this->players[$playerName];
         unset($this->players[$playerName]);
         $this->pg->refreshSigns(false, $this->SWname, $this->getSlot(true), $this->slot, $this->getState());
-        if ($left) {
-            foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
+        if ($left)
+            foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p)
                 $p->sendMessage(str_replace('{COUNT}', '[' . $this->getSlot(true) . '/' . $this->slot . ']', str_replace('{PLAYER}', $playerName, $this->pg->lang['game.left'])));
-            }
-        }
+        if ($spectate && !in_array($playerName, $this->spectators))
+            $this->spectators[] = $playerName;
         return true;
     }
-
 
     /**
      * @param Player $p
      * @param bool $left
+     * @param bool $spectate
+     * @param bool $force
      * @return bool
      */
-    public function closePlayer(Player $p, $left = false)
+    public function closePlayer(Player $p, $left = false, $spectate = false, $force = false)
     {
-        if ($this->quit($p->getName(), $left)) {
+        if ($force || $this->quit($p->getName(), $left, $spectate)) {
+            $p->setGamemode($p->getServer()->getDefaultGamemode());
             $p->getInventory()->clearAll();
             $p->removeAllEffects();
             $p->setMaxHealth(20);
-            $p->setMaxHealth($p->getMaxHealth());//TODO: useless : effects are removed before
+            $p->setMaxHealth($p->getMaxHealth());
             $p->setHealth($p->getMaxHealth());
             $p->setFood($p->getMaxFood());
-            $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
+            if (!$spectate) {
+                $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
+            } elseif ($this->GAME_STATE == 1 && 1 < count($this->players)) {
+                $p->setGamemode(Player::CREATIVE);
+                foreach ($this->players as $dname => $spawn) {
+                    if (($d = $this->pg->getServer()->getPlayer($dname)) instanceof Player)
+                        $p->despawnFrom($d);
+                }
+                $pk = new \pocketmine\network\protocol\ContainerSetContentPacket();
+                $pk->windowid = \pocketmine\network\protocol\ContainerSetContentPacket::SPECIAL_CREATIVE;
+                $p->dataPacket($pk);
+                $p->getInventory()->sendContents($p);
+                $p->getInventory()->sendContents($p->getViewers());
+                foreach ($this->spectators as $sname) {
+                    if ($sname != $p->getName() && ($s = $this->pg->getServer()->getPlayer($sname)) instanceof Player) {
+                        $p->spawnTo($s);
+                        $s->spawnTo($p);
+                    }
+                }
+                $p->sendMessage($this->pg->lang['death.spectator']);
+            }
             return true;
         }
         return false;
@@ -445,10 +477,17 @@ class SWarena
      */
     public function stop()
     {
+        $this->pg->getServer()->loadLevel($this->world);
+        foreach ($this->spectators as $playerName) {
+            $p = $this->pg->getServer()->getPlayer($playerName);
+            if ($p instanceof Player) {
+                $this->closePlayer($p, false, false, true);
+            }
+        }
         foreach ($this->players as $name => $spawn) {
             $p = $this->pg->getServer()->getPlayer($name);
             if ($p instanceof Player) {
-                $this->closePlayer($p);
+                $this->closePlayer($p, false, false, true);
                 foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {
                     $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));
                 }
@@ -462,7 +501,6 @@ class SWarena
                 }
             }
         }
-        $this->pg->getServer()->loadLevel($this->world);
         foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p)
             $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
         $this->reload();
