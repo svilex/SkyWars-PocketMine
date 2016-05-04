@@ -86,12 +86,33 @@ class SWcommands
                     }
 
                     //SW NAME
-                    $SWname = array_shift($args);
+                    $SWname = TextFormat::clean(array_shift($args));
                     if (!array_key_exists($SWname, $this->pg->arenas)) {
                         $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena with name: ' . TextFormat::WHITE . $SWname . TextFormat::RED . ' doesn\'t exist');
                         break;
                     }
-                    //TODO
+
+                    $player = TextFormat::clean(array_shift($args));
+                    if (is_string($player)) {
+                        $p = $sender->getServer()->getPlayer($player);
+                        if ($p instanceof Player) {
+                            if ($this->pg->inArena($p->getName())) {
+                                $p->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'You are already inside an arena');
+                                break;
+                            }
+                            $this->pg->arenas[$SWname]->join($p);
+                        } else {
+                            $sender->sendMessage(TextFormat::RED . 'Player not found!');
+                        }
+                    } elseif ($sender instanceof Player) {
+                        if ($this->pg->inArena($sender->getName())) {
+                            $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'You are already inside an arena');
+                            break;
+                        }
+                        $this->pg->arenas[$SWname]->join($sender);
+                    } else {
+                        $sender->sendMessage(TextFormat::RED . 'Player not found!');
+                    }
                     break;
 
 
@@ -101,9 +122,9 @@ class SWcommands
                         break;
                     }
 
-                    foreach ($this->pg->arenas as $name => $arena) {
-                        if ($arena->inArena($sender->getName())) {
-                            $arena->closePlayer($sender, true);
+                    foreach ($this->pg->arenas as $a) {
+                        if ($a->inArena($sender->getName())) {
+                            $a->closePlayer($sender, true);
                             break;
                         }
                     }
@@ -151,9 +172,19 @@ class SWcommands
                 //Checks if there is already an arena in the world
                 foreach ($this->pg->arenas as $aname => $arena) {
                     if ($arena->getWorld() == $world) {
-                        $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::RED . 'You can\'t create 2 arenas in the same world try:');
+                        $sender->sendMessage(TextFormat::RED . '→' . TextFormat::RED . 'You can\'t create 2 arenas in the same world try:');
                         $sender->sendMessage(TextFormat::RED . '→' . TextFormat::WHITE . '/sw list' . TextFormat::RED . ' for a list of arenas');
                         $sender->sendMessage(TextFormat::RED . '→' . TextFormat::WHITE . '/sw delete' . TextFormat::RED . ' to delete an arena');
+                        unset($fworld, $world);
+                        break 2;
+                    }
+                }
+
+                //Checks if there is already a join sign in the world
+                foreach ($this->pg->signs as $loc => $name) {
+                    if (explode(':', $loc)[3] == $world) {
+                        $sender->sendMessage(TextFormat::RED . '→' . TextFormat::RED . 'You can\'t create an arena in the same world of a join sign:');
+                        $sender->sendMessage(TextFormat::RED . '→' . TextFormat::WHITE . '/sw signdelete' . TextFormat::RED . ' to delete signs');
                         unset($fworld, $world);
                         break 2;
                     }
@@ -211,7 +242,7 @@ class SWcommands
                         $provider->getLevelData()->LevelName = new Str('LevelName', $fworld);
                         $provider->saveLevelData();
                     }
-                    unset($fworld, $world, $SWname, $slot, $countdown, $maxtime);
+                    unset($fworld, $world, $SWname, $slot, $countdown, $maxtime, $provider);
                     break;
                 }
 
@@ -242,9 +273,9 @@ class SWcommands
                 }
                 $void = ($last - 1);
 
-                $sender->teleport($sender->getServer()->getDefaultLevel()->getSpawnLocation());
-                foreach ($sender->getServer()->getLevelByName($world)->getPlayers() as $p)
+                foreach ($sender->getLevel()->getPlayers() as $p)
                     $p->close('', 'Please re-join');
+                $sender->teleport($sender->getServer()->getDefaultLevel()->getSpawnLocation());
                 $sender->getServer()->unloadLevel($sender->getServer()->getLevelByName($world));
 
                 //From here @vars are: $SWname , $slot , $world . Now i'm going to Zip the world and make a new arena
@@ -269,7 +300,7 @@ class SWcommands
                 $this->pg->arenas[$SWname] = new SWarena($this->pg, $SWname, $slot, $world, $countdown, $maxtime, $void);
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Arena: ' . TextFormat::DARK_GREEN . $SWname . TextFormat::GREEN . ' created successfully!');
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Now set spawns with ' . TextFormat::WHITE . '/sw setspawn [slot]');
-                unset($SWname, $slot, $world, $countdown, $maxtime, $void, $provider);
+                unset($fworld, $world, $SWname, $slot, $countdown, $maxtime, $provider);
                 break;
 
 

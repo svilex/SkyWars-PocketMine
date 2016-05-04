@@ -399,6 +399,20 @@ class SWmain extends PluginBase
     }
 
     /**
+     * @param string $playerName
+     * @return bool
+     */
+    public function inArena($playerName = '')
+    {
+        foreach ($this->arenas as $a) {
+            if ($a->inArena($playerName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @return array
      */
     public function getChestContents() //TODO: **rewrite** this and let the owner decide the contents of the chest

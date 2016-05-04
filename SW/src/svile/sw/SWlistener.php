@@ -92,11 +92,13 @@ class SWlistener implements Listener
             return;
         }
 
-        //Checks if the sign is placed in a different world from the arena one
+        //Checks if the sign is placed inside arenas
         $world = $ev->getPlayer()->getLevel()->getName();
-        if ($world == $this->pg->arenas[$SWname]->getWorld()) {
-            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'You can\'t place the join sign in the arena');
-            return;
+        foreach ($this->pg->arenas as $name => $arena) {
+            if ($world == $arena->getWorld()) {
+                $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'You can\'t place the join sign inside arenas');
+                return;
+            }
         }
 
         //Checks arena spawns
@@ -375,13 +377,10 @@ class SWlistener implements Listener
         $command = strtolower($ev->getMessage());
         if ($command{0} == '/') {
             $command = explode(' ', $command)[0];
-            foreach ($this->pg->arenas as $a) {
-                if ($a->inArena($ev->getPlayer()->getName())) {
-                    if (in_array($command, $this->pg->configs['banned.commands.while.in.game'])) {
-                        $ev->getPlayer()->sendMessage($this->pg->lang['banned.command.msg']);
-                        $ev->setCancelled();
-                    }
-                    break;
+            if ($this->pg->inArena($ev->getPlayer()->getName())) {
+                if (in_array($command, $this->pg->configs['banned.commands.while.in.game'])) {
+                    $ev->getPlayer()->sendMessage($this->pg->lang['banned.command.msg']);
+                    $ev->setCancelled();
                 }
             }
         }

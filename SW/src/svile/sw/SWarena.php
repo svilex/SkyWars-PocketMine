@@ -203,10 +203,10 @@ class SWarena
     }
 
     /**
-     * @param $playerName
+     * @param string $playerName
      * @return bool
      */
-    public function inArena($playerName)
+    public function inArena($playerName = '')
     {
         if (array_key_exists($playerName, $this->players))
             return true;
