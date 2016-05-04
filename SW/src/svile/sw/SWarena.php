@@ -195,7 +195,7 @@ class SWarena
     /**
      * @param bool $spawn
      * @param string $playerName
-     * @return string
+     * @return string|array
      */
     public function getWorld($spawn = false, $playerName = '')
     {

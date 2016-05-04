@@ -45,6 +45,7 @@ use pocketmine\event\Listener;
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerMoveEvent;
@@ -145,6 +146,18 @@ class SWlistener implements Listener
         unset($key);
     }
 
+    public function onLevelChange(EntityLevelChangeEvent $ev)
+    {
+        if ($ev->getEntity() instanceof Player) {
+            foreach ($this->pg->arenas as $a) {
+                if ($a->inArena($ev->getEntity()->getName())) {
+                    $ev->setCancelled();
+                    break;
+                }
+            }
+        }
+    }
+
     public function onMove(PlayerMoveEvent $ev)
     {
         foreach ($this->pg->arenas as $a) {
@@ -160,7 +173,7 @@ class SWlistener implements Listener
                     $ev->getPlayer()->attack($event->getFinalDamage(), $event);
                     unset($event);
                 }
-                break;
+                return;
             }
         }
         //Checks if knockBack is enabled
@@ -363,12 +376,18 @@ class SWlistener implements Listener
                         return;
                     }
                     $cause = $ev->getCause();
-                    if ($cause == EntityDamageEvent::CAUSE_FALL || $cause == EntityDamageEvent::CAUSE_SUICIDE || $cause == EntityDamageEvent::CAUSE_SUFFOCATION || $cause == EntityDamageEvent::CAUSE_CONTACT || $cause == EntityDamageEvent::CAUSE_DROWNING)
+                    if ($cause == EntityDamageEvent::CAUSE_FALL || $cause == EntityDamageEvent::CAUSE_SUICIDE || $cause == EntityDamageEvent::CAUSE_SUFFOCATION || $cause == EntityDamageEvent::CAUSE_CONTACT || $cause == EntityDamageEvent::CAUSE_DROWNING) {
                         $ev->setCancelled();
-                    if ($cause == EntityDamageEvent::CAUSE_STARVATION && $this->pg->configs['starvation.can.damage.inArena.players'] == false)
+                        return;
+                    }
+                    if ($cause == EntityDamageEvent::CAUSE_STARVATION && $this->pg->configs['starvation.can.damage.inArena.players'] == false) {
                         $ev->setCancelled();
-                    if ($a->GAME_STATE == 0)
+                        return;
+                    }
+                    if ($a->GAME_STATE == 0) {
                         $ev->setCancelled();
+                        return;
+                    }
 
                     //SPECTATORS
                     $spectate = (bool)$this->pg->configs['death.spectator'];
