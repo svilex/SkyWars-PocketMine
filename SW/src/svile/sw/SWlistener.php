@@ -150,7 +150,7 @@ class SWlistener implements Listener
     {
         if ($ev->getEntity() instanceof Player) {
             foreach ($this->pg->arenas as $a) {
-                if ($a->inArena($ev->getEntity()->getName())) {
+                if ($a->inArena($ev->getEntity()->getName()) && $a->GAME_STATE == 1 && 1 < $a->getSlot(true)) {
                     $ev->setCancelled();
                     break;
                 }
@@ -370,10 +370,12 @@ class SWlistener implements Listener
         if ($ev->getEntity() instanceof Player) {
             $p = $ev->getEntity();
             foreach ($this->pg->arenas as $a) {
-                if ($t = $a->inArena($p->getName())) {
-                    if ($t == 2) {
-                        $ev->setCancelled();
-                        return;
+                if ($a->inArena($p->getName())) {
+	                   if ($ev instanceof EntityDamageByEntityEvent && ($d = $ev->getDamager()) instanceof Player) {
+                        if (($f = $a->inArena($d->getName())) == 2 || $f == 0) {
+                            $ev->setCancelled();
+                            return;
+                        }
                     }
                     $cause = $ev->getCause();
                     if ($cause == EntityDamageEvent::CAUSE_FALL || $cause == EntityDamageEvent::CAUSE_SUICIDE || $cause == EntityDamageEvent::CAUSE_SUFFOCATION || $cause == EntityDamageEvent::CAUSE_CONTACT || $cause == EntityDamageEvent::CAUSE_DROWNING) {
