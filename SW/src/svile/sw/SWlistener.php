@@ -41,13 +41,13 @@
 namespace svile\sw;
 
 
-use pocketmine\event\inventory\InventoryPickupItemEvent;
 use pocketmine\event\Listener;
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
+use pocketmine\event\inventory\InventoryPickupItemEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerMoveEvent;
