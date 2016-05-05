@@ -374,8 +374,9 @@ class SWarena
 
         $this->pg->getServer()->loadLevel($this->world);
         $level = $this->pg->getServer()->getLevelByName($this->world);
-        $this->players[$player->getName()] = array_shift($this->spawns);
-        $player->teleport(new Position($this->players[$player->getName()]['x'], $this->players[$player->getName()]['y'], $this->players[$player->getName()]['z'], $level), $this->players[$player->getName()]['yaw'], $this->players[$player->getName()]['pitch']);
+        $tmp = array_shift($this->spawns);
+        $player->teleport(new Position($tmp['x'], $tmp['y'], $tmp['z'], $level), $tmp['yaw'], $tmp['pitch']);
+        $this->players[$player->getName()] = $tmp;
         foreach ($level->getPlayers() as $p) {
             $p->sendMessage(str_replace('{COUNT}', '[' . $this->getSlot(true) . '/' . $this->slot . ']', str_replace('{PLAYER}', $player->getName(), $this->pg->lang['game.join'])));
         }
@@ -412,12 +413,11 @@ class SWarena
      * @param Player $p
      * @param bool $left
      * @param bool $spectate
-     * @param bool $force
      * @return bool
      */
-    public function closePlayer(Player $p, $left = false, $spectate = false, $force = false)
+    public function closePlayer(Player $p, $left = false, $spectate = false)
     {
-        if ($force || $this->quit($p->getName(), $left, $spectate)) {
+        if ($this->quit($p->getName(), $left, $spectate)) {
             $p->setGamemode($p->getServer()->getDefaultGamemode());
             $p->getInventory()->clearAll();
             $p->removeAllEffects();
@@ -481,13 +481,13 @@ class SWarena
         foreach ($this->spectators as $playerName) {
             $p = $this->pg->getServer()->getPlayer($playerName);
             if ($p instanceof Player) {
-                $this->closePlayer($p, false, false, true);
+                $this->closePlayer($p);
             }
         }
         foreach ($this->players as $name => $spawn) {
             $p = $this->pg->getServer()->getPlayer($name);
             if ($p instanceof Player) {
-                $this->closePlayer($p, false, false, true);
+                $this->closePlayer($p);
                 foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {
                     $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));
                 }

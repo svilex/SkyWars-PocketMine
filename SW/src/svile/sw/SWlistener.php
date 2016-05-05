@@ -41,11 +41,13 @@
 namespace svile\sw;
 
 
+use pocketmine\event\inventory\InventoryPickupItemEvent;
 use pocketmine\event\Listener;
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityLevelChangeEvent;
+use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerMoveEvent;
@@ -150,7 +152,31 @@ class SWlistener implements Listener
     {
         if ($ev->getEntity() instanceof Player) {
             foreach ($this->pg->arenas as $a) {
-                if ($a->inArena($ev->getEntity()->getName()) && $a->GAME_STATE == 1 && 1 < $a->getSlot(true)) {
+                if ($a->inArena($ev->getEntity()->getName())) {
+                    $ev->setCancelled();
+                    break;
+                }
+            }
+        }
+    }
+
+    public function onTeleport(EntityTeleportEvent $ev)
+    {
+        if ($ev->getEntity() instanceof Player) {
+            foreach ($this->pg->arenas as $a) {
+                if ($a->inArena($ev->getEntity()->getName())) {
+                    $ev->setCancelled();
+                    break;
+                }
+            }
+        }
+    }
+
+    public function onPickUp(InventoryPickupItemEvent $ev)
+    {
+        if (($p = $ev->getInventory()->getHolder()) instanceof Player) {
+            foreach ($this->pg->arenas as $a) {
+                if ($a->inArena($p->getName()) == 2) {
                     $ev->setCancelled();
                     break;
                 }
@@ -371,24 +397,24 @@ class SWlistener implements Listener
             $p = $ev->getEntity();
             foreach ($this->pg->arenas as $a) {
                 if ($a->inArena($p->getName())) {
-	                   if ($ev instanceof EntityDamageByEntityEvent && ($d = $ev->getDamager()) instanceof Player) {
+                    if ($ev instanceof EntityDamageByEntityEvent && ($d = $ev->getDamager()) instanceof Player) {
                         if (($f = $a->inArena($d->getName())) == 2 || $f == 0) {
                             $ev->setCancelled();
-                            return;
+                            break;
                         }
                     }
                     $cause = $ev->getCause();
                     if ($cause == EntityDamageEvent::CAUSE_FALL || $cause == EntityDamageEvent::CAUSE_SUICIDE || $cause == EntityDamageEvent::CAUSE_SUFFOCATION || $cause == EntityDamageEvent::CAUSE_CONTACT || $cause == EntityDamageEvent::CAUSE_DROWNING) {
                         $ev->setCancelled();
-                        return;
+                        break;
                     }
                     if ($cause == EntityDamageEvent::CAUSE_STARVATION && $this->pg->configs['starvation.can.damage.inArena.players'] == false) {
                         $ev->setCancelled();
-                        return;
+                        break;
                     }
                     if ($a->GAME_STATE == 0) {
                         $ev->setCancelled();
-                        return;
+                        break;
                     }
 
                     //SPECTATORS
