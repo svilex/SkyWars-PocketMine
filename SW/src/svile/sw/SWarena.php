@@ -431,7 +431,7 @@ class SWarena
                 $p->setGamemode(Player::CREATIVE);
                 foreach ($this->players as $dname => $spawn) {
                     if (($d = $this->pg->getServer()->getPlayer($dname)) instanceof Player)
-                        $p->despawnFrom($d);
+                        $d->hidePlayer($p);
                 }
                 $pk = new \pocketmine\network\protocol\ContainerSetContentPacket();
                 $pk->windowid = \pocketmine\network\protocol\ContainerSetContentPacket::SPECIAL_CREATIVE;
@@ -439,10 +439,8 @@ class SWarena
                 $p->getInventory()->sendContents($p);
                 $p->getInventory()->sendContents($p->getViewers());
                 foreach ($this->spectators as $sname) {
-                    if ($sname != $p->getName() && ($s = $this->pg->getServer()->getPlayer($sname)) instanceof Player) {
-                        $p->spawnTo($s);
-                        $s->spawnTo($p);
-                    }
+                    if ($sname != $p->getName() && ($s = $this->pg->getServer()->getPlayer($sname)) instanceof Player)
+                        $p->showPlayer($s);
                 }
                 $p->sendMessage($this->pg->lang['death.spectator']);
             }
@@ -469,7 +467,7 @@ class SWarena
         }
         $this->time = 0;
         $this->GAME_STATE = 1;
-        $this->pg->refreshSigns(false, $this->SWname, $this->getSlot(true), $this->slot, (TextFormat::RED . TextFormat::BOLD . 'Running'));
+        $this->pg->refreshSigns(false, $this->SWname, $this->getSlot(true), $this->slot, $this->getState());
     }
 
     /**
@@ -503,6 +501,15 @@ class SWarena
         }
         foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p)
             $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
+        /*
+        foreach ($this->pg->getServer()->getOnlinePlayers() as $p) {
+            foreach ($this->pg->getServer()->getOnlinePlayers() as $p2) {
+                if (!$p->canSee($p2)) {
+                    $p->showPlayer($p2);
+                }
+            }
+        }
+        */
         $this->reload();
         return true;
     }
