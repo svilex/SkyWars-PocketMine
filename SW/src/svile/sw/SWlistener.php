@@ -49,6 +49,7 @@ use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\inventory\InventoryPickupItemEvent;
 use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
@@ -165,9 +166,29 @@ class SWlistener implements Listener
         if ($ev->getEntity() instanceof Player) {
             foreach ($this->pg->arenas as $a) {
                 if ($a->inArena($ev->getEntity()->getName())) {
+                    //Allow near teleport
+                    if ($ev->getFrom()->distanceSquared($ev->getTo()) < 10)
+                        break;
                     $ev->setCancelled();
                     break;
                 }
+            }
+        }
+    }
+
+    public function onDropItem(PlayerDropItemEvent $ev)
+    {
+        foreach ($this->pg->arenas as $a) {
+            if (($f = $a->inArena($ev->getPlayer()->getName()))) {
+                if ($f == 2) {
+                    $ev->setCancelled();
+                    break;
+                }
+                if (!$this->pg->configs['player.drop.item']) {
+                    $ev->setCancelled();
+                    break;
+                }
+                break;
             }
         }
     }
@@ -383,7 +404,7 @@ class SWlistener implements Listener
                     foreach ($p->getLevel()->getPlayers() as $pl)
                         $pl->sendMessage($message);
 
-                    if (!$this->pg->configs['drops.in.arena'])
+                    if (!$this->pg->configs['drops.on.death'])
                         $event->setDrops([]);
                     break;
                 }
@@ -396,7 +417,11 @@ class SWlistener implements Listener
         if ($ev->getEntity() instanceof Player) {
             $p = $ev->getEntity();
             foreach ($this->pg->arenas as $a) {
-                if ($a->inArena($p->getName())) {
+                if ($f = $a->inArena($p->getName())) {
+                    if ($f != 1) {
+                        $ev->setCancelled();
+                        break;
+                    }
                     if ($ev instanceof EntityDamageByEntityEvent && ($d = $ev->getDamager()) instanceof Player) {
                         if (($f = $a->inArena($d->getName())) == 2 || $f == 0) {
                             $ev->setCancelled();
@@ -475,7 +500,7 @@ class SWlistener implements Listener
                                 $pl->sendMessage($message);
 
                             //DROPS
-                            if ($this->pg->configs['drops.in.arena']) {
+                            if ($this->pg->configs['drops.on.death']) {
                                 foreach ($p->getDrops() as $item) {
                                     $p->getLevel()->dropItem($p, $item);
                                 }

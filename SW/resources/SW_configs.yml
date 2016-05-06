@@ -54,8 +54,11 @@ join.health: 99
 # Players playing a SkyWars game won't be damaged from starvation if this option is "false".
 starvation.can.damage.inArena.players: false
 
-# Players playing a SkyWars game won't drop anything on death.
-drops.in.arena: false
+# Players playing a SkyWars game won't drop anything on death if this option = "false".
+drops.on.death: false
+
+# Players playing a SkyWars game won't be able to drop items if this option = "false".
+player.drop.item: true
 
 # This is the refill chests' switch. You can decide to refill chests or not.
 chest.refill: true

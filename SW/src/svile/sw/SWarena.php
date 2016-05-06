@@ -418,6 +418,7 @@ class SWarena
     public function closePlayer(Player $p, $left = false, $spectate = false)
     {
         if ($this->quit($p->getName(), $left, $spectate)) {
+            $p->gamemode = 4;//Just to make sure setGamemode() won't return false if the gm is the same
             $p->setGamemode($p->getServer()->getDefaultGamemode());
             $p->getInventory()->clearAll();
             $p->removeAllEffects();
@@ -428,7 +429,7 @@ class SWarena
             if (!$spectate) {
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
             } elseif ($this->GAME_STATE == 1 && 1 < count($this->players)) {
-                $p->setGamemode(Player::CREATIVE);
+                $p->setGamemode(Player::CREATIVE);// :D
                 foreach ($this->players as $dname => $spawn) {
                     if (($d = $this->pg->getServer()->getPlayer($dname)) instanceof Player)
                         $d->hidePlayer($p);
@@ -476,32 +477,42 @@ class SWarena
     public function stop()
     {
         $this->pg->getServer()->loadLevel($this->world);
+        //CLOSE SPECTATORS
         foreach ($this->spectators as $playerName) {
-            $p = $this->pg->getServer()->getPlayer($playerName);
-            if ($p instanceof Player) {
-                $this->closePlayer($p);
-            }
+            if (($s = $this->pg->getServer()->getPlayer($playerName)) instanceof Player)
+                $this->closePlayer($s);
         }
+        //CLOSE PLAYERS
         foreach ($this->players as $name => $spawn) {
             $p = $this->pg->getServer()->getPlayer($name);
             if ($p instanceof Player) {
+                //Show spectators
+                foreach ($this->spectators as $playerName) {
+                    if (($s = $this->pg->getServer()->getPlayer($playerName)) instanceof Player)
+                        $p->showPlayer($s);
+                }
                 $this->closePlayer($p);
+                //Broadcast winner
                 foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {
                     $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));
                 }
+                //Economy reward
                 if ($this->pg->configs['reward.winning.players'] && is_numeric($this->pg->configs['reward.value']) && is_int(($this->pg->configs['reward.value'] + 0)) && $this->pg->economy instanceof SWeconomy && $this->pg->economy->getApiVersion() != 0) {
                     $this->pg->economy->addMoney($p, (int)$this->pg->configs['reward.value']);
                     $p->sendMessage(str_replace('{MONEY}', $this->pg->economy->getMoney($p), str_replace('{VALUE}', $this->pg->configs['reward.value'], $this->pg->lang['winner.reward.msg'])));
                 }
+                //Reward command
                 $command = trim($this->pg->configs['reward.command']);
                 if (strlen($command) > 1 && $command{0} == '/') {
                     $this->pg->getServer()->dispatchCommand(new \pocketmine\command\ConsoleCommandSender(), str_replace('{PLAYER}', $p->getName(), substr($command, 1)));
                 }
             }
         }
+        //Other players
         foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p)
             $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
         /*
+        UNCOMMENT THIS TO BE SURE ALL PLAYERS CAN SEE EACH OTHER
         foreach ($this->pg->getServer()->getOnlinePlayers() as $p) {
             foreach ($this->pg->getServer()->getOnlinePlayers() as $p2) {
                 if (!$p->canSee($p2)) {
