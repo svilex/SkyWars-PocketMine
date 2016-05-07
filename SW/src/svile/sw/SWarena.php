@@ -478,7 +478,8 @@ class SWarena
     {
         $this->pg->getServer()->loadLevel($this->world);
         //CLOSE SPECTATORS
-        foreach ($this->spectators as $playerName) {
+        $sp = $this->spectators;
+        foreach ($sp as $playerName) {
             if (($s = $this->pg->getServer()->getPlayer($playerName)) instanceof Player)
                 $this->closePlayer($s);
         }
@@ -487,7 +488,7 @@ class SWarena
             $p = $this->pg->getServer()->getPlayer($name);
             if ($p instanceof Player) {
                 //Show spectators
-                foreach ($this->spectators as $playerName) {
+                foreach ($sp as $playerName) {
                     if (($s = $this->pg->getServer()->getPlayer($playerName)) instanceof Player)
                         $p->showPlayer($s);
                 }
