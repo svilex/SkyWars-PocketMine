@@ -32,7 +32,7 @@
  *
  *
  * DONORS LIST :
- * - no one
+ * - Ahmet , thanks a lot !
  * - no one
  * - no one
  *
@@ -393,6 +393,10 @@ class SWarena
     {
         if (in_array($playerName, $this->spectators)) {
             unset($this->spectators[array_search($playerName, $this->spectators)]);
+            foreach ($this->players as $name => $spawn) {
+                if ((($p = $this->pg->getServer()->getPlayer($name)) instanceof Player) && (($s = $this->pg->getServer()->getPlayer($playerName)) instanceof Player))
+                    $p->showPlayer($s);
+            }
             return true;
         }
         if (!array_key_exists($playerName, $this->players))
@@ -406,6 +410,10 @@ class SWarena
                 $p->sendMessage(str_replace('{COUNT}', '[' . $this->getSlot(true) . '/' . $this->slot . ']', str_replace('{PLAYER}', $playerName, $this->pg->lang['game.left'])));
         if ($spectate && !in_array($playerName, $this->spectators))
             $this->spectators[] = $playerName;
+        foreach ($this->spectators as $sp) {
+            if ((($p = $this->pg->getServer()->getPlayer($playerName)) instanceof Player) && (($s = $this->pg->getServer()->getPlayer($sp)) instanceof Player))
+                $p->showPlayer($s);
+        }
         return true;
     }
 
@@ -439,10 +447,6 @@ class SWarena
                 $p->dataPacket($pk);
                 $p->getInventory()->sendContents($p);
                 $p->getInventory()->sendContents($p->getViewers());
-                foreach ($this->spectators as $sname) {
-                    if ($sname != $p->getName() && ($s = $this->pg->getServer()->getPlayer($sname)) instanceof Player)
-                        $p->showPlayer($s);
-                }
                 $p->sendMessage($this->pg->lang['death.spectator']);
             }
             return true;
@@ -478,20 +482,13 @@ class SWarena
     {
         $this->pg->getServer()->loadLevel($this->world);
         //CLOSE SPECTATORS
-        $sp = $this->spectators;
-        foreach ($sp as $playerName) {
+        foreach ($this->spectators as $playerName) {
             if (($s = $this->pg->getServer()->getPlayer($playerName)) instanceof Player)
                 $this->closePlayer($s);
         }
         //CLOSE PLAYERS
         foreach ($this->players as $name => $spawn) {
-            $p = $this->pg->getServer()->getPlayer($name);
-            if ($p instanceof Player) {
-                //Show spectators
-                foreach ($sp as $playerName) {
-                    if (($s = $this->pg->getServer()->getPlayer($playerName)) instanceof Player)
-                        $p->showPlayer($s);
-                }
+            if (($p = $this->pg->getServer()->getPlayer($name)) instanceof Player) {
                 $this->closePlayer($p);
                 //Broadcast winner
                 foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {

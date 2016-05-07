@@ -32,7 +32,7 @@
  *
  *
  * DONORS LIST :
- * - no one
+ * - Ahmet , thanks a lot !
  * - no one
  * - no one
  *
@@ -65,7 +65,7 @@ use pocketmine\math\Vector3;
 class SWmain extends PluginBase
 {
     /** Plugin Version */
-    const SW_VERSION = 0.5;
+    const SW_VERSION = 0.6;
 
     /** @var SWcommands */
     private $commands;

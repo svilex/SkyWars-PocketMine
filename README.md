@@ -18,31 +18,47 @@ _This plugin helped you? Do you like it? **Support it by donating!**_
 
 _Benefits: You will be credited in the source code as a generous **donor**_ :smile:
 
-**GOAL: :moneybag: €0 / €20**
+**GOAL: :moneybag: €1 / €20**
 
 - ![Paypal](https://raw.githubusercontent.com/svilex/res/master/paypal.png) Paypal: [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=G596HU7YZ8HAG) :money_with_wings:
 
 ---
 ###Releases - Downloads
 
-* **Release [_0.4_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.4) (April 24, 2016)**
+* **pre-Release [_0.6_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.6) (May 7, 2016)**
 
->Added air generator option<br>
->Added a config for signs format<br>
->Better and faster world reset<br>
->Bug Fixes
+>- Beautiful config file with descriptions.<br>
+>- Spectator mode when a player dies.<br>
+>- Economy support for money rewards.<br>
+>- Reward command.<br>
+>- /sw join & /sw quit.<br>
+>- New sign knockBack type.<br>
+>- More death messages.<br>
+>- An option to set the player max health.<br>
+>- An option to choose if a player can drop items.<br>
+>- Added COBBLESTONE & DIRT to chests.<br>
+>- Bug Fixes that you don't need to know because are a lot :smirk:
 
-* **Release [_0.3_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.3) (April 14, 2016)**
+* **pre-Release [_0.4_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.4) (April 24, 2016)**
 
->Maybe fixed #3<br>
->Added a sound on arena join
+>- Added air generator option.<br>
+>- Added a config for signs format.<br>
+>- Better and faster world reset.<br>
+>- Bug Fixes.
 
-* **Release [_0.2_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.2) (April 13, 2016)**
+* **pre-Release [_0.3_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.3) (April 14, 2016)**
 
->Now removing players effects on respawn, arena join, quit.<br>
->Added a config option to set the needed players for the countdown start.<br>
->Now players are no more able to interact before the game start.<br>
->Added a sound for the last 10 seconds of the countdown.<br>
+>- Maybe fixed #3<br>
+>- Added a sound on arena join.
+
+<!--
+* **pre-Release [_0.2_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.2) (April 13, 2016)**
+
+>- Now removing players effects on respawn, arena join, quit.<br>
+>- Added a config option to set the needed players for the countdown start.<br>
+>- Now players are no more able to interact before the game start.<br>
+>- Added a sound for the last 10 seconds of the countdown.<br>
+-->
 
 _Click [**here**](https://github.com/svilex/SkyWars-PocketMine/releases) for other releases_.
 
@@ -72,6 +88,8 @@ Command | Description
 /sw list  | Displays the list of loaded arenas with the corresponding world + players playing in them. Example: `TestArena [5/16] => TestWorld` etc.
 /sw delete **[**SWname**]** | This command just deletes an arena.<br/>- **SWname** is the name of the arena that you must give to delete it
 /sw signdelete **[**SWname**\|**all**]** | Do you want to delete a join sign but you forgot where you placed it? This command can help you.<br/>- **SWname** is the arena name, if gived, all the signs pointing to the given arena will be deleted.<br/>- **all** If used as the arena name like `/sw signdelete all`, all the SW signs wil be deleted.<br/>_Are you thinking this command is useless? You'll change your idea about it when you'll have the need._:laughing:
+/sw join **[**SWname**]** [PlayerName] | Anyone except ops can use this command to join SW games.<br/>- **PlayerName** can be used only by CONSOLE to force the player to join the specified arena.
+/sw quit | Anyone except ops can use this command to left the current SW game.
 
 #####Here there are some videos that explains how to create an arena in different languages:
 - [Deutsch](//TODO add a video) no video yet

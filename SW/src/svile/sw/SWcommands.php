@@ -32,7 +32,7 @@
  *
  *
  * DONORS LIST :
- * - no one
+ * - Ahmet , thanks a lot !
  * - no one
  * - no one
  *
@@ -81,7 +81,7 @@ class SWcommands
 
                 case 'join':
                     if (!(count($args) > 0 && count($args) < 0b11)) {
-                        $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Usage: /sw ' . TextFormat::GREEN . 'join [SWname]' . TextFormat::GRAY . ' [Player]');
+                        $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Usage: /sw ' . TextFormat::GREEN . 'join [SWname]' . TextFormat::GRAY . ' [PlayerName]');
                         break;
                     }
 
@@ -93,7 +93,7 @@ class SWcommands
                     }
 
                     $player = TextFormat::clean(array_shift($args));
-                    if (strlen($player) > 0) {
+                    if (strlen($player) > 0 && $sender instanceof \pocketmine\command\ConsoleCommandSender) {
                         $p = $sender->getServer()->getPlayer($player);
                         if ($p instanceof Player) {
                             if ($this->pg->inArena($p->getName())) {
