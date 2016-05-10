@@ -428,12 +428,8 @@ class SWlistener implements Listener
                             break;
                         }
                     }
-                    $cause = $ev->getCause();
-                    if ($cause == EntityDamageEvent::CAUSE_FALL || $cause == EntityDamageEvent::CAUSE_SUICIDE || $cause == EntityDamageEvent::CAUSE_SUFFOCATION || $cause == EntityDamageEvent::CAUSE_CONTACT || $cause == EntityDamageEvent::CAUSE_DROWNING) {
-                        $ev->setCancelled();
-                        break;
-                    }
-                    if ($cause == EntityDamageEvent::CAUSE_STARVATION && $this->pg->configs['starvation.can.damage.inArena.players'] == false) {
+                    $cause = (int)$ev->getCause();
+                    if (in_array($cause, $this->pg->configs['damage.cancelled.causes'])) {
                         $ev->setCancelled();
                         break;
                     }

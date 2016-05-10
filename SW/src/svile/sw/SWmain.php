@@ -65,7 +65,7 @@ use pocketmine\math\Vector3;
 class SWmain extends PluginBase
 {
     /** Plugin Version */
-    const SW_VERSION = 0.6;
+    const SW_VERSION = '0.6dev';
 
     /** @var SWcommands */
     private $commands;
@@ -168,7 +168,7 @@ class SWmain extends PluginBase
             'needed.players.to.run.countdown' => 1,
             'join.max.health' => 20,
             'join.health' => 20,
-            'starvation.can.damage.inArena.players' => false,
+            'damage.cancelled.causes' => [0, 3, 4, 8, 12, 15],
             'drops.on.death' => false,
             'player.drop.item' => true,
             'chest.refill' => true,

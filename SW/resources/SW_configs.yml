@@ -13,7 +13,7 @@
 # @E-mail: thesville@gmail.com
 # @Github: https://github.com/svilex/SkyWars-PocketMine
 
-CONFIG_VERSION: 0.600000
+CONFIG_VERSION: 0.6dev
 
 
 ###########################################_GAME_###########################################
@@ -51,8 +51,31 @@ join.max.health: 20
 join.health: 99
 # ------------------------------------------\HEALTH-----------------------------------------
 
-# Players playing a SkyWars game won't be damaged from starvation if this option is "false".
-starvation.can.damage.inArena.players: false
+# Players playing a SkyWars game won't be damaged from the following causes.
+# 0 = CAUSE_CONTACT
+# 1 = CAUSE_ENTITY_ATTACK
+# 2 = CAUSE_PROJECTILE
+# 3 = CAUSE_SUFFOCATION
+# 4 = CAUSE_FALL
+# 5 = CAUSE_FIRE
+# 6 = CAUSE_FIRE_TICK
+# 7 = CAUSE_LAVA
+# 8 = CAUSE_DROWNING
+# 9 = CAUSE_BLOCK_EXPLOSION
+# 10 = CAUSE_ENTITY_EXPLOSION
+# 11 = CAUSE_VOID
+# 12 = CAUSE_SUICIDE
+# 13 = CAUSE_MAGIC
+# 14 = CAUSE_CUSTOM
+# 15 = CAUSE_STARVATION
+# 16 = CAUSE_LIGHTNING
+damage.cancelled.causes:
+- 0
+- 3
+- 4
+- 8
+- 12
+- 15
 
 # Players playing a SkyWars game won't drop anything on death if this option = "false".
 drops.on.death: false
