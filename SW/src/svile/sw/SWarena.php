@@ -370,7 +370,7 @@ class SWarena
         $player->setMaxHealth($this->pg->configs['join.max.health']);
         $player->setMaxHealth($player->getMaxHealth());
         $player->setHealth($this->pg->configs['join.health']);
-        $player->setFood($player->getMaxFood());
+        $player->setFood(20);
 
         $this->pg->getServer()->loadLevel($this->world);
         $level = $this->pg->getServer()->getLevelByName($this->world);
@@ -432,8 +432,13 @@ class SWarena
             $p->removeAllEffects();
             $p->setMaxHealth(20);
             $p->setMaxHealth($p->getMaxHealth());
-            $p->setHealth($p->getMaxHealth());
-            $p->setFood($p->getMaxFood());
+            if ($p->isAlive()) {
+                $p->setSprinting(false);
+                $p->setSneaking(false);
+                $p->extinguish();
+                $p->setHealth($p->getMaxHealth());
+                $p->setFood(20);
+            }
             if (!$spectate) {
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
             } elseif ($this->GAME_STATE == 1 && 1 < count($this->players)) {
@@ -463,7 +468,7 @@ class SWarena
             $p->setMaxHealth($this->pg->configs['join.max.health']);
             $p->setMaxHealth($p->getMaxHealth());
             $p->setHealth($this->pg->configs['join.health']);
-            $p->setFood($p->getMaxFood());
+            $p->setFood(20);
             $p->sendMessage($this->pg->lang['game.start']);
             if ($p->getLevel()->getBlock($p->floor()->subtract(0, 2))->getId() == 20)
                 $p->getLevel()->setBlock($p->floor()->subtract(0, 2), Block::get(0), true, false);

@@ -163,7 +163,7 @@ class SWmain extends PluginBase
         */
         $this->configs = new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML, [
             'CONFIG_VERSION' => self::SW_VERSION,
-            'banned.commands.while.in.game' => array('/hub', '/lobby', '/spawn', '/tpa', '/tp', '/tpaccept', '/back', '/home', '/f'),
+            'banned.commands.while.in.game' => array('/hub', '/lobby', '/spawn', '/tpa', '/tp', '/tpaccept', '/back', '/home', '/f', '/kill'),
             'start.when.full' => true,
             'needed.players.to.run.countdown' => 1,
             'join.max.health' => 20,
@@ -179,6 +179,7 @@ class SWmain extends PluginBase
             'reward.command' => '/',
             '1st line' => '§l§c[§bSW§c]',
             '2nd line' => '§l§e{SWNAME}',
+            'sign.tick' => false,
             'sign.knockBack' => true,
             'knockBack.radius.from.sign' => 1,
             'knockBack.intensity' => 0b10,

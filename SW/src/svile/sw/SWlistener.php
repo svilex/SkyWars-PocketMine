@@ -401,7 +401,7 @@ class SWlistener implements Listener
 
                     endswitch;
 
-                    foreach ($p->getLevel()->getPlayers() as $pl)
+                    foreach ($this->pg->getServer()->getLevelByName($a->getWorld())->getPlayers() as $pl)
                         $pl->sendMessage($message);
 
                     if (!$this->pg->configs['drops.on.death'])

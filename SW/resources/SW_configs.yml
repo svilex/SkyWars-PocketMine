@@ -30,6 +30,7 @@ banned.commands.while.in.game:
 - /back
 - /home
 - /f
+- /kill
 
 # If this option is "true" , the game will start once all the slots will be finished , regardless from countdown.
 start.when.full: true
@@ -115,6 +116,11 @@ reward.command: '/'
 # Signs format.
 1st line: '§l§c[§bSW§c]'
 2nd line: '§l§e{SWNAME}'
+
+# Refreshes signs each 5 seconds.
+# Hint : This is useful if you often see signs displaying wrong info about SW games.
+# Hint : Only enable if you've noticed the above problem.
+sign.tick: false
 
 # This pushes players away from signs , like when damaged in PvP.
 sign.knockBack: true

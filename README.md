@@ -7,7 +7,8 @@ This is a [PocketMine-MP](https://github.com/PocketMine/PocketMine-MP) (or forks
 
 ######This plugin was tested (and should work) on:
 - [ ] **[PocketMine-MP](https://github.com/PocketMine/PocketMine-MP)**
-- [x] **[ClearSky](https://github.com/ClearSkyTeam/ClearSky/)**
+- [ ] **[ImagicalMine](https://github.com/ImagicalCorp/ImagicalMine)**
+- [x] **[ClearSky](https://github.com/ClearSkyTeam/ClearSky)**
 - [x] **[Genisys](https://github.com/iTXTech/Genisys)**
 
 ---

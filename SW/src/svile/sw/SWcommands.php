@@ -440,7 +440,7 @@ class SWcommands
                 }
 
                 $SWname = array_shift($args);
-                if (!($SWname && ctype_alpha($SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10 && array_key_exists($SWname, $this->pg->arenas))) {
+                if (!array_key_exists($SWname, $this->pg->arenas)) {
                     if ($SWname == 'all') {
                         //Deleting SW signs blocks
                         foreach ($this->pg->signs as $loc => $name) {
@@ -461,6 +461,7 @@ class SWcommands
                     }
                     break;
                 }
+                $this->pg->arenas[$SWname]->stop();
                 foreach ($this->pg->signs as $loc => $name) {
                     if ($SWname == $name) {
                         $ex = explode(':', $loc);
