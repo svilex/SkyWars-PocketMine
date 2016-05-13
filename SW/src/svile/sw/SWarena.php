@@ -430,16 +430,19 @@ class SWarena
             $p->setGamemode($p->getServer()->getDefaultGamemode());
             $p->getInventory()->clearAll();
             $p->removeAllEffects();
-            $p->setMaxHealth(20);
-            $p->setMaxHealth($p->getMaxHealth());
             if ($p->isAlive()) {
                 $p->setSprinting(false);
                 $p->setSneaking(false);
                 $p->extinguish();
-                $p->setHealth($p->getMaxHealth());
-                $p->setFood(20);
+                $p->setMaxHealth(20);
+                $p->setMaxHealth($p->getMaxHealth());
+                if ($p->getAttributeMap() != null) {//just to be really sure
+                    $p->setHealth($p->getMaxHealth());
+                    $p->setFood(20);
+                }
             }
             if (!$spectate) {
+                //TODO: Invisibility issues for death players
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
             } elseif ($this->GAME_STATE == 1 && 1 < count($this->players)) {
                 $p->setGamemode(Player::CREATIVE);// :D
@@ -450,6 +453,10 @@ class SWarena
                 $pk = new \pocketmine\network\protocol\ContainerSetContentPacket();
                 $pk->windowid = \pocketmine\network\protocol\ContainerSetContentPacket::SPECIAL_CREATIVE;
                 $p->dataPacket($pk);
+                $idmeta = explode(':', $this->pg->configs['spectator.quit.item']);
+                $p->getInventory()->setHeldItemIndex(1);
+                $p->getInventory()->setItem(0, Item::get((int)$idmeta[0], (int)$idmeta[1], 1));
+                $p->getInventory()->setHotbarSlotIndex(0, 0);
                 $p->getInventory()->sendContents($p);
                 $p->getInventory()->sendContents($p->getViewers());
                 $p->sendMessage($this->pg->lang['death.spectator']);

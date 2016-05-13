@@ -48,6 +48,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\inventory\InventoryPickupItemEvent;
+use pocketmine\event\player\PlayerItemHeldEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -197,10 +198,26 @@ class SWlistener implements Listener
     {
         if (($p = $ev->getInventory()->getHolder()) instanceof Player) {
             foreach ($this->pg->arenas as $a) {
-                if ($a->inArena($p->getName()) == 2) {
-                    $ev->setCancelled();
+                if ($f = $a->inArena($p->getName())) {
+                    if ($f == 2)
+                        $ev->setCancelled();
                     break;
                 }
+            }
+        }
+    }
+
+    public function onItemHeld(PlayerItemHeldEvent $ev)
+    {
+        foreach ($this->pg->arenas as $a) {
+            if ($f = $a->inArena($ev->getPlayer()->getName())) {
+                if ($f == 2) {
+                    if (($ev->getItem()->getId() . ':' . $ev->getItem()->getDamage()) == $this->pg->configs['spectator.quit.item'])
+                        $a->closePlayer($ev->getPlayer());
+                    $ev->setCancelled();
+                    $ev->getPlayer()->getInventory()->setHeldItemIndex(1);
+                }
+                break;
             }
         }
     }

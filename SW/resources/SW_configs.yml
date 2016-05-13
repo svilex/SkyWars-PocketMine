@@ -96,6 +96,10 @@ chest.refill.rate: 240
 # N.B : So , I recommend you to set "world.generator.air" to true.
 death.spectator: true
 
+# The spectator will be able to select this item to quit from the SW game.
+# N.B : Respect syntax " id:meta "
+spectator.quit.item: '120:0'
+
 # ------------------------------------------REWARDS------------------------------------------
 # Award winning players' switch.
 # N.B : You need a supported economy plugin for this to work.

@@ -174,6 +174,7 @@ class SWmain extends PluginBase
             'chest.refill' => true,
             'chest.refill.rate' => 0xf0,
             'death.spectator' => true,
+            'spectator.quit.item' => '120:0',
             'reward.winning.players' => false,
             'reward.value' => 100,
             'reward.command' => '/',
