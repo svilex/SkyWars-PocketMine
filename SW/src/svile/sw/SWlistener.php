@@ -168,7 +168,7 @@ class SWlistener implements Listener
             foreach ($this->pg->arenas as $a) {
                 if ($a->inArena($ev->getEntity()->getName())) {
                     //Allow near teleport
-                    if ($ev->getFrom()->distanceSquared($ev->getTo()) < 10)
+                    if ($ev->getFrom()->distanceSquared($ev->getTo()) < 20)
                         break;
                     $ev->setCancelled();
                     break;

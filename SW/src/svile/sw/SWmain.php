@@ -146,6 +146,7 @@ class SWmain extends PluginBase
             $this->getLogger()->notice('You are using old configs, deleting them.Make sure to delete old arenas if aren\'t working');
             @unlink($this->getDataFolder() . 'SW_configs.yml');
             @unlink($this->getDataFolder() . 'SW_lang.yml');
+            $this->saveResource('SW_configs.yml', true);
         } elseif ($v == '1st') {
             $this->saveResource('SW_configs.yml', true);
         }
