@@ -80,7 +80,7 @@ class SWmain extends PluginBase
     public $lang;
     /** @var \SQLite3 */
     private $db;
-    /** @var SWeconomy */
+    /** @var \svile\sw\utils\SWeconomy */
     public $economy;
 
     public function onLoad()
@@ -246,8 +246,8 @@ class SWmain extends PluginBase
         //svile\sw\SWcommands
         $this->commands = new SWcommands($this);
         if ($this->configs['reward.winning.players']) {
-            //svile\sw\SWeconomy
-            $this->economy = new SWeconomy($this);
+            //\svile\sw\utils\SWeconomy
+            $this->economy = new \svile\sw\utils\SWeconomy($this);
             if ($this->economy->getApiVersion()) {
                 $this->getLogger()->info('§aUsing: §f' . $this->economy->getApiVersion(true) . '§a as economy api');
             } else {
@@ -262,7 +262,7 @@ class SWmain extends PluginBase
 
         //THANKS TO Dan FOR THE HINT
         //https://github.com/thebigsmileXD
-        Block::$list[Block::GLASS] = Glass::class;
+        Block::$list[Block::GLASS] = \svile\sw\utils\Glass::class;
 
         $this->getLogger()->info(str_replace('\n', PHP_EOL, @gzinflate(@base64_decode("\x70\x5a\x42\x4e\x43\x6f\x4d\x77\x45\x45\x61\x76knVBs3dVS8VFWym00I0gUaZJMD8Sk1JP5D08WUlqFm7bWb7vzTcwtarVMotl7na/zLoMubNMmwwt83N8cQGRn3\x67fYBNoE/EdBFBDZFMa7YZgMGuHMcPYrlEqAW+qikQSLoJrGfhIwJ56lnZaRqvklrl200gD8tK38I1v/fQgZkyuuuvBXriKR9\x6f1QYNwlCvUTiis+D5SVPnhXBz//NcH"))));
     }

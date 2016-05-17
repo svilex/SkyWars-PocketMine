@@ -38,16 +38,27 @@
  *
  */
 
-namespace svile\sw;
+namespace svile\sw\utils;
 
-
-use pocketmine\block\Glass as PmGlass;
-
-
-class Glass extends PmGlass
+class RawSkin extends Skin
 {
-    public function canPassThrough()
+    /**
+     * RawSkin constructor.
+     * @param string $bytes
+     * @param string $path
+     */
+    public function __construct($bytes, $path)
     {
-        return true;
+        parent::__construct($bytes, $path);
+    }
+
+    public function load()
+    {
+        // TODO: Implement load() method.
+    }
+
+    public function save()
+    {
+        // TODO: Implement save() method.
     }
 }

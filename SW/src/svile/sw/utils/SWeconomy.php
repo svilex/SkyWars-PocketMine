@@ -38,9 +38,11 @@
  *
  */
 
-namespace svile\sw;
+namespace svile\sw\utils;
 
 
+use svile\sw\SWmain;
+use pocketmine\plugin\Plugin;
 use pocketmine\Player;
 
 
@@ -60,19 +62,19 @@ class SWeconomy
     {
         $this->pg = $plugin;
         $api = $this->pg->getServer()->getPluginManager()->getPlugin('EconomyAPI');
-        if ($api != false && $api instanceof \pocketmine\plugin\Plugin && $api->getDescription()->getVersion() == '2.0.9') {
+        if ($api != false && $api instanceof Plugin && $api->getDescription()->getVersion() == '2.0.9') {
             $this->ver = self::EconomyAPI;
             $this->api = $api;
             return;
         }
         $api = $this->pg->getServer()->getPluginManager()->getPlugin('PocketMoney');
-        if ($api != false && $api instanceof \pocketmine\plugin\Plugin && $api->getDescription()->getVersion() == '4.0.1') {
+        if ($api != false && $api instanceof Plugin && $api->getDescription()->getVersion() == '4.0.1') {
             $this->ver = self::PocketMoney;
             $this->api = $api;
             return;
         }
         $api = $this->pg->getServer()->getPluginManager()->getPlugin('MassiveEconomy');
-        if ($api != false && $api instanceof \pocketmine\plugin\Plugin && $api->getDescription()->getVersion() == '1.0 R3') {
+        if ($api != false && $api instanceof Plugin && $api->getDescription()->getVersion() == '1.0 R3') {
             $this->ver = self::MassiveEconomy;
             $this->api = $api;
             return;
