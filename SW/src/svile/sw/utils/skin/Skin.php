@@ -38,7 +38,7 @@
  *
  */
 
-namespace svile\sw\utils;
+namespace svile\sw\utils\skin;
 
 
 use pocketmine\entity\Human;
@@ -53,17 +53,40 @@ abstract class Skin
 
     /**
      * Skin constructor.
-     * @param string $bytes
      * @param string $path
+     * @param string $bytes
      */
-    public function __construct($bytes = '', $path = '')
+    public function __construct($path, $bytes = '')
     {
-        return $this->setBytes((string)$bytes) && $this->setPath((string)$path);
+        return extension_loaded('gd') && $this->setPath((string)$path) && $this->setBytes((string)$bytes);
     }
 
     public function __toString()
     {
-        return \basename($this->getPath());
+        return basename($this->getPath());
+    }
+
+    /**
+     * @param bool $real
+     * @return string
+     */
+    final public function getPath($real = true)
+    {
+        if ($real)
+            return (string)realpath($this->path);
+        return (string)$this->path;
+    }
+
+    /**
+     * @param string $path
+     * @return bool
+     */
+    final public function setPath($path)
+    {
+        if (!is_dir(pathinfo($path, PATHINFO_DIRNAME)))
+            return false;
+        $this->path = (string)$path;
+        return true;
     }
 
     /**
@@ -78,41 +101,48 @@ abstract class Skin
      * @param string $bytes
      * @return bool
      */
-    final public function setBytes($bytes = '')
+    final public function setBytes($bytes)
     {
-        if (\strlen($bytes) != 64 * 64 * 4 && \strlen($bytes) != 64 * 32 * 4)
+        if (strlen($bytes) != 64 * 32 * 4 && strlen($bytes) != 64 * 64 * 4)
             return false;
         $this->bytes = (string)$bytes;
         return true;
     }
 
     /**
-     * @return string
+     * @return int
+     *
+     * 0 = NULL
+     * 1 = PNG
+     * 2 = RAW
      */
-    final public function getPath()
+    final public function getType()
     {
-        return (string)\realpath($this->path);
-    }
-
-    /**
-     * @param string $path
-     * @return bool
-     */
-    final public function setPath($path = '')
-    {
-        if (!\is_dir(\pathinfo($path, PATHINFO_DIRNAME)))
-            return false;
-        $this->path = (string)$path;
-        return true;
+        if (!is_file($this->getPath()))
+            return 0;
+        $png = @getimagesize($this->getPath());
+        if (($png[0] == 64 && $png[1] == 32 && $png[2] == IMAGETYPE_PNG) && (strtolower(pathinfo($this->getPath(), PATHINFO_EXTENSION)) == 'png') && ((function_exists('mime_content_type') && @mime_content_type($this->getPath()) == 'image/png') || (function_exists('exif_imagetype') && @exif_imagetype($this->getPath()) == IMAGETYPE_PNG)))
+            return 1;
+        $byteslen = strlen(@zlib_decode(@file_get_contents($this->getPath())));
+        if ($byteslen == 64 * 32 * 4 || $byteslen == 64 * 64 * 4)
+            return 2;
+        return 0;
     }
 
     /**
      * @param Human $h
      * @param bool $slim
+     * @return bool
      */
     final public function apply(Human $h, $slim = false)
     {
-        $h->setSkin($this->getBytes(), (bool)$slim);
+        if (!$this->load())
+            return false;
+        (bool)$slim ? $slim = 'Standard_CustomSlim' : $slim = 'Standard_Custom';
+        $h->setSkin($this->getBytes(), $slim);
+        $h->despawnFromAll();
+        $h->spawnToAll();
+        return true;
     }
 
     abstract public function load();

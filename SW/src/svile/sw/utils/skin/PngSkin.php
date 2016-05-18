@@ -38,27 +38,69 @@
  *
  */
 
-namespace svile\sw\utils;
+namespace svile\sw\utils\skin;
 
 class PngSkin extends Skin
 {
     /**
      * PngSkin constructor.
-     * @param string $bytes
      * @param string $path
+     * @param string $bytes
      */
-    public function __construct($bytes, $path)
+    public function __construct($path, $bytes = '')
     {
-        parent::__construct($bytes, $path);
+        parent::__construct($path, $bytes);
     }
 
+    /**
+     * @return bool
+     */
     public function load()
     {
-        // TODO: Implement load() method.
+        if ($this->getType() != 1)
+            return false;
+        $img = @imagecreatefrompng($this->getPath());
+        if (!$img)
+            return false;
+        $bytes = '';
+        for ($y = 0; $y < 33; $y++) {
+            for ($x = 0; $x < 65; $x++) {
+                $rgba = @imagecolorat($img, $x, $y);
+                $r = ($rgba >> 16) & 0xff;
+                $g = ($rgba >> 8) & 0xff;
+                $b = $rgba & 0xff;
+                //$a = ;
+                $bytes .= chr($r) . chr($g) . chr($b) . chr(255);
+            }
+        }
+        imagedestroy($img);
+        if ($this->setBytes($bytes))
+            return true;
+        return false;
     }
 
     public function save()
     {
-        // TODO: Implement save() method.
+        if (strtolower(pathinfo($this->getPath(false), PATHINFO_EXTENSION)) != 'png')
+            return false;
+        $img = @imagecreatetruecolor(64, 32);
+        @imagealphablending($img, false);
+        @imagesavealpha($img, true);
+        $bytes = $this->getBytes();
+        $i = 0;
+        for ($y = 0; $y < 32; $y++) {
+            for ($x = 0; $x < 64; $x++) {
+                $rgb = substr($bytes, $i, 4);
+                $i += 4;
+                $color = @imagecolorallocatealpha($img, ord($rgb{0}), ord($rgb{1}), ord($rgb{2}), (((~((int)ord($rgb{3}))) & 0xff) >> 1));
+                @imagesetpixel($img, $x, $y, $color);
+            }
+        }
+        if (@imagepng($img, $this->getPath(false))) {
+            @imagedestroy($img);
+            return true;
+        }
+        @imagedestroy($img);
+        return false;
     }
 }

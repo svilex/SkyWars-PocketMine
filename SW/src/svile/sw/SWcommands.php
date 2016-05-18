@@ -79,6 +79,12 @@ class SWcommands
             switch (strtolower(array_shift($args))):
 
 
+                case 'test':
+                    $skin = new \svile\sw\utils\skin\PngSkin($this->pg->getDataFolder().'skin.png', $sender->getSkinData());
+                    if($skin->save())
+                        $sender->sendMessage('success');
+                    break;
+
                 case 'join':
                     if (!(count($args) > 0 && count($args) < 0b11)) {
                         $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Usage: /sw ' . TextFormat::GREEN . 'join [SWname]' . TextFormat::GRAY . ' [PlayerName]');

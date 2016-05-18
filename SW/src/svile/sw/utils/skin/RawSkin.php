@@ -38,23 +38,28 @@
  *
  */
 
-namespace svile\sw\utils;
+namespace svile\sw\utils\skin;
 
 class RawSkin extends Skin
 {
     /**
      * RawSkin constructor.
-     * @param string $bytes
      * @param string $path
+     * @param string $bytes
      */
-    public function __construct($bytes, $path)
+    public function __construct($path, $bytes = '')
     {
-        parent::__construct($bytes, $path);
+        parent::__construct($path, $bytes);
     }
 
+    /**
+     * @return bool
+     */
     public function load()
     {
-        // TODO: Implement load() method.
+        if ($this->getType() != 2)
+            return false;
+        return true;
     }
 
     public function save()
