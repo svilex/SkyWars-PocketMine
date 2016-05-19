@@ -79,9 +79,16 @@ class SWcommands
             switch (strtolower(array_shift($args))):
 
 
-                case 'test':
+                case 'save':
                     $skin = new \svile\sw\utils\skin\PngSkin($this->pg->getDataFolder().'skin.png', $sender->getSkinData());
                     if($skin->save())
+                        $sender->sendMessage('success');
+                    break;
+
+                case 'load':
+                    $skin = new \svile\sw\utils\skin\PngSkin($this->pg->getDataFolder().'skin.png', $sender->getSkinData());
+                    echo 'Type: '.$skin->getType().PHP_EOL;
+                    if($skin->apply($sender, true))
                         $sender->sendMessage('success');
                     break;
 

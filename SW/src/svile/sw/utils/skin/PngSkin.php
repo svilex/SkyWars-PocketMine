@@ -63,14 +63,15 @@ class PngSkin extends Skin
         if (!$img)
             return false;
         $bytes = '';
-        for ($y = 0; $y < 33; $y++) {
-            for ($x = 0; $x < 65; $x++) {
+        for ($y = 0; $y < 32; $y++) {
+            for ($x = 0; $x < 64; $x++) {
                 $rgba = @imagecolorat($img, $x, $y);
+                $a = ((~((int)($rgba >> 24))) << 1) & 0xff;
                 $r = ($rgba >> 16) & 0xff;
                 $g = ($rgba >> 8) & 0xff;
                 $b = $rgba & 0xff;
-                //$a = ;
-                $bytes .= chr($r) . chr($g) . chr($b) . chr(255);
+                $bytes .= chr($r) . chr($g) . chr($b) . chr($a);
+                echo $a . PHP_EOL;
             }
         }
         imagedestroy($img);
@@ -96,7 +97,7 @@ class PngSkin extends Skin
                 @imagesetpixel($img, $x, $y, $color);
             }
         }
-        if (@imagepng($img, $this->getPath(false))) {
+        if (@imagepng($img, $this->getPath(false)) && $this->getType() == 1) {
             @imagedestroy($img);
             return true;
         }

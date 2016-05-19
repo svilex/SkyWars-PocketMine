@@ -41,7 +41,7 @@
 namespace svile\sw\utils\skin;
 
 
-use pocketmine\entity\Human;
+use pocketmine\Player;
 
 
 abstract class Skin
@@ -120,28 +120,44 @@ abstract class Skin
     {
         if (!is_file($this->getPath()))
             return 0;
-        $png = @getimagesize($this->getPath());
-        if (($png[0] == 64 && $png[1] == 32 && $png[2] == IMAGETYPE_PNG) && (strtolower(pathinfo($this->getPath(), PATHINFO_EXTENSION)) == 'png') && ((function_exists('mime_content_type') && @mime_content_type($this->getPath()) == 'image/png') || (function_exists('exif_imagetype') && @exif_imagetype($this->getPath()) == IMAGETYPE_PNG)))
-            return 1;
-        $byteslen = strlen(@zlib_decode(@file_get_contents($this->getPath())));
-        if ($byteslen == 64 * 32 * 4 || $byteslen == 64 * 64 * 4)
-            return 2;
+        $ext = strtolower(pathinfo($this->getPath(), PATHINFO_EXTENSION));
+        if ($ext == 'png') {
+            $f = fopen($this->getPath(), 'rb');
+            $header = fread($f, 8);
+            fclose($f);
+            $png = @getimagesize($this->getPath());
+            if (($png[0] == 64 && $png[1] == 32 && $png[2] == IMAGETYPE_PNG) && ($header == "\x89PNG\x0d\x0a\x1a\x0a"))
+                return 1;
+        } elseif ($ext == 'skin') {
+            $byteslen = strlen(@zlib_decode(@file_get_contents($this->getPath())));
+            if (($byteslen == 64 * 32 * 4 || $byteslen == 64 * 64 * 4))
+                return 2;
+        }
         return 0;
     }
 
     /**
-     * @param Human $h
+     * @param Player $p
      * @param bool $slim
      * @return bool
      */
-    final public function apply(Human $h, $slim = false)
+    final public function apply(Player $p, $slim = false)
     {
         if (!$this->load())
             return false;
         (bool)$slim ? $slim = 'Standard_CustomSlim' : $slim = 'Standard_Custom';
-        $h->setSkin($this->getBytes(), $slim);
-        $h->despawnFromAll();
-        $h->spawnToAll();
+        $p->setSkin($this->getBytes(), $slim);
+        //From ClearSky , needed for genisys ...
+        //---
+        foreach ($p->getServer()->getOnlinePlayers() as $player) {
+            $p->getServer()->removePlayerListData($player->getUniqueId());
+        }
+        foreach ($p->getServer()->getOnlinePlayers() as $player) {
+            $p->getServer()->sendFullPlayerListData($player);
+        }
+        //---
+        $p->despawnFromAll();
+        $p->spawnToAll();
         return true;
     }
 
