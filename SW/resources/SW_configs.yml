@@ -118,8 +118,8 @@ reward.command: '/'
 ########################################_JOIN-SIGNS_########################################
 
 # Signs format.
-1st line: '§l§c[§bSW§c]'
-2nd line: '§l§e{SWNAME}'
+1st_line: §l§c[§bSW§c]
+2nd_line: §l§e{SWNAME}
 
 # Refreshes signs each 5 seconds.
 # Hint : This is useful if you often see signs displaying wrong info about SW games.

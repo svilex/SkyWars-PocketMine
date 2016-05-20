@@ -119,8 +119,8 @@ class SWlistener implements Listener
             $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'SW join sign created !');
 
         //Sets sign format
-        $ev->setLine(0, $this->pg->configs['1st line']);
-        $ev->setLine(1, str_replace('{SWNAME}', $SWname, $this->pg->configs['2nd line']));
+        $ev->setLine(0, $this->pg->configs['1st_line']);
+        $ev->setLine(1, str_replace('{SWNAME}', $SWname, $this->pg->configs['2nd_line']));
         $ev->setLine(2, TextFormat::GREEN . '0' . TextFormat::BOLD . TextFormat::DARK_GRAY . '/' . TextFormat::RESET . TextFormat::GREEN . $this->pg->arenas[$SWname]->getSlot());
         $ev->setLine(3, TextFormat::WHITE . 'Tap to join');
         $this->pg->refreshSigns(true);
