@@ -369,9 +369,10 @@ final class SWarena
             $player->removeAllEffects();
         $player->setMaxHealth($this->pg->configs['join.max.health']);
         $player->setMaxHealth($player->getMaxHealth());
-        $player->setHealth($this->pg->configs['join.health']);
-        $player->setFood(20);
-
+        if ($player->getAttributeMap() != null) {//just to be really sure
+            $player->setHealth($this->pg->configs['join.health']);
+            $player->setFood(20);
+        }
         $this->pg->getServer()->loadLevel($this->world);
         $level = $this->pg->getServer()->getLevelByName($this->world);
         $tmp = array_shift($this->spawns);
@@ -474,8 +475,10 @@ final class SWarena
         foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
             $p->setMaxHealth($this->pg->configs['join.max.health']);
             $p->setMaxHealth($p->getMaxHealth());
-            $p->setHealth($this->pg->configs['join.health']);
-            $p->setFood(20);
+            if ($p->getAttributeMap() != null) {//just to be really sure
+                $p->setHealth($this->pg->configs['join.health']);
+                $p->setFood(20);
+            }
             $p->sendMessage($this->pg->lang['game.start']);
             if ($p->getLevel()->getBlock($p->floor()->subtract(0, 2))->getId() == 20)
                 $p->getLevel()->setBlock($p->floor()->subtract(0, 2), Block::get(0), true, false);
