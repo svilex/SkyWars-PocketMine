@@ -371,6 +371,7 @@ class SWcommands
                 }
                 break;
 
+
             case 'delete':
                 /*
                      _        _        _

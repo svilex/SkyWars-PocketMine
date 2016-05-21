@@ -521,16 +521,6 @@ final class SWarena
         //Other players
         foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p)
             $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
-        /*
-        UNCOMMENT THIS TO BE SURE ALL PLAYERS CAN SEE EACH OTHER
-        foreach ($this->pg->getServer()->getOnlinePlayers() as $p) {
-            foreach ($this->pg->getServer()->getOnlinePlayers() as $p2) {
-                if (!$p->canSee($p2)) {
-                    $p->showPlayer($p2);
-                }
-            }
-        }
-        */
         $this->reload();
         return true;
     }
