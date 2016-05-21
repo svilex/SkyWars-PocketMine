@@ -1,6 +1,6 @@
 # SkyWars - PocketMine plugin
 ![skywars](https://raw.githubusercontent.com/svilex/res/master/skywars.png)
-
+[![Build Status](https://travis-ci.org/svilex/SkyWars-PocketMine.svg?branch=master)](https://travis-ci.org/svilex/SkyWars-PocketMine)
 ---
 ###About
 This is a [PocketMine-MP](https://github.com/PocketMine/PocketMine-MP) (or forks) plugin that allows you to simply create multiple SkyWars mini-games for mcpe 0.15! :grin:

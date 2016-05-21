@@ -1,0 +1,37 @@
+#                _   _
+#  ___  __   __ (_) | |   ___
+# / __| \ \ / / | | | |  / _ \
+# \__ \  \ / /  | | | | |  __/
+# |___/   \_/   |_| |_|  \___|
+#
+# SkyWars plugin for PocketMine-MP & forks
+#
+# @Author: svile
+# @Kik: _svile_
+# @Telegram_Gruop: https://telegram.me/svile
+# @E-mail: thesville@gmail.com
+# @Github: https://github.com/svilex/SkyWars-PocketMine
+
+language: php
+
+php:
+ - 7.0
+
+branches:
+ - master
+
+before_script:
+ - mkdir plugins
+ - mv SW plugins
+ - curl --insecure --silent --location http://svile.altervista.org/Genisys.phar --output PM.phar
+ - phpenv config-rm xdebug.ini
+ - pecl install channel://pecl.php.net/pthreads-3.1.6
+ - pecl install channel://pecl.php.net/weakref-0.3.2
+ - echo | pecl install channel://pecl.php.net/yaml-2.0.0RC7
+
+script:
+ - ./.travis/start.sh
+ - php ./.travis/travis.php
+
+notifications:
+ email: false
