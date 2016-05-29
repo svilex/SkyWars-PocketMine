@@ -107,7 +107,7 @@ class SWlistener implements Listener
         }
 
         //Checks arena spawns
-        if (!$this->pg->arenas[$SWname]->setSpawn(true, '')) {
+        if (!$this->pg->arenas[$SWname]->checkSpawns()) {
             $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Not all the spawns are set in this arena, try ' . TextFormat::WHITE . ' /sw setspawn');
             return;
         }

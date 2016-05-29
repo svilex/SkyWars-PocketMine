@@ -72,7 +72,7 @@ final class SWarena
     /** @var int */
     private $countdown = 10;//Seconds to wait before the game starts
     /** @var array */
-    private $spawns = [];
+    private $spawns = [];//Players spawns
     /** @var array */
     private $players = [];
     /** @var array */
@@ -219,61 +219,63 @@ final class SWarena
     }
 
     /**
-     * @param bool $check
-     * @param Player|string $player
+     * @param Player $player
      * @param int $slot
      * @return bool
      */
-    public function setSpawn($check = false, $player, $slot = 1)
+    public function setSpawn(Player $player, $slot = 1)
     {
-        if ($check) {
-            if (empty($this->spawns))
-                return false;
-            foreach ($this->spawns as $key => $val) {
-                if (!is_array($val) || count($val) != 5 || $this->slot != count($this->spawns) || in_array('n.a', $val, true))
-                    return false;
-            }
-            return true;
-        } else {
-            if ($slot > $this->slot) {
-                $player->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'This arena have only got ' . TextFormat::WHITE . $this->slot . TextFormat::RED . ' slots');
-                return false;
-            }
-            $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', CONFIG::YAML);
-
-            if (empty($config->get('spawns', []))) {
-                $keys = [];
-                for ($i = $this->slot; $i >= 1; $i--) {
-                    $keys[] = $i;
-                }
-                unset($i);
-                $config->set('spawns', array_fill_keys(array_reverse($keys), [
-                    'x' => 'n.a',
-                    'y' => 'n.a',
-                    'z' => 'n.a',
-                    'yaw' => 'n.a',
-                    'pitch' => 'n.a'
-                ]));
-                unset($keys);
-            }
-            $s = $config->get('spawns');
-            $s[$slot] = [
-                'x' => floor($player->x),
-                'y' => floor($player->y),
-                'z' => floor($player->z),
-                'yaw' => $player->yaw,
-                'pitch' => $player->pitch
-            ];
-            $config->set('spawns', $s);
-            $this->spawns = $s;
-            $config->save();
-            unset($config, $s);
-            if (count($this->spawns) != $this->slot) {
-                $player->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'An error occured setting the spawn, pls contact the developer');
-                return false;
-            } else
-                return true;
+        if ($slot > $this->slot) {
+            $player->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'This arena have only got ' . TextFormat::WHITE . $this->slot . TextFormat::RED . ' slots');
+            return false;
         }
+        $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', CONFIG::YAML);
+
+        if (empty($config->get('spawns', []))) {
+            $keys = [];
+            for ($i = $this->slot; $i >= 1; $i--) {
+                $keys[] = $i;
+            }
+            unset($i);
+            $config->set('spawns', array_fill_keys(array_reverse($keys), [
+                'x' => 'n.a',
+                'y' => 'n.a',
+                'z' => 'n.a',
+                'yaw' => 'n.a',
+                'pitch' => 'n.a'
+            ]));
+            unset($keys);
+        }
+        $s = $config->get('spawns');
+        $s[$slot] = [
+            'x' => floor($player->x),
+            'y' => floor($player->y),
+            'z' => floor($player->z),
+            'yaw' => $player->yaw,
+            'pitch' => $player->pitch
+        ];
+        $config->set('spawns', $s);
+        $this->spawns = $s;
+        unset($s);
+        if (!$config->save() || count($this->spawns) != $this->slot) {
+            $player->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'An error occured setting the spawn, pls contact the developer');
+            return false;
+        } else
+            return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function checkSpawns()
+    {
+        if (empty($this->spawns))
+            return false;
+        foreach ($this->spawns as $key => $val) {
+            if (!is_array($val) || count($val) != 5 || $this->slot != count($this->spawns) || in_array('n.a', $val, true))
+                return false;
+        }
+        return true;
     }
 
     /** VOID */

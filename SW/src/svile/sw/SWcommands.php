@@ -329,7 +329,7 @@ class SWcommands
                     }
                 }
                 if (!($SWname && ctype_alpha($SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10 && array_key_exists($SWname, $this->pg->arenas))) {
-                    $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena not found here');
+                    $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena not found here, try ' . TextFormat::WHITE . '/sw create');
                     unset($SWname);
                     break;
                 }
@@ -343,10 +343,10 @@ class SWcommands
                 $slot += 0;
 
                 if ($sender->getLevel()->getName() == $this->pg->arenas[$SWname]->getWorld()) {
-                    if ($this->pg->arenas[$SWname]->setSpawn(false, $sender, $slot)) {
+                    if ($this->pg->arenas[$SWname]->setSpawn($sender, $slot)) {
                         $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'New spawn: ' . TextFormat::WHITE . $slot . TextFormat::GREEN . ' In arena: ' . TextFormat::WHITE . $SWname);
-                        if ($this->pg->arenas[$SWname]->setSpawn(true, ''))
-                            $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'I found all the spawns for Arena: ' . TextFormat::WHITE . $SWname . TextFormat::GREEN . ' , now you can create a join sign!');
+                        if ($this->pg->arenas[$SWname]->checkSpawns())
+                            $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'I found all the spawns for Arena: ' . TextFormat::WHITE . $SWname . TextFormat::GREEN . ', now you can create a join sign!');
                     }
                 }
                 break;
