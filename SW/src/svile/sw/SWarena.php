@@ -59,6 +59,7 @@ final class SWarena
     public $GAME_STATE = 0;//0 -> GAME_COUNTDOWN | 1 -> GAME_RUNNING
     /** @var SWmain */
     private $pg;
+
     /** @var string */
     private $SWname;
     /** @var int */
@@ -66,19 +67,20 @@ final class SWarena
     /** @var string */
     private $world;
     /** @var int */
-    private $time = 0;//Seconds from the last reload
+    private $countdown = 60;//Seconds to wait before the game starts
     /** @var int */
-    private $maxtime = 10;//Max seconds after the countdown, if go over this, the game will finish
+    private $maxtime = 300;//Max seconds after the countdown, if go over this, the game will finish
     /** @var int */
-    private $countdown = 10;//Seconds to wait before the game starts
+    public $void = 0;//This is used to check "fake void" to avoid fall (stunck in air) bug
     /** @var array */
     private $spawns = [];//Players spawns
+
+    /** @var int */
+    private $time = 0;//Seconds from the last reload | GAME_STATE
     /** @var array */
     private $players = [];
     /** @var array */
     private $spectators = [];
-    /** @var int */
-    public $void = 0;//This is used to check "fake void" to avoid fall (stunck in air) bug
 
     /**
      * @param SWmain $plugin
@@ -89,7 +91,7 @@ final class SWarena
      * @param int $maxtime
      * @param int $void
      */
-    public function __construct(SWmain $plugin, $SWname = 'sw', $slot = 0, $world = 'world', $countdown = 0, $maxtime = 0, $void = 0)
+    public function __construct(SWmain $plugin, $SWname = 'sw', $slot = 0, $world = 'world', $countdown = 60, $maxtime = 300, $void = 0)
     {
         $this->pg = $plugin;
         $this->SWname = $SWname;
@@ -141,7 +143,7 @@ final class SWarena
             'countdown' => $this->countdown,
             'maxGameTime' => $this->maxtime,
             'void_Y' => $this->void,
-            'spawns' => [],
+            'spawns' => []
         ]);
         $this->SWname = $config->get('name');
         $this->slot = ($config->get('slot') + 0);
@@ -324,6 +326,7 @@ final class SWarena
             return;
         }
 
+        //Chest refill
         if ($this->GAME_STATE == 1 && $this->pg->configs['chest.refill'] && ($this->time % $this->pg->configs['chest.refill.rate']) == 0) {
             $this->refillChests();
             foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
@@ -474,18 +477,20 @@ final class SWarena
     {
         if ($this->pg->configs['chest.refill'])
             $this->refillChests();
-        foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
-            $p->setMaxHealth($this->pg->configs['join.max.health']);
-            $p->setMaxHealth($p->getMaxHealth());
-            if ($p->getAttributeMap() != null) {//just to be really sure
-                $p->setHealth($this->pg->configs['join.health']);
-                $p->setFood(20);
+        foreach ($this->players as $name => $spawn) {
+            if (($p = $this->pg->getServer()->getPlayer($name)) instanceof Player) {
+                $p->setMaxHealth($this->pg->configs['join.max.health']);
+                $p->setMaxHealth($p->getMaxHealth());
+                if ($p->getAttributeMap() != null) {//just to be really sure
+                    $p->setHealth($this->pg->configs['join.health']);
+                    $p->setFood(20);
+                }
+                $p->sendMessage($this->pg->lang['game.start']);
+                if ($p->getLevel()->getBlock($p->floor()->subtract(0, 2))->getId() == 20)
+                    $p->getLevel()->setBlock($p->floor()->subtract(0, 2), Block::get(0), true, false);
+                if ($p->getLevel()->getBlock($p->floor()->subtract(0, 1))->getId() == 20)
+                    $p->getLevel()->setBlock($p->floor()->subtract(0, 1), Block::get(0), true, false);
             }
-            $p->sendMessage($this->pg->lang['game.start']);
-            if ($p->getLevel()->getBlock($p->floor()->subtract(0, 2))->getId() == 20)
-                $p->getLevel()->setBlock($p->floor()->subtract(0, 2), Block::get(0), true, false);
-            if ($p->getLevel()->getBlock($p->floor()->subtract(0, 1))->getId() == 20)
-                $p->getLevel()->setBlock($p->floor()->subtract(0, 1), Block::get(0), true, false);
         }
         $this->time = 0;
         $this->GAME_STATE = 1;
