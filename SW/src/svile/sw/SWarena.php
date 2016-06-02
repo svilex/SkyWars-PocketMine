@@ -228,7 +228,7 @@ final class SWarena
     public function setSpawn(Player $player, $slot = 1)
     {
         if ($slot > $this->slot) {
-            $player->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'This arena have only got ' . TextFormat::WHITE . $this->slot . TextFormat::RED . ' slots');
+            $player->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'This arena have only got ' . TextFormat::WHITE . $this->slot . TextFormat::RED . ' slots');
             return false;
         }
         $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', CONFIG::YAML);
@@ -260,7 +260,7 @@ final class SWarena
         $this->spawns = $s;
         unset($s);
         if (!$config->save() || count($this->spawns) != $this->slot) {
-            $player->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'An error occured setting the spawn, pls contact the developer');
+            $player->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'An error occured setting the spawn, pls contact the developer');
             return false;
         } else
             return true;
