@@ -89,6 +89,7 @@ chest.refill: true
 
 # If "chest.refill" (the above option) is "true" :
 # chests will be refilled on game start & , according to this option , each N seconds from the start.
+# N.B : To disable the "refill each N seconds" just put a big number EX: Your games lasts 5min? set this to 300.
 chest.refill.rate: 240
 
 # Spectator gamemode for killed players.
