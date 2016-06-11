@@ -32,8 +32,8 @@
  *
  *
  * DONORS LIST :
- * - Ahmet , thanks a lot !
- * - no one
+ * - Ahmet
+ * - Jinsong Liu
  * - no one
  *
  */
@@ -555,7 +555,7 @@ class SWlistener implements Listener
             return;
         $key = (($ev->getBlock()->getX() + 0) . ':' . ($ev->getBlock()->getY() + 0) . ':' . ($ev->getBlock()->getZ() + 0) . ':' . $ev->getPlayer()->getLevel()->getName());
         if (array_key_exists($key, $this->pg->signs)) {
-            $this->pg->arenas[$this->pg->signs[$key]]->stop();
+            $this->pg->arenas[$this->pg->signs[$key]]->stop(true);
             $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::GREEN . 'Arena reloaded !');
             if ($this->pg->setSign($this->pg->signs[$key], 0, 0, 0, 'world', true, false)) {
                 $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::GREEN . 'SW join sign deleted !');

@@ -32,8 +32,8 @@
  *
  *
  * DONORS LIST :
- * - Ahmet , thanks a lot !
- * - no one
+ * - Ahmet
+ * - Jinsong Liu
  * - no one
  *
  */
@@ -70,7 +70,7 @@ class SWmain extends PluginBase
 
     /** @var SWcommands */
     private $commands;
-    /** @var array */
+    /** @var SWarena[] */
     public $arenas = [];
     /** @var array */
     public $signs = [];
@@ -270,7 +270,7 @@ class SWmain extends PluginBase
     public function onDisable()
     {
         foreach ($this->arenas as $name => $arena)
-            $arena->stop();
+            $arena->stop(true);
     }
 
     public function onCommand(CommandSender $sender, Command $command, $label, array $args)

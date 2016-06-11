@@ -32,8 +32,8 @@
  *
  *
  * DONORS LIST :
- * - Ahmet , thanks a lot !
- * - no one
+ * - Ahmet
+ * - Jinsong Liu
  * - no one
  *
  */
@@ -498,9 +498,10 @@ final class SWarena
     }
 
     /**
+     * @param bool $force
      * @return bool
      */
-    public function stop()
+    public function stop($force = false)
     {
         $this->pg->getServer()->loadLevel($this->world);
         //CLOSE SPECTATORS
@@ -512,19 +513,21 @@ final class SWarena
         foreach ($this->players as $name => $spawn) {
             if (($p = $this->pg->getServer()->getPlayer($name)) instanceof Player) {
                 $this->closePlayer($p);
-                //Broadcast winner
-                foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {
-                    $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));
-                }
-                //Economy reward
-                if ($this->pg->configs['reward.winning.players'] && is_numeric($this->pg->configs['reward.value']) && is_int(($this->pg->configs['reward.value'] + 0)) && $this->pg->economy instanceof \svile\sw\utils\SWeconomy && $this->pg->economy->getApiVersion() != 0) {
-                    $this->pg->economy->addMoney($p, (int)$this->pg->configs['reward.value']);
-                    $p->sendMessage(str_replace('{MONEY}', $this->pg->economy->getMoney($p), str_replace('{VALUE}', $this->pg->configs['reward.value'], $this->pg->lang['winner.reward.msg'])));
-                }
-                //Reward command
-                $command = trim($this->pg->configs['reward.command']);
-                if (strlen($command) > 1 && $command{0} == '/') {
-                    $this->pg->getServer()->dispatchCommand(new \pocketmine\command\ConsoleCommandSender(), str_replace('{PLAYER}', $p->getName(), substr($command, 1)));
+                if (!$force) {
+                    //Broadcast winner
+                    foreach ($this->pg->getServer()->getDefaultLevel()->getPlayers() as $pl) {
+                        $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));
+                    }
+                    //Economy reward
+                    if ($this->pg->configs['reward.winning.players'] && is_numeric($this->pg->configs['reward.value']) && is_int(($this->pg->configs['reward.value'] + 0)) && $this->pg->economy instanceof \svile\sw\utils\SWeconomy && $this->pg->economy->getApiVersion() != 0) {
+                        $this->pg->economy->addMoney($p, (int)$this->pg->configs['reward.value']);
+                        $p->sendMessage(str_replace('{MONEY}', $this->pg->economy->getMoney($p), str_replace('{VALUE}', $this->pg->configs['reward.value'], $this->pg->lang['winner.reward.msg'])));
+                    }
+                    //Reward command
+                    $command = trim($this->pg->configs['reward.command']);
+                    if (strlen($command) > 1 && $command{0} == '/') {
+                        $this->pg->getServer()->dispatchCommand(new \pocketmine\command\ConsoleCommandSender(), str_replace('{PLAYER}', $p->getName(), substr($command, 1)));
+                    }
                 }
             }
         }

@@ -32,8 +32,8 @@
  *
  *
  * DONORS LIST :
- * - Ahmet , thanks a lot !
- * - no one
+ * - Ahmet
+ * - Jinsong Liu
  * - no one
  *
  */
@@ -400,7 +400,7 @@ class SWcommands
                 }
 
                 $sender->sendMessage(TextFormat::AQUA . '>' . TextFormat::GREEN . 'Please wait, this can take a bit');
-                $this->pg->arenas[$SWname]->stop();
+                $this->pg->arenas[$SWname]->stop(true);
                 foreach ($this->pg->signs as $loc => $name) {
                     if ($SWname == $name) {
                         $ex = explode(':', $loc);
@@ -462,7 +462,7 @@ class SWcommands
                     }
                     break;
                 }
-                $this->pg->arenas[$SWname]->stop();
+                $this->pg->arenas[$SWname]->stop(true);
                 foreach ($this->pg->signs as $loc => $name) {
                     if ($SWname == $name) {
                         $ex = explode(':', $loc);
