@@ -83,6 +83,7 @@ class SWmain extends PluginBase
     /** @var \svile\sw\utils\SWeconomy */
     public $economy;
 
+
     public function onLoad()
     {
         //Sometimes the silence operator " @ " doesn't works and the server crash, this is better.Don't ask me why, i just know that.
@@ -118,6 +119,7 @@ class SWmain extends PluginBase
             $this->getLogger()->critical($e->getMessage() . ' in §b' . $e->getFile() . '§c on line §b' . $e->getLine());
         }
     }
+
 
     public function onEnable()
     {
@@ -267,11 +269,13 @@ class SWmain extends PluginBase
         $this->getLogger()->info(str_replace('\n', PHP_EOL, @gzinflate(@base64_decode("\x70\x5a\x42\x4e\x43\x6f\x4d\x77\x45\x45\x61\x76knVBs3dVS8VFWym00I0gUaZJMD8Sk1JP5D08WUlqFm7bWb7vzTcwtarVMotl7na/zLoMubNMmwwt83N8cQGRn3\x67fYBNoE/EdBFBDZFMa7YZgMGuHMcPYrlEqAW+qikQSLoJrGfhIwJ56lnZaRqvklrl200gD8tK38I1v/fQgZkyuuuvBXriKR9\x6f1QYNwlCvUTiis+D5SVPnhXBz//NcH"))));
     }
 
+
     public function onDisable()
     {
         foreach ($this->arenas as $name => $arena)
             $arena->stop(true);
     }
+
 
     public function onCommand(CommandSender $sender, Command $command, $label, array $args)
     {
@@ -320,6 +324,7 @@ class SWmain extends PluginBase
         return true;
     }
 
+
     /**
      * @return bool
      */
@@ -334,6 +339,7 @@ class SWmain extends PluginBase
         else
             return true;
     }
+
 
     /**
      * @param string $SWname
@@ -370,6 +376,7 @@ class SWmain extends PluginBase
                 return false;
         }
     }
+
 
     /**
      * @param bool $all
@@ -411,6 +418,7 @@ class SWmain extends PluginBase
         }
     }
 
+
     /**
      * @param string $playerName
      * @return bool
@@ -424,6 +432,7 @@ class SWmain extends PluginBase
         }
         return false;
     }
+
 
     /**
      * @return array

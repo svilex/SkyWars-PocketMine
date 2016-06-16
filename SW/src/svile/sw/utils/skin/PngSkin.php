@@ -52,6 +52,7 @@ class PngSkin extends Skin
         parent::__construct($path, $bytes);
     }
 
+
     /**
      * @return bool
      */
@@ -80,6 +81,7 @@ class PngSkin extends Skin
             return true;
         return false;
     }
+
 
     final public function save()
     {

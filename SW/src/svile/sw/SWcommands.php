@@ -61,10 +61,12 @@ class SWcommands
     /** @var SWmain */
     private $pg;
 
+
     public function __construct(SWmain $plugin)
     {
         $this->pg = $plugin;
     }
+
 
     /**
      * @param CommandSender $sender

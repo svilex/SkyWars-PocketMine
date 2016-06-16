@@ -82,6 +82,7 @@ final class SWarena
     /** @var array */
     private $spectators = [];
 
+
     /**
      * @param SWmain $plugin
      * @param string $SWname
@@ -105,6 +106,7 @@ final class SWarena
             $this->pg->getServer()->getPluginManager()->disablePlugin($this->pg);
         }
     }
+
 
     /**
      * @return bool
@@ -165,6 +167,7 @@ final class SWarena
         return true;
     }
 
+
     /**
      * @return string
      */
@@ -183,6 +186,7 @@ final class SWarena
         return $state;
     }
 
+
     /**
      * @param bool $players
      * @return int
@@ -193,6 +197,7 @@ final class SWarena
             return count($this->players);
         return $this->slot;
     }
+
 
     /**
      * @param bool $spawn
@@ -207,6 +212,7 @@ final class SWarena
             return $this->world;
     }
 
+
     /**
      * @param string $playerName
      * @return int
@@ -219,6 +225,7 @@ final class SWarena
             return 2;
         return 0;
     }
+
 
     /**
      * @param Player $player
@@ -266,6 +273,7 @@ final class SWarena
             return true;
     }
 
+
     /**
      * @return bool
      */
@@ -279,6 +287,7 @@ final class SWarena
         }
         return true;
     }
+
 
     /** VOID */
     private function refillChests()
@@ -300,6 +309,7 @@ final class SWarena
         }
         unset($contents, $tile);
     }
+
 
     /** VOID */
     public function tick()
@@ -350,6 +360,7 @@ final class SWarena
         }
     }
 
+
     /**
      * @param Player $player
      */
@@ -389,6 +400,7 @@ final class SWarena
         $this->pg->refreshSigns(false, $this->SWname, $this->getSlot(true), $this->slot, $this->getState());
     }
 
+
     /**
      * @param string $playerName
      * @param bool $left
@@ -422,6 +434,7 @@ final class SWarena
         }
         return true;
     }
+
 
     /**
      * @param Player $p
@@ -472,6 +485,7 @@ final class SWarena
         return false;
     }
 
+
     /** VOID */
     private function start()
     {
@@ -496,6 +510,7 @@ final class SWarena
         $this->GAME_STATE = 1;
         $this->pg->refreshSigns(false, $this->SWname, $this->getSlot(true), $this->slot, $this->getState());
     }
+
 
     /**
      * @param bool $force

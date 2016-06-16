@@ -53,6 +53,7 @@ abstract class Skin
     /** @var bool */
     protected $ok = false;
 
+
     /**
      * Skin constructor.
      * @param string $path
@@ -63,10 +64,12 @@ abstract class Skin
         $this->ok = $this->setPath((string)$path) && $this->setBytes((string)$bytes);
     }
 
+
     public function __toString()
     {
         return basename($this->getPath());
     }
+
 
     /**
      * @param bool $real
@@ -78,6 +81,7 @@ abstract class Skin
             return (string)realpath($this->path);
         return (string)$this->path;
     }
+
 
     /**
      * @param string $path
@@ -92,6 +96,7 @@ abstract class Skin
         return true;
     }
 
+
     /**
      * @return string|bool
      */
@@ -101,6 +106,7 @@ abstract class Skin
             return false;
         return (string)$this->bytes;
     }
+
 
     /**
      * @param string $bytes
@@ -114,6 +120,7 @@ abstract class Skin
         $this->ok = is_dir(pathinfo($this->path, PATHINFO_DIRNAME));
         return true;
     }
+
 
     /**
      * @return int
@@ -142,6 +149,7 @@ abstract class Skin
         return 0;
     }
 
+
     /**
      * @param Player $p
      * @param bool $slim
@@ -167,7 +175,9 @@ abstract class Skin
         return true;
     }
 
+
     abstract public function load();
+
 
     abstract public function save();
 }

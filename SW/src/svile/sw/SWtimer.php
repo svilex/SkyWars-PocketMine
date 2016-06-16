@@ -51,11 +51,13 @@ class SWtimer extends PluginTask
     /** @var bool */
     private $tick = false;
 
+
     public function __construct(SWmain $plugin)
     {
         parent::__construct($plugin);
         $this->tick = (bool)$plugin->configs['sign.tick'];
     }
+
 
     public function onRun($tick)
     {

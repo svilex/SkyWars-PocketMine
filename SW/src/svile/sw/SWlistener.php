@@ -74,10 +74,12 @@ class SWlistener implements Listener
     /** @var SWmain */
     private $pg;
 
+
     public function __construct(SWmain $plugin)
     {
         $this->pg = $plugin;
     }
+
 
     public function onSignChange(SignChangeEvent $ev)
     {
@@ -127,6 +129,7 @@ class SWlistener implements Listener
         unset($SWname, $world);
     }
 
+
     public function onInteract(PlayerInteractEvent $ev)
     {
         if ($ev->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK)
@@ -150,6 +153,7 @@ class SWlistener implements Listener
         unset($key);
     }
 
+
     public function onLevelChange(EntityLevelChangeEvent $ev)
     {
         if ($ev->getEntity() instanceof Player) {
@@ -161,6 +165,7 @@ class SWlistener implements Listener
             }
         }
     }
+
 
     public function onTeleport(EntityTeleportEvent $ev)
     {
@@ -176,6 +181,7 @@ class SWlistener implements Listener
             }
         }
     }
+
 
     public function onDropItem(PlayerDropItemEvent $ev)
     {
@@ -194,6 +200,7 @@ class SWlistener implements Listener
         }
     }
 
+
     public function onPickUp(InventoryPickupItemEvent $ev)
     {
         if (($p = $ev->getInventory()->getHolder()) instanceof Player) {
@@ -206,6 +213,7 @@ class SWlistener implements Listener
             }
         }
     }
+
 
     public function onItemHeld(PlayerItemHeldEvent $ev)
     {
@@ -221,6 +229,7 @@ class SWlistener implements Listener
             }
         }
     }
+
 
     public function onMove(PlayerMoveEvent $ev)
     {
@@ -353,6 +362,7 @@ class SWlistener implements Listener
         }
     }
 
+
     public function onQuit(PlayerQuitEvent $ev)
     {
         foreach ($this->pg->arenas as $a) {
@@ -360,6 +370,7 @@ class SWlistener implements Listener
                 break;
         }
     }
+
 
     public function onDeath(PlayerDeathEvent $event)
     {
@@ -428,6 +439,7 @@ class SWlistener implements Listener
             }
         }
     }
+
 
     public function onDamage(EntityDamageEvent $ev)
     {
@@ -529,6 +541,7 @@ class SWlistener implements Listener
         }
     }
 
+
     public function onRespawn(PlayerRespawnEvent $ev)
     {
         if ($this->pg->configs['always.spawn.in.defaultLevel'])
@@ -539,6 +552,7 @@ class SWlistener implements Listener
         if ($this->pg->configs['clear.effects.on.respawn&join'])
             $ev->getPlayer()->removeAllEffects();
     }
+
 
     public function onBreak(BlockBreakEvent $ev)
     {
@@ -566,6 +580,7 @@ class SWlistener implements Listener
         unset($key);
     }
 
+
     public function onPlace(BlockPlaceEvent $ev)
     {
         foreach ($this->pg->arenas as $a) {
@@ -578,6 +593,7 @@ class SWlistener implements Listener
             }
         }
     }
+
 
     public function onCommand(PlayerCommandPreprocessEvent $ev)
     {

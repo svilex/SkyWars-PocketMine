@@ -58,6 +58,7 @@ class SWeconomy
     /** @var bool|\pocketmine\plugin\Plugin */
     private $api;
 
+
     public function __construct(SWmain $plugin)
     {
         $this->pg = $plugin;
@@ -81,6 +82,7 @@ class SWeconomy
         }
     }
 
+
     /**
      * @return bool|\pocketmine\plugin\Plugin
      */
@@ -88,6 +90,7 @@ class SWeconomy
     {
         return $this->api;
     }
+
 
     /**
      * @param bool $string
@@ -119,6 +122,7 @@ class SWeconomy
         }
     }
 
+
     /**
      * @param Player $player
      * @param int $amount
@@ -146,6 +150,7 @@ class SWeconomy
         return false;
     }
 
+
     /**
      * @param Player $player
      * @param int $amount
@@ -172,6 +177,7 @@ class SWeconomy
         }
         return false;
     }
+
 
     /**
      * @param Player $player
