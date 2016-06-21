@@ -173,14 +173,14 @@ final class SWarena
      */
     public function getState()
     {
-        $state = TextFormat::WHITE . 'Tap to join';
+        $state = TextFormat::WHITE . 'Katılmak için bas';
         switch ($this->GAME_STATE) {
             case 1:
-                $state = TextFormat::RED . TextFormat::BOLD . 'Running';
+                $state = TextFormat::RED . TextFormat::BOLD . 'Başladı';
                 break;
             case 0:
                 if (count($this->players) >= $this->slot)
-                    $state = TextFormat::RED . TextFormat::BOLD . 'Running';
+                    $state = TextFormat::RED . TextFormat::BOLD . 'Başladı';
                 break;
         }
         return $state;
@@ -344,7 +344,6 @@ final class SWarena
             }
             return;
         }
-
         //Chat and Popup messanges
         if ($this->GAME_STATE == 0 && $this->time % 30 == 0) {
             foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
@@ -356,6 +355,9 @@ final class SWarena
                 $p->sendPopup(str_replace('{N}', date('i:s', ($this->countdown - $this->time)), $this->pg->lang['popup.countdown']));
                 if (($this->countdown - $this->time) <= 10)
                     $p->getLevel()->addSound((new \pocketmine\level\sound\ButtonClickSound($p)), [$p]);
+                $x=$p->getXpLevel();
+                $x--;
+                $p->setXpLevel($x);
             }
         }
     }
@@ -385,6 +387,7 @@ final class SWarena
             $player->removeAllEffects();
         $player->setMaxHealth($this->pg->configs['join.max.health']);
         $player->setMaxHealth($player->getMaxHealth());
+        $player->setXpLevel(10);
         if ($player->getAttributeMap() != null) {//just to be really sure
             $player->setHealth($this->pg->configs['join.health']);
             $player->setFood(20);
@@ -500,6 +503,7 @@ final class SWarena
                     $p->setFood(20);
                 }
                 $p->sendMessage($this->pg->lang['game.start']);
+                $p->setXpLevel(0);
                 if ($p->getLevel()->getBlock($p->floor()->subtract(0, 2))->getId() == 20)
                     $p->getLevel()->setBlock($p->floor()->subtract(0, 2), Block::get(0), true, false);
                 if ($p->getLevel()->getBlock($p->floor()->subtract(0, 1))->getId() == 20)
