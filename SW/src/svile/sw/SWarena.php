@@ -363,16 +363,20 @@ final class SWarena
 
     /**
      * @param Player $player
+     * @param bool $msg
+     * @return bool
      */
-    public function join(Player $player)
+    public function join(Player $player, $msg = true)
     {
         if ($this->GAME_STATE == 1) {
-            $player->sendMessage($this->pg->lang['sign.game.running']);
-            return;
+            if ($msg)
+                $player->sendMessage($this->pg->lang['sign.game.running']);
+            return false;
         }
         if (count($this->players) >= $this->slot || empty($this->spawns)) {
-            $player->sendMessage($this->pg->lang['sign.game.full']);
-            return;
+            if ($msg)
+                $player->sendMessage($this->pg->lang['sign.game.full']);
+            return false;
         }
         //Sound
         $player->getLevel()->addSound((new \pocketmine\level\sound\EndermanTeleportSound($player)), [$player]);
@@ -398,6 +402,7 @@ final class SWarena
             $p->sendMessage(str_replace('{COUNT}', '[' . $this->getSlot(true) . '/' . $this->slot . ']', str_replace('{PLAYER}', $player->getName(), $this->pg->lang['game.join'])));
         }
         $this->pg->refreshSigns(false, $this->SWname, $this->getSlot(true), $this->slot, $this->getState());
+        return true;
     }
 
 

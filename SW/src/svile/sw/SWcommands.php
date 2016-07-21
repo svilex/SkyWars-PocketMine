@@ -82,15 +82,26 @@ class SWcommands
 
 
                 case 'join':
-                    if (!(count($args) > 0 && count($args) < 0b11)) {
+                    if (!(count($args) < 0b11)) {
                         $sender->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'Usage: /sw ' . TextFormat::GREEN . 'join [SWname]' . TextFormat::GRAY . ' [PlayerName]');
                         break;
                     }
 
-                    //SW NAME
-                    $SWname = TextFormat::clean(array_shift($args));
-                    if (!array_key_exists($SWname, $this->pg->arenas)) {
-                        $sender->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'Arena with name: ' . TextFormat::WHITE . $SWname . TextFormat::RED . ' doesn\'t exist');
+                    if (isset($args[0])) {
+                        //SW NAME
+                        $SWname = TextFormat::clean(array_shift($args));
+                        if (!array_key_exists($SWname, $this->pg->arenas)) {
+                            $sender->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'Arena with name: ' . TextFormat::WHITE . $SWname . TextFormat::RED . ' doesn\'t exist');
+                            break;
+                        }
+                    } else {
+                        if ($sender instanceof Player) {
+                            foreach ($this->pg->arenas as $a) {
+                                if ($a->join($sender, false))
+                                    break 2;
+                            }
+                            $sender->sendMessage(TextFormat::RED . 'No games, retry later');
+                        }
                         break;
                     }
 
