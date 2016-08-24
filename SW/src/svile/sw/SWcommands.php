@@ -207,8 +207,8 @@ class SWcommands
 
                 //SW NAME
                 $SWname = array_shift($args);
-                if (!($SWname && ctype_alpha($SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10)) {
-                    $sender->sendMessage(TextFormat::WHITE . '>' . TextFormat::AQUA . '[SWname]' . TextFormat::RED . ' must consists of all letters (min3-max15)');
+                if (!($SWname && preg_match('/^[a-z0-9]+[a-z0-9]$/i', $SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10)) {
+                    $sender->sendMessage(TextFormat::WHITE . '>' . TextFormat::AQUA . '[SWname]' . TextFormat::RED . ' must consists of a-z 0-9 (min3-max15)');
                     unset($fworld, $world, $SWname);
                     break;
                 }
@@ -341,7 +341,7 @@ class SWcommands
                         break;
                     }
                 }
-                if (!($SWname && ctype_alpha($SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10 && array_key_exists($SWname, $this->pg->arenas))) {
+                if (!($SWname && preg_match('/^[a-z0-9]+[a-z0-9]$/i', $SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10 && array_key_exists($SWname, $this->pg->arenas))) {
                     $sender->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'Arena not found here, try ' . TextFormat::WHITE . '/sw create');
                     unset($SWname);
                     break;
@@ -400,7 +400,7 @@ class SWcommands
                 }
 
                 $SWname = array_shift($args);
-                if (!($SWname && ctype_alpha($SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10 && array_key_exists($SWname, $this->pg->arenas))) {
+                if (!($SWname && preg_match('/^[a-z0-9]+[a-z0-9]$/i', $SWname) && strlen($SWname) < 0x10 && strlen($SWname) > 0b10 && array_key_exists($SWname, $this->pg->arenas))) {
                     $sender->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'Arena: ' . TextFormat::WHITE . $SWname . TextFormat::RED . ' doesn\'t exist');
                     unset($SWname);
                     break;
