@@ -114,23 +114,23 @@ final class SWarena
     private function reload()
     {
         //Map reset
-        if (!is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz'))
+        if (!is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar'))
             return false;
         if ($this->pg->getServer()->isLevelLoaded($this->world)) {
-            if ($this->pg->getServer()->getLevelByName($this->world)->getAutoSave() or $this->pg->configs['world.reset.from.targz']) {
+            if ($this->pg->getServer()->getLevelByName($this->world)->getAutoSave() or $this->pg->configs['world.reset.from.tar']) {
                 $this->pg->getServer()->unloadLevel($this->pg->getServer()->getLevelByName($this->world));
-                $tarGz = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz');
-                $tarGz->extractTo($this->pg->getServer()->getDataPath() . 'worlds/' . $this->world, null, true);
-                unset($tarGz);
+                $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar');
+                $tar->extractTo($this->pg->getServer()->getDataPath() . 'worlds/' . $this->world, null, true);
+                unset($tar);
                 $this->pg->getServer()->loadLevel($this->world);
             }
             $this->pg->getServer()->unloadLevel($this->pg->getServer()->getLevelByName($this->world));
             $this->pg->getServer()->loadLevel($this->world);
             $this->pg->getServer()->getLevelByName($this->world)->setAutoSave(false);
         } else {
-            $tarGz = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz');
-            $tarGz->extractTo($this->pg->getServer()->getDataPath() . 'worlds/' . $this->world, null, true);
-            unset($tarGz);
+            $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar');
+            $tar->extractTo($this->pg->getServer()->getDataPath() . 'worlds/' . $this->world, null, true);
+            unset($tar);
             $this->pg->getServer()->loadLevel($this->world);
         }
 

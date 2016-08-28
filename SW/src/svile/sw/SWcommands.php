@@ -299,11 +299,9 @@ class SWcommands
                 $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $world . '.tar');
                 $tar->startBuffering();
                 $tar->buildFromDirectory(realpath($sender->getServer()->getDataPath() . 'worlds/' . $world));
-                $tar->compress(\Phar::GZ);
+                //$tar->compress(\Phar::GZ);
                 $tar->stopBuffering();
-                $tar = null;
                 unset($tar);
-                @unlink($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $world . '.tar');
                 $sender->getServer()->loadLevel($world);
                 // END TAR.GZ }
 

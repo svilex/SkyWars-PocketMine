@@ -195,7 +195,7 @@ class SWmain extends PluginBase
             'clear.effects.on.respawn&join' => false,//many people don't know on respawn means also on join
             'clear.effects.on.arena.join' => true,
             'world.generator.air' => true,
-            'world.reset.from.targz' => true
+            'world.reset.from.tar' => true
         ]);
         $this->configs = $this->configs->getAll();
 
