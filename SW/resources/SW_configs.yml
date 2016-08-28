@@ -164,5 +164,5 @@ world.generator.air: true
 
 # Experimental: if you change this to "false" , the worlds won't save changes. This is the fastest way.
 # If you have trouble with world reset , just put this back to "true".
-world.reset.from.zip: true
+world.reset.from.targz: true
 ...

@@ -114,27 +114,23 @@ final class SWarena
     private function reload()
     {
         //Map reset
-        if (!is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.zip'))
+        if (!is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz'))
             return false;
         if ($this->pg->getServer()->isLevelLoaded($this->world)) {
-            if ($this->pg->getServer()->getLevelByName($this->world)->getAutoSave() or $this->pg->configs['world.reset.from.zip']) {
+            if ($this->pg->getServer()->getLevelByName($this->world)->getAutoSave() or $this->pg->configs['world.reset.from.targz']) {
                 $this->pg->getServer()->unloadLevel($this->pg->getServer()->getLevelByName($this->world));
-                $zip = new \ZipArchive;
-                $zip->open($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.zip');
-                $zip->extractTo($this->pg->getServer()->getDataPath() . 'worlds');
-                $zip->close();
-                unset($zip);
+                $tarGz = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz');
+                $tarGz->extractTo($this->pg->getServer()->getDataPath() . 'worlds/' . $this->world, null, true);
+                unset($tarGz);
                 $this->pg->getServer()->loadLevel($this->world);
             }
             $this->pg->getServer()->unloadLevel($this->pg->getServer()->getLevelByName($this->world));
             $this->pg->getServer()->loadLevel($this->world);
             $this->pg->getServer()->getLevelByName($this->world)->setAutoSave(false);
         } else {
-            $zip = new \ZipArchive;
-            $zip->open($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.zip');
-            $zip->extractTo($this->pg->getServer()->getDataPath() . 'worlds');
-            $zip->close();
-            unset($zip);
+            $tarGz = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz');
+            $tarGz->extractTo($this->pg->getServer()->getDataPath() . 'worlds/' . $this->world, null, true);
+            unset($tarGz);
             $this->pg->getServer()->loadLevel($this->world);
         }
 
@@ -396,7 +392,7 @@ final class SWarena
         $this->pg->getServer()->loadLevel($this->world);
         $level = $this->pg->getServer()->getLevelByName($this->world);
         $tmp = array_shift($this->spawns);
-        $player->teleport(new Position($tmp['x'], $tmp['y'], $tmp['z'], $level), $tmp['yaw'], $tmp['pitch']);
+        $player->teleport(new Position($tmp['x'] + 0.5, $tmp['y'], $tmp['z'] + 0.5, $level), $tmp['yaw'], $tmp['pitch']);
         $this->players[$player->getName()] = $tmp;
         foreach ($level->getPlayers() as $p) {
             $p->sendMessage(str_replace('{COUNT}', '[' . $this->getSlot(true) . '/' . $this->slot . ']', str_replace('{PLAYER}', $player->getName(), $this->pg->lang['game.join'])));

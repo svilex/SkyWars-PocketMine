@@ -293,23 +293,19 @@ class SWcommands
                     $p->close('', 'Please re-join');
                 $sender->getServer()->unloadLevel($sender->getServer()->getLevelByName($world));
 
-                //From here @vars are: $SWname , $slot , $world . Now i'm going to Zip the world and make a new arena
-                // { ZIP
-                $path = realpath($sender->getServer()->getDataPath() . 'worlds/' . $world);
-                $zip = new \ZipArchive;
+                //From here @vars are: $SWname , $slot , $world
+                // { TAR.GZ
                 @mkdir($this->pg->getDataFolder() . 'arenas/' . $SWname, 0755);
-                $zip->open($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $world . '.zip', $zip::CREATE | $zip::OVERWRITE);
-                $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path), \RecursiveIteratorIterator::LEAVES_ONLY);
-                foreach ($files as $nu => $file) {
-                    if (!$file->isDir()) {
-                        $relativePath = $world . '/' . substr($file, strlen($path) + 1);
-                        $zip->addFile($file, $relativePath);
-                    }
-                }
-                $zip->close();
+                $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $world . '.tar');
+                $tar->startBuffering();
+                $tar->buildFromDirectory(realpath($sender->getServer()->getDataPath() . 'worlds/' . $world));
+                $tar->compress(\Phar::GZ);
+                $tar->stopBuffering();
+                $tar = null;
+                unset($tar);
+                @unlink($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $world . '.tar');
                 $sender->getServer()->loadLevel($world);
-                unset($zip, $path, $files);
-                // ENDZIP }
+                // END TAR.GZ }
 
                 //SWarena object
                 $this->pg->arenas[$SWname] = new SWarena($this->pg, $SWname, $slot, $world, $countdown, $maxtime, $void);

@@ -21,7 +21,7 @@ _Benefits: You will be credited in the source code as a generous **donor**_ :smi
 
 **GOAL: :moneybag: €3 / €20**
 
-- ![Paypal](https://raw.githubusercontent.com/svilex/res/master/paypal.png) Paypal: [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=G596HU7YZ8HAG) :money_with_wings:
+- ![Paypal](https://raw.githubusercontent.com/svilex/res/master/paypal.png) Paypal: [**Donate**](https://www.paypal.me/svile) :money_with_wings:
 
 ---
 ###Releases - Downloads
