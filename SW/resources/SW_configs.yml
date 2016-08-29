@@ -162,6 +162,9 @@ clear.effects.on.arena.join: true
 # N.B : This only happens after the arena is created.
 world.generator.air: true
 
+# .tar backups will be compressed into .tar.gz when the arena is first created
+world.compress.tar: false
+
 # Experimental: if you change this to "false" , the worlds won't save changes. This is the fastest way.
 # If you have trouble with world reset , just put this back to "true".
 world.reset.from.tar: true

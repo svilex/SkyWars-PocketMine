@@ -114,12 +114,17 @@ final class SWarena
     private function reload()
     {
         //Map reset
-        if (!is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar'))
+        if (!is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar') && !is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz'))
             return false;
         if ($this->pg->getServer()->isLevelLoaded($this->world)) {
-            if ($this->pg->getServer()->getLevelByName($this->world)->getAutoSave() or $this->pg->configs['world.reset.from.tar']) {
+            if ($this->pg->getServer()->getLevelByName($this->world)->getAutoSave() || $this->pg->configs['world.reset.from.tar']) {
                 $this->pg->getServer()->unloadLevel($this->pg->getServer()->getLevelByName($this->world));
-                $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar');
+                if (is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar'))
+                    $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar');
+                elseif (is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz'))
+                    $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz');
+                else
+                    return false;//WILL NEVER REACH THIS
                 $tar->extractTo($this->pg->getServer()->getDataPath() . 'worlds/' . $this->world, null, true);
                 unset($tar);
                 $this->pg->getServer()->loadLevel($this->world);
@@ -128,7 +133,12 @@ final class SWarena
             $this->pg->getServer()->loadLevel($this->world);
             $this->pg->getServer()->getLevelByName($this->world)->setAutoSave(false);
         } else {
-            $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar');
+            if (is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar'))
+                $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar');
+            elseif (is_file($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz'))
+                $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/' . $this->world . '.tar.gz');
+            else
+                return false;//WILL NEVER REACH THIS
             $tar->extractTo($this->pg->getServer()->getDataPath() . 'worlds/' . $this->world, null, true);
             unset($tar);
             $this->pg->getServer()->loadLevel($this->world);
@@ -476,7 +486,7 @@ final class SWarena
                 $idmeta = explode(':', $this->pg->configs['spectator.quit.item']);
                 $p->getInventory()->setHeldItemIndex(1);
                 $p->getInventory()->setItem(0, Item::get((int)$idmeta[0], (int)$idmeta[1], 1));
-                $p->getInventory()->setHotbarSlotIndex(0, 0);
+                //$p->getInventory()->setHotbarSlotIndex(0, 0);
                 $p->getInventory()->sendContents($p);
                 $p->getInventory()->sendContents($p->getViewers());
                 $p->sendMessage($this->pg->lang['death.spectator']);
