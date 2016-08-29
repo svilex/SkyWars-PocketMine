@@ -42,6 +42,8 @@ namespace svile\sw;
 
 
 use pocketmine\Player;
+use pocketmine\network\protocol\ContainerSetContentPacket;
+use pocketmine\network\protocol\SetPlayerGameTypePacket;
 
 use pocketmine\block\Block;
 use pocketmine\level\Position;
@@ -475,17 +477,22 @@ final class SWarena
                 //TODO: Invisibility issues for death players
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
             } elseif ($this->GAME_STATE == 1 && 1 < count($this->players)) {
-                $p->setGamemode(Player::CREATIVE);// :D
+                $p->gamemode = Player::SPECTATOR;
+                $p->spawnToAll();
+                $pk = new SetPlayerGameTypePacket();
+                $pk->gamemode = Player::CREATIVE;
+                $p->dataPacket($pk);
+                $p->setAllowFlight(true);
+                $pk = new ContainerSetContentPacket();
+                $pk->windowid = ContainerSetContentPacket::SPECIAL_CREATIVE;
+                $p->dataPacket($pk);
                 foreach ($this->players as $dname => $spawn) {
                     if (($d = $this->pg->getServer()->getPlayer($dname)) instanceof Player)
                         $d->hidePlayer($p);
                 }
-                $pk = new \pocketmine\network\protocol\ContainerSetContentPacket();
-                $pk->windowid = \pocketmine\network\protocol\ContainerSetContentPacket::SPECIAL_CREATIVE;
-                $p->dataPacket($pk);
                 $idmeta = explode(':', $this->pg->configs['spectator.quit.item']);
-                $p->getInventory()->setHeldItemIndex(1);
                 $p->getInventory()->setItem(0, Item::get((int)$idmeta[0], (int)$idmeta[1], 1));
+                $p->getInventory()->setHeldItemIndex(1);
                 //$p->getInventory()->setHotbarSlotIndex(0, 0);
                 $p->getInventory()->sendContents($p);
                 $p->getInventory()->sendContents($p->getViewers());
