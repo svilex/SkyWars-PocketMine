@@ -23,6 +23,8 @@ branches:
 before_script:
  - mkdir plugins
  - mv SW plugins
+ - mv LICENSE plugins/SW
+ - mv README.md plugins/SW
  - curl --insecure --silent --location http://svile.altervista.org/Genisys.phar --output PM.phar
  - phpenv config-rm xdebug.ini
  - pecl install channel://pecl.php.net/pthreads-3.1.6
