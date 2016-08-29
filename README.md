@@ -5,11 +5,14 @@
 ###About
 This is a [PocketMine-MP](https://github.com/PocketMine/PocketMine-MP) (or forks) plugin that allows you to simply create multiple SkyWars mini-games for mcpe 0.15! :grin:
 
-######This plugin was tested (and should work) on:
+**This plugin was tested (and should work) on:**
+
 - [ ] **[PocketMine-MP](https://github.com/PocketMine/PocketMine-MP)**
-- [ ] **[ImagicalMine](https://github.com/ImagicalCorp/ImagicalMine)**
-- [x] **[ClearSky](https://github.com/ClearSkyTeam/ClearSky)**
+- [ ] **[ClearSky](https://github.com/ClearSkyTeam/ClearSky)**
 - [x] **[Genisys](https://github.com/iTXTech/Genisys)**
+
+_not tested doesn't mean not working_<br>
+_android devices are not supported_
 
 ---
 ###Donate
