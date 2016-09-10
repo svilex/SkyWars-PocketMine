@@ -58,7 +58,7 @@ use pocketmine\item\Item;
 final class SWarena
 {
     /** @var int */
-    public $GAME_STATE = 0;//0 -> GAME_COUNTDOWN | 1 -> GAME_RUNNING
+    public $GAME_STATE = 0;//0 -> GAME_COUNTDOWN | 1 -> GAME_RUNNING | 2 -> no-pvp
     /** @var SWmain */
     private $pg;
 
@@ -184,6 +184,7 @@ final class SWarena
         $state = TextFormat::WHITE . 'Tap to join';
         switch ($this->GAME_STATE) {
             case 1:
+            case 2:
                 $state = TextFormat::RED . TextFormat::BOLD . 'Running';
                 break;
             case 0:
@@ -331,7 +332,7 @@ final class SWarena
             $this->start();
             return;
         }
-        if ($this->GAME_STATE == 1 && 2 > count($this->players)) {
+        if ($this->GAME_STATE > 0 && 2 > count($this->players)) {
             $this->stop();
             return;
         }
@@ -339,17 +340,27 @@ final class SWarena
             $this->start();
             return;
         }
-        if ($this->GAME_STATE == 1 && $this->time >= $this->maxtime) {
+        if ($this->GAME_STATE > 0 && $this->time >= $this->maxtime) {
             $this->stop();
             return;
         }
 
         //Chest refill
-        if ($this->GAME_STATE == 1 && $this->pg->configs['chest.refill'] && ($this->time % $this->pg->configs['chest.refill.rate']) == 0) {
+        if ($this->GAME_STATE > 0 && $this->pg->configs['chest.refill'] && ($this->time % $this->pg->configs['chest.refill.rate']) == 0) {
             $this->refillChests();
             foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
                 $p->sendMessage($this->pg->lang['game.chest.refill']);
             }
+            return;
+        }
+
+        //PvP - updates
+        if ($this->GAME_STATE == 2) {
+            if ($this->time <= $this->pg->configs['no.pvp.countdown'])
+                foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p)
+                    $p->sendPopup(str_replace('{COUNT}', $this->pg->configs['no.pvp.countdown'] - $this->time + 1, $this->pg->lang['no.pvp.countdown']));
+            else
+                $this->GAME_STATE = 1;
             return;
         }
 
@@ -376,7 +387,7 @@ final class SWarena
      */
     public function join(Player $player, $msg = true)
     {
-        if ($this->GAME_STATE == 1) {
+        if ($this->GAME_STATE > 0) {
             if ($msg)
                 $player->sendMessage($this->pg->lang['sign.game.running']);
             return false;
@@ -476,7 +487,7 @@ final class SWarena
             if (!$spectate) {
                 //TODO: Invisibility issues for death players
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
-            } elseif ($this->GAME_STATE == 1 && 1 < count($this->players)) {
+            } elseif ($this->GAME_STATE > 0 && 1 < count($this->players)) {
                 $p->gamemode = Player::SPECTATOR;
                 $p->spawnToAll();
                 $pk = new SetPlayerGameTypePacket();
@@ -525,7 +536,7 @@ final class SWarena
             }
         }
         $this->time = 0;
-        $this->GAME_STATE = 1;
+        $this->GAME_STATE = 2;
         $this->pg->refreshSigns(false, $this->SWname, $this->getSlot(true), $this->slot, $this->getState());
     }
 

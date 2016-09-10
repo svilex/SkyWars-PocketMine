@@ -462,7 +462,7 @@ class SWlistener implements Listener
                         $ev->setCancelled();
                         break;
                     }
-                    if ($a->GAME_STATE == 0) {
+                    if ($a->GAME_STATE == 0 || $a->GAME_STATE == 2) {
                         $ev->setCancelled();
                         break;
                     }
