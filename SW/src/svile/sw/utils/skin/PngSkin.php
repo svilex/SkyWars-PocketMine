@@ -11,7 +11,7 @@
  *
  * @Author: svile
  * @Kik: _svile_
- * @Telegram_Gruop: https://telegram.me/svile
+ * @Telegram_Group: https://telegram.me/svile
  * @E-mail: thesville@gmail.com
  * @Github: https://github.com/svilex/SkyWars-PocketMine
  *
