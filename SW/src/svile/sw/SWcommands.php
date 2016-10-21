@@ -314,6 +314,7 @@ class SWcommands
                 $this->pg->arenas[$SWname] = new SWarena($this->pg, $SWname, $slot, $world, $countdown, $maxtime, $void);
                 $sender->sendMessage(TextFormat::AQUA . '>' . TextFormat::GREEN . 'Arena: ' . TextFormat::DARK_GREEN . $SWname . TextFormat::GREEN . ' created successfully!');
                 $sender->sendMessage(TextFormat::AQUA . '>' . TextFormat::GREEN . 'Now set spawns with ' . TextFormat::WHITE . '/sw setspawn [slot]');
+                $sender->teleport($sender->getServer()->getLevelByName($world)->getSpawnLocation());
                 unset($fworld, $world, $SWname, $slot, $countdown, $maxtime, $provider, $void);
                 break;
 

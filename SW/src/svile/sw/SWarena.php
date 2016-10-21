@@ -42,6 +42,7 @@ namespace svile\sw;
 
 
 use pocketmine\Player;
+use pocketmine\network\protocol\AdventureSettingsPacket;
 use pocketmine\network\protocol\ContainerSetContentPacket;
 use pocketmine\network\protocol\SetPlayerGameTypePacket;
 
@@ -493,7 +494,11 @@ final class SWarena
                 $pk = new SetPlayerGameTypePacket();
                 $pk->gamemode = Player::CREATIVE;
                 $p->dataPacket($pk);
-                $p->setAllowFlight(true);
+                $pk = new AdventureSettingsPacket();
+                $pk->flags = 207;
+                $pk->userPermission = 2;
+                $pk->globalPermission = 2;
+                $p->dataPacket($pk);
                 $pk = new ContainerSetContentPacket();
                 $pk->windowid = ContainerSetContentPacket::SPECIAL_CREATIVE;
                 $p->dataPacket($pk);
@@ -502,7 +507,8 @@ final class SWarena
                         $d->hidePlayer($p);
                 }
                 $idmeta = explode(':', $this->pg->configs['spectator.quit.item']);
-                $p->getInventory()->setItem(0, Item::get((int)$idmeta[0], (int)$idmeta[1], 1));
+                $p->getInventory()->setHeldItemIndex(0);
+                $p->getInventory()->setItemInHand(Item::get((int)$idmeta[0], (int)$idmeta[1], 1));
                 $p->getInventory()->setHeldItemIndex(1);
                 //$p->getInventory()->setHotbarSlotIndex(0, 0);
                 $p->getInventory()->sendContents($p);
