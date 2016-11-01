@@ -44,6 +44,8 @@ namespace svile\sw;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 
+use pocketmine\command\ConsoleCommandSender;
+use pocketmine\level\format\generic\BaseLevelProvider;
 use pocketmine\Player;
 
 use pocketmine\utils\TextFormat;
@@ -106,7 +108,7 @@ class SWcommands
                     }
 
                     $player = TextFormat::clean(array_shift($args));
-                    if (strlen($player) > 0 && $sender instanceof \pocketmine\command\ConsoleCommandSender) {
+                    if (strlen($player) > 0 && $sender instanceof ConsoleCommandSender) {
                         $p = $sender->getServer()->getPlayer($player);
                         if ($p instanceof Player) {
                             if ($this->pg->inArena($p->getName())) {
@@ -253,7 +255,7 @@ class SWcommands
                 } else {
                     $sender->sendMessage(TextFormat::WHITE . '>' . TextFormat::RED . 'There is a problem with the world name, try to restart your server');
                     $provider = $sender->getLevel()->getProvider();
-                    if ($provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
+                    if ($provider instanceof BaseLevelProvider) {
                         $provider->getLevelData()->LevelName = new Str('LevelName', $fworld);
                         $provider->saveLevelData();
                     }
@@ -263,7 +265,7 @@ class SWcommands
 
                 //Air world generator
                 $provider = $sender->getLevel()->getProvider();
-                if ($this->pg->configs['world.generator.air'] && $provider instanceof \pocketmine\level\format\generic\BaseLevelProvider) {
+                if ($this->pg->configs['world.generator.air'] && $provider instanceof BaseLevelProvider) {
                     $provider->getLevelData()->generatorName = new Str('generatorName', 'flat');
                     $provider->getLevelData()->generatorOptions = new Str('generatorOptions', '0;0;0');
                     $provider->saveLevelData();
