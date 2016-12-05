@@ -318,7 +318,7 @@ class SWcommands
                 unset($fworld, $world, $SWname, $slot, $countdown, $maxtime, $provider, $void);
                 break;
 
-
+            case 'ss':
             case 'setspawn':
                 /*
                             _    ____
