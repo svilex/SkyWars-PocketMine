@@ -77,7 +77,7 @@ class SWcommands
      */
     public function onCommand(CommandSender $sender, Command $command, $label, array $args)
     {
-        if ($sender instanceof Player) {
+          if (!($sender instanceof Player) || !$sender->isOp()) {
             switch (strtolower(array_shift($args))):
 
 
