@@ -41,6 +41,9 @@
 namespace svile\sw;
 
 
+use pocketmine\command\ConsoleCommandSender;
+use pocketmine\level\sound\ButtonClickSound;
+use pocketmine\level\sound\EndermanTeleportSound;
 use pocketmine\Player;
 use pocketmine\network\protocol\AdventureSettingsPacket;
 use pocketmine\network\protocol\ContainerSetContentPacket;
@@ -54,6 +57,7 @@ use pocketmine\utils\TextFormat;
 
 use pocketmine\tile\Chest;
 use pocketmine\item\Item;
+use svile\sw\utils\SWeconomy;
 
 
 final class SWarena
@@ -147,7 +151,7 @@ final class SWarena
             $this->pg->getServer()->loadLevel($this->world);
         }
 
-        $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', CONFIG::YAML, [//TODO: put descriptions
+        $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', Config::YAML, [
             'name' => $this->SWname,
             'slot' => $this->slot,
             'world' => $this->world,
@@ -248,7 +252,7 @@ final class SWarena
             $player->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'This arena have only got ' . TextFormat::WHITE . $this->slot . TextFormat::RED . ' slots');
             return false;
         }
-        $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', CONFIG::YAML);
+        $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', Config::YAML);
 
         if (empty($config->get('spawns', []))) {
             $keys = [];
@@ -375,7 +379,7 @@ final class SWarena
             foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
                 $p->sendPopup(str_replace('{N}', date('i:s', ($this->countdown - $this->time)), $this->pg->lang['popup.countdown']));
                 if (($this->countdown - $this->time) <= 10)
-                    $p->getLevel()->addSound((new \pocketmine\level\sound\ButtonClickSound($p)), [$p]);
+                    $p->getLevel()->addSound((new ButtonClickSound($p)), [$p]);
             }
         }
     }
@@ -399,7 +403,7 @@ final class SWarena
             return false;
         }
         //Sound
-        $player->getLevel()->addSound((new \pocketmine\level\sound\EndermanTeleportSound($player)), [$player]);
+        $player->getLevel()->addSound((new EndermanTeleportSound($player)), [$player]);
 
         //Removes player things
         $player->setGamemode(Player::SURVIVAL);
@@ -486,7 +490,6 @@ final class SWarena
                 }
             }
             if (!$spectate) {
-                //TODO: Invisibility issues for death players
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
             } elseif ($this->GAME_STATE > 0 && 1 < count($this->players)) {
                 $p->gamemode = Player::SPECTATOR;
@@ -569,14 +572,14 @@ final class SWarena
                         $pl->sendMessage(str_replace('{SWNAME}', $this->SWname, str_replace('{PLAYER}', $p->getName(), $this->pg->lang['server.broadcast.winner'])));
                     }
                     //Economy reward
-                    if ($this->pg->configs['reward.winning.players'] && is_numeric($this->pg->configs['reward.value']) && is_int(($this->pg->configs['reward.value'] + 0)) && $this->pg->economy instanceof \svile\sw\utils\SWeconomy && $this->pg->economy->getApiVersion() != 0) {
+                    if ($this->pg->configs['reward.winning.players'] && is_numeric($this->pg->configs['reward.value']) && is_int(($this->pg->configs['reward.value'] + 0)) && $this->pg->economy instanceof SWeconomy && $this->pg->economy->getApiVersion() != 0) {
                         $this->pg->economy->addMoney($p, (int)$this->pg->configs['reward.value']);
                         $p->sendMessage(str_replace('{MONEY}', $this->pg->economy->getMoney($p), str_replace('{VALUE}', $this->pg->configs['reward.value'], $this->pg->lang['winner.reward.msg'])));
                     }
                     //Reward command
                     $command = trim($this->pg->configs['reward.command']);
                     if (strlen($command) > 1 && $command{0} == '/') {
-                        $this->pg->getServer()->dispatchCommand(new \pocketmine\command\ConsoleCommandSender(), str_replace('{PLAYER}', $p->getName(), substr($command, 1)));
+                        $this->pg->getServer()->dispatchCommand(new ConsoleCommandSender(), str_replace('{PLAYER}', $p->getName(), substr($command, 1)));
                     }
                 }
             }
