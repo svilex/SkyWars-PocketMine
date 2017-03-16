@@ -1,8 +1,8 @@
 # SkyWars - PocketMine plugin
 ![skywars](https://raw.githubusercontent.com/svilex/res/master/skywars.png)
 ---
-###About
-This is a [PocketMine-MP](https://github.com/PocketMine/PocketMine-MP) (or forks) plugin that allows you to simply create multiple SkyWars mini-games for mcpe 0.15! :grin:
+### About
+This is a [PocketMine-MP](https://github.com/PocketMine/PocketMine-MP) (or forks) plugin that allows you to simply create multiple SkyWars mini-games for mcpe 1.0.4! :grin:
 
 **This plugin was tested (and works) on:**
 
@@ -12,7 +12,7 @@ _not tested doesn't mean not working_<br>
 _android devices are not supported_
 
 ---
-###Donate
+### Donate
 _Making a **donation** is an act of generosity. Your support, however modest it might be, is necessary._<br/>
 _Your **donations** helps me to continue creating plugins and improve this project!_<br/>
 _This plugin helped you? Do you like it? **Support it by donating!**_
@@ -24,7 +24,7 @@ _Benefits: You will be credited in the source code as a generous **donor**_ :smi
 - ![Paypal](https://raw.githubusercontent.com/svilex/res/master/paypal.png) Paypal: [**Donate**](https://www.paypal.me/svile) :money_with_wings:
 
 ---
-###Releases - Downloads
+### Releases - Downloads
 
 * **pre-Release [_0.6_](https://github.com/svilex/SkyWars-PocketMine/releases/tag/v0.6) (May 7, 2016)**
 
@@ -64,23 +64,23 @@ _Benefits: You will be credited in the source code as a generous **donor**_ :smi
 _Click [**here**](https://github.com/svilex/SkyWars-PocketMine/releases) for other releases_.
 
 ---
-###How to use
+### How to use
 
-#####Installation
+##### Installation
 **1.** Download a plugin release (the last is recommended) from above.<br/>
 **2.** Choose the `SW_svile_php*.phar` file according to your php version.<br/>
 **3.** Extract the file into the **plugins/** folder of your server and restart it.<br/>
 **4.** Done, you can now join the game and create arenas _(SkyWars\_mini-games)_.
 
-#####How to create an arena
+##### How to create an arena
 **1.** Teleport yourself in the world where you would like to create it (not default one).<br/>
 **2.** Now you can use the command `/sw create [SWname] [slots] [countdown] [maxGameTime]` to create an arena.<br/>
 **3.** Go back in the arena world and depending on its spawns/slots use the command `/sw setspawn [slot]` x times.<br/>
 **4.** Place a sign with `sw` in the 1st line and `SWname` in the 2nd.<br/>
 **5.** Done, now players can tap the sign to join the game!
 
-#####Commands
-######These commands cannot be used in console.
+##### Commands
+###### These commands cannot be used in console.
 Command | Description
 -----------|-----------
 /sw        | SW main command, shows the usage (subcommands)
@@ -92,17 +92,17 @@ Command | Description
 /sw join **[**SWname**]** [PlayerName] | Anyone except ops can use this command to join SW games.<br/>- **PlayerName** can be used only by CONSOLE to force the player to join the specified arena.
 /sw quit | Anyone except ops can use this command to left the current SW game.
 
-#####Here there are some videos that explains how to create an arena in different languages:
+##### Here there are some videos that explains how to create an arena in different languages:
 - [Deutsch](//TODO add a video) no video yet
 - [English](//TODO add a video) no video yet
 - [Español](//TODO add a video) no video yet
 - [Français](//TODO add a video) no video yet
 - [Italiano](//TODO add a video) no video yet
 
-######Have you made a video? Contact me to put it here:exclamation:
+###### Have you made a video? Contact me to put it here:exclamation:
 
 ---
-###Contacts
+### Contacts
 <br/>
 - **Kik:** \_svile\_<br/>
 - **Telegram_Gruop:** :link: https://telegram.me/svile<br/>
@@ -115,7 +115,7 @@ Command | Description
 <br/>
 
 ---
-###License
+### License
 This plugin is licensed under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html)
 
 >This program is free software: you can redistribute it and/or modify<br/>
