@@ -1,15 +1,12 @@
 # SkyWars - PocketMine plugin
 ![skywars](https://raw.githubusercontent.com/svilex/res/master/skywars.png)
-[![Build Status](https://travis-ci.org/svilex/SkyWars-PocketMine.svg?branch=master)](https://travis-ci.org/svilex/SkyWars-PocketMine)
 ---
 ###About
 This is a [PocketMine-MP](https://github.com/PocketMine/PocketMine-MP) (or forks) plugin that allows you to simply create multiple SkyWars mini-games for mcpe 0.15! :grin:
 
-**This plugin was tested (and should work) on:**
+**This plugin was tested (and works) on:**
 
-- [ ] **[PocketMine-MP](https://github.com/PocketMine/PocketMine-MP)**
-- [ ] **[ClearSky](https://github.com/ClearSkyTeam/ClearSky)**
-- [x] **[Genisys](https://github.com/iTXTech/Genisys)**
+- [x] **[PocketMine-MP](https://github.com/pmmp/PocketMine-MP/)**
 
 _not tested doesn't mean not working_<br>
 _android devices are not supported_
@@ -22,7 +19,7 @@ _This plugin helped you? Do you like it? **Support it by donating!**_
 
 _Benefits: You will be credited in the source code as a generous **donor**_ :smile:
 
-**GOAL: :moneybag: €3 / €20**
+**GOAL: :moneybag: €8 / €20**
 
 - ![Paypal](https://raw.githubusercontent.com/svilex/res/master/paypal.png) Paypal: [**Donate**](https://www.paypal.me/svile) :money_with_wings:
 
@@ -105,7 +102,7 @@ Command | Description
 ######Have you made a video? Contact me to put it here:exclamation:
 
 ---
-###Contact
+###Contacts
 <br/>
 - **Kik:** \_svile\_<br/>
 - **Telegram_Gruop:** :link: https://telegram.me/svile<br/>
@@ -133,8 +130,3 @@ This plugin is licensed under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.ht
 >
 >You should have received a copy of the GNU General Public License<br/>
 >along with this program.  If not, see http://www.gnu.org/licenses/
-
-###Stats
-This plugin is sending your server **PORT** and **SW_VERSION** to a web server to collect stats.<br/>
-Using this plugin you agree to send these info.<br/>
-- Click [**here**](http://svile.altervista.org/sw_log.html) for the full list.

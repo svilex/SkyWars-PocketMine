@@ -89,13 +89,13 @@ class SWlistener implements Listener
         //Checks if the arena exists
         $SWname = TextFormat::clean(trim($ev->getLine(1)));
         if (!array_key_exists($SWname, $this->pg->arenas)) {
-            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'This arena doesn\'t exist, try ' . TextFormat::WHITE . '/sw create');
+            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'This arena doesn\'t exist, try ' . TextFormat::WHITE . '/sw create');
             return;
         }
 
         //Checks if a sign already exists for the arena
         if (in_array($SWname, $this->pg->signs)) {
-            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'A sign for this arena already exist, try ' . TextFormat::WHITE . '/sw signdelete');
+            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'A sign for this arena already exist, try ' . TextFormat::WHITE . '/sw signdelete');
             return;
         }
 
@@ -103,22 +103,22 @@ class SWlistener implements Listener
         $world = $ev->getPlayer()->getLevel()->getName();
         foreach ($this->pg->arenas as $name => $arena) {
             if ($world == $arena->getWorld()) {
-                $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'You can\'t place the join sign inside arenas');
+                $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'You can\'t place the join sign inside arenas');
                 return;
             }
         }
 
         //Checks arena spawns
         if (!$this->pg->arenas[$SWname]->checkSpawns()) {
-            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'Not all the spawns are set in this arena, try ' . TextFormat::WHITE . ' /sw setspawn');
+            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Not all the spawns are set in this arena, try ' . TextFormat::WHITE . ' /sw setspawn');
             return;
         }
 
         //Saves the sign
         if (!$this->pg->setSign($SWname, ($ev->getBlock()->getX() + 0), ($ev->getBlock()->getY() + 0), ($ev->getBlock()->getZ() + 0), $world))
-            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'An error occured, please contact the developer');
+            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'An error occured, please contact the developer');
         else
-            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::GREEN . 'SW join sign created !');
+            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'SW join sign created !');
 
         //Sets sign format
         $ev->setLine(0, $this->pg->configs['1st_line']);
@@ -570,11 +570,11 @@ class SWlistener implements Listener
         $key = (($ev->getBlock()->getX() + 0) . ':' . ($ev->getBlock()->getY() + 0) . ':' . ($ev->getBlock()->getZ() + 0) . ':' . $ev->getPlayer()->getLevel()->getName());
         if (array_key_exists($key, $this->pg->signs)) {
             $this->pg->arenas[$this->pg->signs[$key]]->stop(true);
-            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::GREEN . 'Arena reloaded !');
+            $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Arena reloaded !');
             if ($this->pg->setSign($this->pg->signs[$key], 0, 0, 0, 'world', true, false)) {
-                $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::GREEN . 'SW join sign deleted !');
+                $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'SW join sign deleted !');
             } else {
-                $ev->getPlayer()->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'An error occured, please contact the developer');
+                $ev->getPlayer()->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'An error occured, please contact the developer');
             }
         }
         unset($key);

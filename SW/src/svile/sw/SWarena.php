@@ -245,7 +245,7 @@ final class SWarena
     public function setSpawn(Player $player, $slot = 1)
     {
         if ($slot > $this->slot) {
-            $player->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'This arena have only got ' . TextFormat::WHITE . $this->slot . TextFormat::RED . ' slots');
+            $player->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'This arena have only got ' . TextFormat::WHITE . $this->slot . TextFormat::RED . ' slots');
             return false;
         }
         $config = new Config($this->pg->getDataFolder() . 'arenas/' . $this->SWname . '/settings.yml', CONFIG::YAML);
@@ -277,7 +277,7 @@ final class SWarena
         $this->spawns = $s;
         unset($s);
         if (!$config->save() || count($this->spawns) != $this->slot) {
-            $player->sendMessage(TextFormat::AQUA . '>' . TextFormat::RED . 'An error occured setting the spawn, pls contact the developer');
+            $player->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'An error occured setting the spawn, pls contact the developer');
             return false;
         } else
             return true;
@@ -375,7 +375,7 @@ final class SWarena
             foreach ($this->pg->getServer()->getLevelByName($this->world)->getPlayers() as $p) {
                 $p->sendPopup(str_replace('{N}', date('i:s', ($this->countdown - $this->time)), $this->pg->lang['popup.countdown']));
                 if (($this->countdown - $this->time) <= 10)
-                    $p->getLevel()->addSound((new \pocketmine\level\sound\ButtonClickSound($p)), [$p]);
+                    $p->getLevel()->addSound((new \pocketmine\level\sound\ClickSound($p)), [$p]);
             }
         }
     }
@@ -489,19 +489,7 @@ final class SWarena
                 //TODO: Invisibility issues for death players
                 $p->teleport($p->getServer()->getDefaultLevel()->getSpawnLocation());
             } elseif ($this->GAME_STATE > 0 && 1 < count($this->players)) {
-                $p->gamemode = Player::SPECTATOR;
-                $p->spawnToAll();
-                $pk = new SetPlayerGameTypePacket();
-                $pk->gamemode = Player::CREATIVE;
-                $p->dataPacket($pk);
-                $pk = new AdventureSettingsPacket();
-                $pk->flags = 207;
-                $pk->userPermission = 2;
-                $pk->globalPermission = 2;
-                $p->dataPacket($pk);
-                $pk = new ContainerSetContentPacket();
-                $pk->windowid = ContainerSetContentPacket::SPECIAL_CREATIVE;
-                $p->dataPacket($pk);
+                $p->setGamemode(Player::SPECTATOR);
                 foreach ($this->players as $dname => $spawn) {
                     if (($d = $this->pg->getServer()->getPlayer($dname)) instanceof Player)
                         $d->hidePlayer($p);

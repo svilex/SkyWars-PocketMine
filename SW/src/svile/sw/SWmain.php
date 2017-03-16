@@ -57,7 +57,6 @@ use pocketmine\nbt\tag\StringTag as Str;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
-use pocketmine\block\Block;
 use pocketmine\item\Item;
 use pocketmine\tile\Sign;
 use pocketmine\math\Vector3;
@@ -66,7 +65,7 @@ use pocketmine\math\Vector3;
 class SWmain extends PluginBase
 {
     /** Plugin Version */
-    const SW_VERSION = '0.6dev';
+    const SW_VERSION = '0.7dev';
 
     /** @var SWcommands */
     private $commands;
@@ -86,15 +85,10 @@ class SWmain extends PluginBase
 
     public function onLoad()
     {
-        //Sometimes the silence operator " @ " doesn't works and the server crash, this is better.Don't ask me why, i just know that.
-        if (!is_dir($this->getDataFolder())) {
-            //rwx permissions and recursive mkdir();
+        if (!is_dir($this->getDataFolder()))
             @mkdir($this->getDataFolder() . "\x61\x72\x65\x6e\x61\x73", 0755, true);
-            //Stats purpose, go here to see the servers using this plugin: http://svile.altervista.org/sw_log.html
-            @\pocketmine\utils\Utils::postURL(@gzinflate(@base64_decode(@\pocketmine\utils\Utils::postURL(@gzinflate(@base64_decode("\x79\x79\x67\x70\x4b\x62\x44\x53\x31\x798uy8xJ1UvMKUktKs\x73sLknUyy9K109\x50LSktytEryCg\x41AA==")), ["\x61" => @gzinflate(@base64_decode("\x53\x38\x35\x49\x54\x63\x36\x4f\x4c\x30\x67\x73\x4c\x6f\x34\x76\x7a\x79\x39\x4b\x69\x56\x66\x55\x4e\x51\x51\x41"))]))), ["\x62" => $this->getServer()->getPort(), "\x63" => self::SW_VERSION]);
-        }
 
-        //This changes worlds NBT name with folders ones to avoid problems
+        //This changes worlds NBT name with folders ones to avoid problems //world folder name should be used instead of doing this
         try {
             foreach (scandir($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73") as $worldDir) {
                 if (is_dir($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir) && is_file($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74")) {
@@ -130,7 +124,7 @@ class SWmain extends PluginBase
             sleep(0x15180);
         }
 
-        //Creates the database that is needed to store signs info
+        //Creates the database that is needed to store signs info (what a bad idea -_-)
         try {
             if (!is_file($this->getDataFolder() . "\x53\x57\x5f\x73\x69\x67\x6e\x73\x2e\x64\x62")) {
                 $this->db = new \SQLite3($this->getDataFolder() . "\x53\x57\x5f\x73\x69\x67\x6e\x73\x2e\x64\x62", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
@@ -210,23 +204,23 @@ class SWmain extends PluginBase
                                       |___/       |___/
         */
         $this->lang = new Config($this->getDataFolder() . 'SW_lang.yml', CONFIG::YAML, [
-            'banned.command.msg' => '@b>@cYou can\'t use this command here',
-            'sign.game.full' => '@b>@cThis game is full, please wait',
-            'sign.game.running' => '@b>@cThe game is running, please wait',
-            'game.join' => '@b>@f{PLAYER} @ejoined the game @b{COUNT}',
+            'banned.command.msg' => '@b→@cYou can\'t use this command here',
+            'sign.game.full' => '@b→@cThis game is full, please wait',
+            'sign.game.running' => '@b→@cThe game is running, please wait',
+            'game.join' => '@b→@f{PLAYER} @ejoined the game @b{COUNT}',
             'popup.countdown' => '@bThe game starts in @f{N}',
-            'chat.countdown' => '@b>@7The game starts in @b{N}',
-            'game.start' => '@b>@dThe game start now, good luck !',
+            'chat.countdown' => '@b→@7The game starts in @b{N}',
+            'game.start' => '@b→@dThe game start now, good luck !',
             'no.pvp.countdown' => '@bYou can\'t PvP for @f{COUNT} @bseconds',
-            'game.chest.refill' => '@b>@aChests has been refilled !',
-            'game.left' => '@f>@7{PLAYER} left the game @b{COUNT}',
-            'death.player' => '@c>@f{PLAYER} @cwas killed by @f{KILLER} @b{COUNT}',
-            'death.arrow' => '@c>@f{PLAYER} @cwas killed by @f{KILLER} @b{COUNT}',
-            'death.void' => '@c>@f{PLAYER} @cwas killed by @fVOID @b{COUNT}',
-            'death.lava' => '@c>@f{PLAYER} @cwas killed by @fLAVA @b{COUNT}',//TODO: add more?
-            'death.spectator' => '@f>@bYou are now a spectator!_EOL_@f>@bType @f/sw quit @bto exit from the game',
-            'server.broadcast.winner' => '@0>@f{PLAYER} @bwon the game on SW: @f{SWNAME}',
-            'winner.reward.msg' => '@bYou won @f{VALUE}$_EOL_@7Your money: @f{MONEY}$'
+            'game.chest.refill' => '@b→@aChests has been refilled !',
+            'game.left' => '@f→@7{PLAYER} left the game @b{COUNT}',
+            'death.player' => '@c→@f{PLAYER} @cwas killed by @f{KILLER} @b{COUNT}',
+            'death.arrow' => '@c→@f{PLAYER} @cwas killed by @f{KILLER} @b{COUNT}',
+            'death.void' => '@c→@f{PLAYER} @cwas killed by @fVOID @b{COUNT}',
+            'death.lava' => '@c→@f{PLAYER} @cwas killed by @fLAVA @b{COUNT}',//TODO: add more?
+            'death.spectator' => '@f→@bYou are now a spectator!_EOL_@f→@bType @f/sw quit @bto exit from the game',
+            'server.broadcast.winner' => '@0→@f{PLAYER} @bwon the game on SW: @f{SWNAME}',
+            'winner.reward.msg' => '@f→@bYou won @f{VALUE}$_EOL_@f→@7Your money: @f{MONEY}$'
         ]);
         touch($this->getDataFolder() . 'SW_lang.yml');
         $this->lang = $this->lang->getAll();
@@ -265,10 +259,6 @@ class SWmain extends PluginBase
             }
         }
 
-        //THANKS TO Dan FOR THE HINT
-        //https://github.com/thebigsmileXD
-        Block::$list[Block::GLASS] = \svile\sw\utils\Glass::class;
-
         $this->getLogger()->info(str_replace('\n', PHP_EOL, @gzinflate(@base64_decode("\x70\x5a\x42\x4e\x43\x6f\x4d\x77\x45\x45\x61\x76knVBs3dVS8VFWym00I0gUaZJMD8Sk1JP5D08WUlqFm7bWb7vzTcwtarVMotl7na/zLoMubNMmwwt83N8cQGRn3\x67fYBNoE/EdBFBDZFMa7YZgMGuHMcPYrlEqAW+qikQSLoJrGfhIwJ56lnZaRqvklrl200gD8tK38I1v/fQgZkyuuuvBXriKR9\x6f1QYNwlCvUTiis+D5SVPnhXBz//NcH"))));
     }
 
@@ -282,10 +272,7 @@ class SWmain extends PluginBase
 
     public function onCommand(CommandSender $sender, Command $command, $label, array $args)
     {
-        if (strtolower($command->getName()) == "\x73\x77") {
-            //If SW command, just call svile\sw\SWcommands->onCommand();
-            $this->commands->onCommand($sender, $command, $label, $args);
-        }
+        $this->commands->onCommand($sender, $command, $label, $args);
         return true;
     }
 
