@@ -402,7 +402,7 @@ final class SWarena
         $player->getLevel()->addSound((new \pocketmine\level\sound\EndermanTeleportSound($player)), [$player]);
 
         //Removes player things
-        $player->setGamemode(Player::ADVENTURE;//Glass break prevent
+        $player->setGamemode(Player::ADVENTURE); //Glass break prevent
         if ($this->pg->configs['clear.inventory.on.arena.join'])
             $player->getInventory()->clearAll();
         if ($this->pg->configs['clear.effects.on.arena.join'])
