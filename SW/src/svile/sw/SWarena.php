@@ -521,14 +521,15 @@ final class SWarena
                 if ($p->getAttributeMap() != null) {//just to be really sure
                     $p->setHealth($this->pg->configs['join.health']);
                     $p->setFood(20);
+                    $p->setGamemode(Pkayer::SURVIVAL);
                 }
                 $p->sendMessage($this->pg->lang['game.start']);
                 if ($p->getLevel()->getBlock($p->floor()->subtract(0, 2))->getId() == 20)
                     $p->getLevel()->setBlock($p->floor()->subtract(0, 2), Block::get(0), true, false);
-                    $player->setGamemode(Player::SURVIVAL); // ANNOYING GLASS
+
                 if ($p->getLevel()->getBlock($p->floor()->subtract(0, 1))->getId() == 20)
                     $p->getLevel()->setBlock($p->floor()->subtract(0, 1), Block::get(0), true, false);
-                    $player->setGamemode(Player::SURVIVAL);//ANNOYING GLASS
+
             }
         }
         $this->time = 0;
