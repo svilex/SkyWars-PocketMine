@@ -521,7 +521,7 @@ final class SWarena
                 if ($p->getAttributeMap() != null) {//just to be really sure
                     $p->setHealth($this->pg->configs['join.health']);
                     $p->setFood(20);
-                    $p->setGamemode(Pkayer::SURVIVAL);
+                    $p->setGamemode(Player::SURVIVAL);
                 }
                 $p->sendMessage($this->pg->lang['game.start']);
                 if ($p->getLevel()->getBlock($p->floor()->subtract(0, 2))->getId() == 20)
