@@ -7,6 +7,7 @@ This is a [PocketMine-MP](https://github.com/PocketMine/PocketMine-MP) (or forks
 **This plugin was tested (and works) on:**
 
 - [x] **[PocketMine-MP](https://github.com/pmmp/PocketMine-MP/)**
+- [x] **[Tesseract](https://github.com/TesseractTeam/Tesseract)**
 
 _not tested doesn't mean not working_<br>
 _android devices are not supported_
