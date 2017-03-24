@@ -402,7 +402,7 @@ final class SWarena
         $player->getLevel()->addSound((new \pocketmine\level\sound\EndermanTeleportSound($player)), [$player]);
 
         //Removes player things
-        $player->setGamemode(Player::SURVIVAL);
+        $player->setGamemode(Player::ADVENTURE); //Glass break prevent
         if ($this->pg->configs['clear.inventory.on.arena.join'])
             $player->getInventory()->clearAll();
         if ($this->pg->configs['clear.effects.on.arena.join'])
@@ -525,12 +525,15 @@ final class SWarena
                         $health = $p->getMaxHealth();
                     $p->setHealth($health);
                     $p->setFood(20);
+                    $p->setGamemode(Player::SURVIVAL);
                 }
                 $p->sendMessage($this->pg->lang['game.start']);
                 if ($p->getLevel()->getBlock($p->floor()->subtract(0, 2))->getId() == 20)
                     $p->getLevel()->setBlock($p->floor()->subtract(0, 2), Block::get(0), true, false);
+
                 if ($p->getLevel()->getBlock($p->floor()->subtract(0, 1))->getId() == 20)
                     $p->getLevel()->setBlock($p->floor()->subtract(0, 1), Block::get(0), true, false);
+
             }
         }
         $this->time = 0;
