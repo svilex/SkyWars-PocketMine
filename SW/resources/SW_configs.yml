@@ -49,7 +49,7 @@ join.max.health: 20
 
 # The players health will be set to this value when joining a SkyWars game.
 # N.B : If greater than the player max health , max health will be used instead.
-join.health: 99
+join.health: 20
 # ------------------------------------------\HEALTH-----------------------------------------
 
 # Players playing a SkyWars game won't be damaged from the following causes.

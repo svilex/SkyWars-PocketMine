@@ -2,11 +2,11 @@
 ![skywars](https://raw.githubusercontent.com/svilex/res/master/skywars.png)
 ---
 ### About
-This is a [PocketMine-MP](https://github.com/PocketMine/PocketMine-MP) (or forks) plugin that allows you to simply create multiple SkyWars mini-games for mcpe 1.0.4! :grin:
+This is a [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) (or forks) plugin which allows you to simply create multiple SkyWars mini-games ! :grin:
 
 **This plugin was tested (and works) on:**
 
-- [x] **[PocketMine-MP](https://github.com/pmmp/PocketMine-MP/)**
+- [x] **[PocketMine-MP](https://github.com/pmmp/PocketMine-MP)**
 
 _not tested doesn't mean not working_<br>
 _android devices are not supported_
@@ -93,26 +93,25 @@ Command | Description
 /sw quit | Anyone except ops can use this command to left the current SW game.
 
 ##### Here there are some videos that explains how to create an arena in different languages:
-- [Deutsch](//TODO add a video) no video yet
-- [English](//TODO add a video) no video yet
-- [Español](//TODO add a video) no video yet
-- [Français](//TODO add a video) no video yet
-- [Italiano](//TODO add a video) no video yet
+
+- [Deutsch]() no video yet
+- [English]() no video yet
+- [Español]() no video yet
+- [Français]() no video yet
+- [Italiano]() no video yet
 
 ###### Have you made a video? Contact me to put it here:exclamation:
 
 ---
 ### Contacts
-<br/>
+
 - **Kik:** \_svile\_<br/>
 - **Telegram_Gruop:** :link: https://telegram.me/svile<br/>
 - **E-mail:** thesville@gmail.com<br/>
 
-<br/>
-<br/>
 ###### _fell free to make pull requests and to contact me for any help_.
-<br/>
-<br/>
+
+
 
 ---
 ### License

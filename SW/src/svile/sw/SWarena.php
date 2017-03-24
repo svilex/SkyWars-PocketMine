@@ -42,9 +42,9 @@ namespace svile\sw;
 
 
 use pocketmine\Player;
-use pocketmine\network\protocol\AdventureSettingsPacket;
-use pocketmine\network\protocol\ContainerSetContentPacket;
-use pocketmine\network\protocol\SetPlayerGameTypePacket;
+//use pocketmine\network\protocol\AdventureSettingsPacket;
+//use pocketmine\network\protocol\ContainerSetContentPacket;
+//use pocketmine\network\protocol\SetPlayerGameTypePacket;
 
 use pocketmine\block\Block;
 use pocketmine\level\Position;
@@ -410,7 +410,9 @@ final class SWarena
         $player->setMaxHealth($this->pg->configs['join.max.health']);
         $player->setMaxHealth($player->getMaxHealth());
         if ($player->getAttributeMap() != null) {//just to be really sure
-            $player->setHealth($this->pg->configs['join.health']);
+            if (($health = $this->pg->configs['join.health']) > $player->getMaxHealth() || $health < 1)
+                $health = $player->getMaxHealth();
+            $player->setHealth($health);
             $player->setFood(20);
         }
         $this->pg->getServer()->loadLevel($this->world);
@@ -519,7 +521,9 @@ final class SWarena
                 $p->setMaxHealth($this->pg->configs['join.max.health']);
                 $p->setMaxHealth($p->getMaxHealth());
                 if ($p->getAttributeMap() != null) {//just to be really sure
-                    $p->setHealth($this->pg->configs['join.health']);
+                    if (($health = $this->pg->configs['join.health']) > $p->getMaxHealth() || $health < 1)
+                        $health = $p->getMaxHealth();
+                    $p->setHealth($health);
                     $p->setFood(20);
                 }
                 $p->sendMessage($this->pg->lang['game.start']);
