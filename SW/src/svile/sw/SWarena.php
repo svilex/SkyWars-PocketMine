@@ -52,6 +52,14 @@ use pocketmine\level\Position;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\Server;
+use pocketmine\entity\Entity;
+use pocketmine\plugin\PluginBase;
+use pocketmine\event\Listener;
+
 use pocketmine\tile\Chest;
 use pocketmine\item\Item;
 
@@ -510,6 +518,22 @@ final class SWarena
         return false;
     }
 
+    // Lightning death
+    
+    public function onDeath(PlayerDeathEvent $ent){
+        $player = $ent->getEntity();
+        $lightningdeathstrike = new AddEntityPacket();
+        $lightningdeathstrike->type = 93;
+        $lightningdeathstrike->eid = Entity::$entityCount++;
+        $lightningdeathstrike->metadata = array();
+        $lightningdeathstrike->speedX = 0;
+        $lightningdeathstrike->speedY = 0;
+        $lightningdeathstrike->speedZ = 0;
+        $lightningdeathstrike->x = $player->x;
+        $lightningdeathstrike->y = $player->y;
+        $lightningdeathstrike->z = $player->z;
+        $player->dataPacket($lightningdeathstrike);
+    }
 
     /** VOID */
     private function start()
