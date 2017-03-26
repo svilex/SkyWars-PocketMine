@@ -46,6 +46,13 @@ use pocketmine\Player;
 //use pocketmine\network\protocol\ContainerSetContentPacket;
 //use pocketmine\network\protocol\SetPlayerGameTypePacket;
 
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\Server;
+use pocketmine\entity\Entity;
+
 use pocketmine\block\Block;
 use pocketmine\level\Position;
 
@@ -380,13 +387,34 @@ final class SWarena
         }
     }
 
+    /**
+     * @param Player $p
+     * @param $height
+     */
+    public function addStrike(Player $p, $height)
+    {
+        $level = $p->getLevel();
+        $light = new AddEntityPacket();
+        $light->metadata = array();
+        $light->type = 93;
+        $light->eid = Entity::$entityCount++;
+        $light->speedX = 0;
+        $light->speedY = 0;
+        $light->speedZ = 0;
+        $light->yaw = $p->getYaw();
+        $light->pitch = $p->getPitch();
+        $light->x = $p->x;
+        $light->y = $p->y+$height;
+        $light->z = $p->z;
+        Server::broadcastPacket($level->getPlayers(),$light);
+   }
 
     /**
      * @param Player $player
      * @param bool $msg
      * @return bool
      */
-    public function join(Player $player, $msg = true)
+    public function join(Player $player, PlayerDeathEvent $e, $msg = true)
     {
         if ($this->GAME_STATE > 0) {
             if ($msg)
@@ -400,6 +428,12 @@ final class SWarena
         }
         //Sound
         $player->getLevel()->addSound((new \pocketmine\level\sound\EndermanTeleportSound($player)), [$player]);
+        
+        //Lightning strike on death
+        $p = $e->getPlayer();
+        if($p instanceof Player){
+            $this->addstrike($p,$this->lightning);
+        }
 
         //Removes player things
         $player->setGamemode(Player::SURVIVAL);
