@@ -408,7 +408,7 @@ final class SWarena
         if ($this->pg->configs['clear.effects.on.arena.join'])
             $player->removeAllEffects();
         $player->setMaxHealth($this->pg->configs['join.max.health']);
-        $player->setMaxHealth($player->getMaxHealth());
+        $player->setHealth($player->getMaxHealth());
         if ($player->getAttributeMap() != null) {//just to be really sure
             if (($health = $this->pg->configs['join.health']) > $player->getMaxHealth() || $health < 1)
                 $health = $player->getMaxHealth();
