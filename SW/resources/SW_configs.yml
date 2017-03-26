@@ -31,6 +31,9 @@ banned.commands.while.in.game:
 - /home
 - /f
 - /kill
+- /p
+- /sethome
+- /home
 
 # If this option is "true" , the game will start once all the slots will be finished , regardless from countdown.
 start.when.full: true
