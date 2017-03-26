@@ -267,9 +267,9 @@ final class SWarena
         }
         $s = $config->get('spawns');
         $s[$slot] = [
-            'x' => floor($player->x),
-            'y' => floor($player->y),
-            'z' => floor($player->z),
+            'x' => $player->getFloorX()+0.5,
+            'y' => $player->getFloorY(),
+            'z' => $player->getFloorZ()+0.5,
             'yaw' => $player->yaw,
             'pitch' => $player->pitch
         ];
