@@ -55,7 +55,6 @@ use pocketmine\nbt\tag\StringTag as Str;
         #Use this for PHP5
 //use pocketmine\nbt\tag\String as Str;
 
-
 class SWcommands
 {
     /** @var SWmain */
@@ -271,8 +270,8 @@ class SWcommands
 
                 //$sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::LIGHT_PURPLE . 'I\'m creating a backup of the world...teleporting to hub');
                 //TODO: Remove this (pmmp messages queue)
-                $pk = new \pocketmine\network\protocol\TextPacket();
-                $pk->type = \pocketmine\network\protocol\TextPacket::TYPE_RAW;
+                $pk = new \pocketmine\network\mcpe\protocol\TextPacket();
+                $pk->type = \pocketmine\network\mcpe\protocol\TextPacket::TYPE_RAW;
                 $pk->message = TextFormat::AQUA . '→' . TextFormat::LIGHT_PURPLE . 'I\'m creating a backup of the world ' . TextFormat::AQUA . $world . TextFormat::LIGHT_PURPLE . ', do not move';
                 $sender->dataPacket($pk);
 
