@@ -75,7 +75,7 @@ class SWcommands
      * @param array $args
      * @return bool
      */
-    public function onCommand(CommandSender $sender, Command $command, $label, array $args)
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool
     {
         if (!($sender instanceof Player) || !$sender->isOp()) {
             switch (strtolower(array_shift($args))):
@@ -271,8 +271,8 @@ class SWcommands
 
                 //$sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::LIGHT_PURPLE . 'I\'m creating a backup of the world...teleporting to hub');
                 //TODO: Remove this (pmmp messages queue)
-                $pk = new \pocketmine\network\protocol\TextPacket();
-                $pk->type = \pocketmine\network\protocol\TextPacket::TYPE_RAW;
+                $pk = new \pocketmine\network\mcpe\protocol\TextPacket();
+                $pk->type = \pocketmine\network\mcpe\protocol\TextPacket::TYPE_RAW;
                 $pk->message = TextFormat::AQUA . '→' . TextFormat::LIGHT_PURPLE . 'I\'m creating a backup of the world ' . TextFormat::AQUA . $world . TextFormat::LIGHT_PURPLE . ', do not move';
                 $sender->dataPacket($pk);
 
