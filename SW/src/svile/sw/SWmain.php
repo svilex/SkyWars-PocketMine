@@ -270,7 +270,7 @@ class SWmain extends PluginBase
     }
 
 
-    public function onCommand(CommandSender $sender, Command $command, $label, array $args)
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool
     {
         $this->commands->onCommand($sender, $command, $label, $args);
         return true;
