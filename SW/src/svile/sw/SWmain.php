@@ -204,15 +204,15 @@ class SWmain extends PluginBase
                                       |___/       |___/
         */
         $this->lang = new Config($this->getDataFolder() . 'SW_lang.yml', CONFIG::YAML, [
-            'banned.command.msg' => '@b→@cYou can\'t use this command here',
+            'banned.command.msg' => '@b→@cYou can\'t use this command here.',
             'sign.game.full' => '@b→@cThis game is full, please wait',
             'sign.game.running' => '@b→@cThe game is running, please wait',
             'game.join' => '@b→@f{PLAYER} @ejoined the game @b{COUNT}',
             'popup.countdown' => '@bThe game starts in @f{N}',
             'chat.countdown' => '@b→@7The game starts in @b{N}',
-            'game.start' => '@b→@dThe game start now, good luck !',
+            'game.start' => '@b→@dThe game start now, good luck!',
             'no.pvp.countdown' => '@bYou can\'t PvP for @f{COUNT} @bseconds',
-            'game.chest.refill' => '@b→@aChests has been refilled !',
+            'game.chest.refill' => '@b→@aChests have been refilled!',
             'game.left' => '@f→@7{PLAYER} left the game @b{COUNT}',
             'death.player' => '@c→@f{PLAYER} @cwas killed by @f{KILLER} @b{COUNT}',
             'death.arrow' => '@c→@f{PLAYER} @cwas killed by @f{KILLER} @b{COUNT}',
@@ -537,7 +537,7 @@ class SWmain extends PluginBase
             //BLOCKS
             'block' => array(
                 Item::STONE,
-                Item::WOODEN_PLANK,
+                Item::WOOD2,
                 Item::COBBLESTONE,
                 Item::DIRT
             ),
