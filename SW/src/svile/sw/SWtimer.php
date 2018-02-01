@@ -59,7 +59,7 @@ class SWtimer extends PluginTask
     }
 
 
-    public function onRun($tick)
+    public function onRun(int $currentTick)
     {
         foreach ($this->getOwner()->arenas as $SWname => $SWarena)
             $SWarena->tick();
