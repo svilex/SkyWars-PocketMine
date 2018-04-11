@@ -451,100 +451,98 @@ class SWlistener implements Listener{
      * @return void
      */
     public function onDamage(EntityDamageEvent $ev) : void{
-        if($ev->getEntity() instanceof Player){
-            $p = $ev->getEntity();
-            foreach($this->pg->arenas as $a){
-                if($f = $a->inArena($p->getName())){
-                    if($f != 1){
-                        $ev->setCancelled();
-                        break;
-                    }
-                    if($ev instanceof EntityDamageByEntityEvent && ($d = $ev->getDamager()) instanceof Player){
-                        if(($f = $a->inArena($d->getName())) == 2 || $f == 0){
-                            $ev->setCancelled();
-                            break;
-                        }
-                    }
-                    $cause = (int)$ev->getCause();
-                    if(in_array($cause, $this->pg->configs['damage.cancelled.causes'])){
-                        $ev->setCancelled();
-                        break;
-                    }
-                    if($a->GAME_STATE == 0 || $a->GAME_STATE == 2){
-                        $ev->setCancelled();
-                        break;
-                    }
-
-                    //SPECTATORS
-                    $spectate = (bool)$this->pg->configs['death.spectator'];
-                    if($spectate && !$ev->isCancelled()){
-                        if(($p->getHealth() - $ev->getFinalDamage()) <= 0){
-                            $ev->setCancelled();
-                            //FAKE KILL PLAYER MSG
-                            $count = '[' . ($a->getSlot(true) - 1) . '/' . $a->getSlot() . ']';
-
-                            switch($cause):
-
-
-                                case EntityDamageEvent::CAUSE_ENTITY_ATTACK:
-                                    if($ev instanceof EntityDamageByEntityEvent){
-                                        $d = $ev->getDamager();
-                                        if($d instanceof Player)
-                                            $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', $d->getDisplayName(), str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.player'])));
-                                        elseif($d instanceof \pocketmine\entity\Living)
-                                            $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', $d->getNameTag() !== '' ? $d->getNameTag() : $d->getName(), str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.player'])));
-                                        else
-                                            $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', 'Unknown', str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.player'])));
-                                    }
-                                    break;
-
-
-                                case EntityDamageEvent::CAUSE_PROJECTILE:
-                                    if($ev instanceof EntityDamageByEntityEvent){
-                                        $d = $ev->getDamager();
-                                        if($d instanceof Player)
-                                            $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', $d->getDisplayName(), str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.arrow'])));
-                                        elseif($d instanceof \pocketmine\entity\Living)
-                                            $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', $d->getNameTag() !== '' ? $d->getNameTag() : $d->getName(), str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.arrow'])));
-                                        else
-                                            $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', 'Unknown', str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.arrow'])));
-                                    }
-                                    break;
-
-
-                                case EntityDamageEvent::CAUSE_VOID:
-                                    $message = str_replace('{COUNT}', $count, str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.void']));
-                                    break;
-
-
-                                case EntityDamageEvent::CAUSE_LAVA:
-                                    $message = str_replace('{COUNT}', $count, str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.lava']));
-                                    break;
-
-
-                                default:
-                                    $message = str_replace('{COUNT}', '[' . $a->getSlot(true) . '/' . $a->getSlot() . ']', str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['game.left']));
-                                    break;
-
-
-                            endswitch;
-
-                            foreach($p->getLevel()->getPlayers() as $pl)
-                                $pl->sendMessage($message);
-
-                            //DROPS
-                            if($this->pg->configs['drops.on.death']){
-                                foreach($p->getDrops() as $item){
-                                    $p->getLevel()->dropItem($p, $item);
-                                }
-                            }
-
-                            //CLOSE
-                            $a->closePlayer($p, false, true);
-                        }
-                    }
+        $p = $ev->getEntity();
+        if(!$p instanceof Player) return;
+        foreach($this->pg->arenas as $a){
+            if($f = $a->inArena($p->getName())){
+                if($f != 1){
+                    $ev->setCancelled();
                     break;
                 }
+                if($ev instanceof EntityDamageByEntityEvent && ($d = $ev->getDamager()) instanceof Player){
+                    if(($f = $a->inArena($d->getName())) == 2 || $f == 0){
+                        $ev->setCancelled();
+                        break;
+                    }
+                }
+                $cause = (int)$ev->getCause();
+                if(in_array($cause, $this->pg->configs['damage.cancelled.causes'])){
+                    $ev->setCancelled();
+                    break;
+                }
+                if($a->GAME_STATE == 0 || $a->GAME_STATE == 2){
+                    $ev->setCancelled();
+                    break;
+                }
+
+                //SPECTATORS
+                $spectate = (bool)$this->pg->configs['death.spectator'];
+                if($spectate && !$ev->isCancelled()){
+                    if(($p->getHealth() - $ev->getFinalDamage()) <= 0){
+                        $ev->setCancelled();
+                        //FAKE KILL PLAYER MSG
+                        $count = '[' . ($a->getSlot(true) - 1) . '/' . $a->getSlot() . ']';
+
+                        switch($cause):
+
+                            case EntityDamageEvent::CAUSE_ENTITY_ATTACK:
+                                if($ev instanceof EntityDamageByEntityEvent){
+                                    $d = $ev->getDamager();
+                                    if($d instanceof Player)
+                                        $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', $d->getDisplayName(), str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.player'])));
+                                    elseif($d instanceof \pocketmine\entity\Living)
+                                        $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', $d->getNameTag() !== '' ? $d->getNameTag() : $d->getName(), str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.player'])));
+                                    else
+                                        $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', 'Unknown', str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.player'])));
+                                }
+                                break;
+
+
+                            case EntityDamageEvent::CAUSE_PROJECTILE:
+                                if($ev instanceof EntityDamageByEntityEvent){
+                                    $d = $ev->getDamager();
+                                    if($d instanceof Player)
+                                        $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', $d->getDisplayName(), str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.arrow'])));
+                                    elseif($d instanceof \pocketmine\entity\Living)
+                                        $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', $d->getNameTag() !== '' ? $d->getNameTag() : $d->getName(), str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.arrow'])));
+                                    else
+                                        $message = str_replace('{COUNT}', $count, str_replace('{KILLER}', 'Unknown', str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.arrow'])));
+                                }
+                                break;
+
+
+                            case EntityDamageEvent::CAUSE_VOID:
+                                $message = str_replace('{COUNT}', $count, str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.void']));
+                                break;
+
+
+                            case EntityDamageEvent::CAUSE_LAVA:
+                                $message = str_replace('{COUNT}', $count, str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['death.lava']));
+                                break;
+
+
+                            default:
+                                $message = str_replace('{COUNT}', '[' . $a->getSlot(true) . '/' . $a->getSlot() . ']', str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['game.left']));
+                                break;
+
+
+                        endswitch;
+
+                        foreach($p->getLevel()->getPlayers() as $pl)
+                            $pl->sendMessage($message);
+
+                        //DROPS
+                        if($this->pg->configs['drops.on.death']){
+                            foreach($p->getDrops() as $item){
+                                $p->getLevel()->dropItem($p, $item);
+                            }
+                        }
+
+                        //CLOSE
+                        $a->closePlayer($p, false, true);
+                    }
+                }
+                break;
             }
         }
     }
@@ -565,6 +563,7 @@ class SWlistener implements Listener{
 
     /**
      * @param BlockBreakEvent $ev
+     * @throws \InvalidStateException
      * @return void
      */
     public function onBreak(BlockBreakEvent $ev) : void{

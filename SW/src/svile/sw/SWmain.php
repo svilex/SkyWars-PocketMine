@@ -64,6 +64,7 @@ use pocketmine\tile\Sign;
 use pocketmine\math\Vector3;
 
 class SWmain extends PluginBase{
+
     /** Plugin Version */
     const SW_VERSION = '0.7dev';
 
@@ -82,7 +83,9 @@ class SWmain extends PluginBase{
     /** @var \svile\sw\utils\SWeconomy */
     public $economy;
 
-
+    /**
+     * @return void
+     */
     public function onLoad() : void{
         if(!is_dir($this->getDataFolder()))
             @mkdir($this->getDataFolder() . "\x61\x72\x65\x6e\x61\x73", 0755, true);
@@ -113,7 +116,9 @@ class SWmain extends PluginBase{
         }
     }
 
-
+    /**
+     * @return void
+     */
     public function onEnable() : void{
         if($this->getDescription()->getVersion() != self::SW_VERSION)
             $this->getLogger()->critical(@gzinflate(@base64_decode('C8lILUpVyCxWSFQoKMpPyknNVSjPLMlQKMlIVSjIKU3PzFMoSy0qzszPAwA=')));
@@ -260,13 +265,23 @@ class SWmain extends PluginBase{
         $this->getLogger()->info(str_replace('\n', PHP_EOL, @gzinflate(@base64_decode("\x70\x5a\x42\x4e\x43\x6f\x4d\x77\x45\x45\x61\x76knVBs3dVS8VFWym00I0gUaZJMD8Sk1JP5D08WUlqFm7bWb7vzTcwtarVMotl7na/zLoMubNMmwwt83N8cQGRn3\x67fYBNoE/EdBFBDZFMa7YZgMGuHMcPYrlEqAW+qikQSLoJrGfhIwJ56lnZaRqvklrl200gD8tK38I1v/fQgZkyuuuvBXriKR9\x6f1QYNwlCvUTiis+D5SVPnhXBz//NcH"))));
     }
 
-
+    /**
+     * @throws \InvalidStateException
+     * @return void
+     */
     public function onDisable() : void{
         foreach($this->arenas as $name => $arena)
             $arena->stop(true);
     }
 
-
+    /**
+     * @param CommandSender $sender
+     * @param Command       $command
+     * @param string        $label
+     * @param array         $args
+     * @return bool
+     * @throws \InvalidStateException
+     */
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
         $this->commands->onCommand($sender, $command, $label, $args);
         return true;

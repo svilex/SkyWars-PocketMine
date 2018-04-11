@@ -63,7 +63,6 @@ final class SWarena{
     public $GAME_STATE = 0;//0 -> GAME_COUNTDOWN | 1 -> GAME_RUNNING | 2 -> no-pvp
     /** @var SWmain */
     private $pg;
-
     /** @var string */
     private $SWname;
     /** @var int */
@@ -78,7 +77,6 @@ final class SWarena{
     public $void = 0;//This is used to check "fake void" to avoid fall (stunck in air) bug
     /** @var array */
     private $spawns = [];//Players spawns
-
     /** @var int */
     private $time = 0;//Seconds from the last reload | GAME_STATE
     /** @var array */
@@ -86,8 +84,8 @@ final class SWarena{
     /** @var array */
     private $spectators = [];
 
-
     /**
+     * SWarena constructor.
      * @param SWmain $plugin
      * @param string $SWname
      * @param int    $slot
@@ -95,6 +93,7 @@ final class SWarena{
      * @param int    $countdown
      * @param int    $maxtime
      * @param int    $void
+     * @throws \InvalidStateException
      */
     public function __construct(SWmain $plugin, $SWname = 'sw', $slot = 0, $world = 'world', $countdown = 60, $maxtime = 300, $void = 0){
         $this->pg = $plugin;
@@ -317,6 +316,7 @@ final class SWarena{
 
 
     /**
+     * @throws \InvalidStateException
      * @return void
      */
     public function tick() : void{
