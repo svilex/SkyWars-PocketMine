@@ -2,7 +2,7 @@ name: SW_svile
 author: svile
 description: SkyWars plugin
 main: svile\sw\SWmain
-version: 0.7dev
+version: 0.8dev
 api: [3.0.0-ALPHA11]
 load: STARTUP
 commands:
