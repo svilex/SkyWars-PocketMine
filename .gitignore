@@ -1,2 +1,4 @@
 *.phar
 .idea/*
+.xml
+.iml
