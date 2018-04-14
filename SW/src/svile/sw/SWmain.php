@@ -38,8 +38,9 @@
  *
  */
 
-namespace svile\sw;
+declare(strict_types=1);
 
+namespace svile\sw;
 
 use pocketmine\plugin\PluginBase;
 
@@ -47,10 +48,11 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 
 use pocketmine\nbt\NBT;
-        #Use these for PHP7
+#Use these for PHP7
 use pocketmine\nbt\tag\CompoundTag as Compound;
 use pocketmine\nbt\tag\StringTag as Str;
-        #Use these for PHP5
+
+#Use these for PHP5
 //use pocketmine\nbt\tag\Compound as Compound;
 //use pocketmine\nbt\tag\String as Str;
 
@@ -61,9 +63,8 @@ use pocketmine\item\Item;
 use pocketmine\tile\Sign;
 use pocketmine\math\Vector3;
 
+class SWmain extends PluginBase{
 
-class SWmain extends PluginBase
-{
     /** Plugin Version */
     const SW_VERSION = '0.7dev';
 
@@ -82,69 +83,71 @@ class SWmain extends PluginBase
     /** @var \svile\sw\utils\SWeconomy */
     public $economy;
 
-
-    public function onLoad()
-    {
-        if (!is_dir($this->getDataFolder()))
+    /**
+     * @return void
+     */
+    public function onLoad() : void{
+        if(!is_dir($this->getDataFolder()))
             @mkdir($this->getDataFolder() . "\x61\x72\x65\x6e\x61\x73", 0755, true);
 
         //This changes worlds NBT name with folders ones to avoid problems //world folder name should be used instead of doing this
-        try {
-            foreach (scandir($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73") as $worldDir) {
-                if (is_dir($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir) && is_file($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74")) {
+        try{
+            foreach(scandir($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73") as $worldDir){
+                if(is_dir($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir) && is_file($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74")){
                     $nbt = new NBT(NBT::BIG_ENDIAN);
                     $nbt->readCompressed(file_get_contents($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74"));
                     $levelData = $nbt->getData();
-                    if (array_key_exists("\x44\x61\x74\x61", $levelData) && $levelData["\x44\x61\x74\x61"] instanceof Compound) {
+                    if(array_key_exists("\x44\x61\x74\x61", $levelData) && $levelData["\x44\x61\x74\x61"] instanceof Compound){
                         $levelData = $levelData["\x44\x61\x74\x61"];
-                        if (array_key_exists("\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65", $levelData) && $levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] != $worldDir) {
+                        if(array_key_exists("\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65", $levelData) && $levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] != $worldDir){
                             $levelData["\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65"] = new Str("\x4c\x65\x76\x65\x6c\x4e\x61\x6d\x65", $worldDir);
                             $nbt->setData(new Compound('', ["\x44\x61\x74\x61" => $levelData]));
                             file_put_contents($this->getServer()->getDataPath() . "\x77\x6f\x72\x6c\x64\x73\x2f" . $worldDir . "\x2f\x6c\x65\x76\x65\x6c\x2e\x64\x61\x74", $nbt->writeCompressed());
                         }
                         unset($worldDir, $levelData, $nbt);
-                    } else {
+                    }else{
                         $this->getLogger()->critical('There is a problem with the "level.dat" of the world: §f' . $worldDir);
                         unset($worldDir, $levelData, $nbt);
                     }
                 }
             }
-        } catch (\Exception $e) {
+        }catch(\Exception $e){
             $this->getLogger()->critical($e->getMessage() . ' in §b' . $e->getFile() . '§c on line §b' . $e->getLine());
         }
     }
 
-
-    public function onEnable()
-    {
-        if ($this->getDescription()->getVersion() != self::SW_VERSION)
+    /**
+     * @return void
+     */
+    public function onEnable() : void{
+        if($this->getDescription()->getVersion() != self::SW_VERSION)
             $this->getLogger()->critical(@gzinflate(@base64_decode('C8lILUpVyCxWSFQoKMpPyknNVSjPLMlQKMlIVSjIKU3PzFMoSy0qzszPAwA=')));
-        if (@array_shift($this->getDescription()->getAuthors()) != "\x73\x76\x69\x6c\x65" || $this->getDescription()->getName() != "\x53\x57\x5f\x73\x76\x69\x6c\x65" || $this->getDescription()->getVersion() != self::SW_VERSION) {
+        if(@array_shift($this->getDescription()->getAuthors()) != "\x73\x76\x69\x6c\x65" || $this->getDescription()->getName() != "\x53\x57\x5f\x73\x76\x69\x6c\x65" || $this->getDescription()->getVersion() != self::SW_VERSION){
             $this->getLogger()->notice(@gzinflate(@base64_decode('LYxBDsIwDAS/sg8ozb1/QEICiXOo3NhKiKvYqeD3hcJtNaPZGxNid9YGXeAshrX0JBWfZZsUGrCJif9ckZrhikRfQGgUyz+YwO6rTSEkce6PcdZnOB5e4Zrf99jsdNE5k5+l0g4=')));
             sleep(0x15180);
         }
 
         //Creates the database that is needed to store signs info (what a bad idea -_-)
-        try {
-            if (!is_file($this->getDataFolder() . "\x53\x57\x5f\x73\x69\x67\x6e\x73\x2e\x64\x62")) {
+        try{
+            if(!is_file($this->getDataFolder() . "\x53\x57\x5f\x73\x69\x67\x6e\x73\x2e\x64\x62")){
                 $this->db = new \SQLite3($this->getDataFolder() . "\x53\x57\x5f\x73\x69\x67\x6e\x73\x2e\x64\x62", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
-            } else {
+            }else{
                 $this->db = new \SQLite3($this->getDataFolder() . "\x53\x57\x5f\x73\x69\x67\x6e\x73\x2e\x64\x62", SQLITE3_OPEN_READWRITE);
             }
             $this->db->exec("CREATE TABLE IF NOT EXISTS signs (arena TEXT PRIMARY KEY COLLATE NOCASE, x INTEGER , y INTEGER , z INTEGER, world TEXT);");
-        } catch (\Exception $e) {
+        }catch(\Exception $e){
             $this->getLogger()->critical($e->getMessage() . ' in §b' . $e->getFile() . '§c on line §b' . $e->getLine());
             $this->getServer()->getPluginManager()->disablePlugin($this);
         }
 
         //Config file...
         $v = ((new Config($this->getDataFolder() . 'SW_configs.yml', CONFIG::YAML))->get('CONFIG_VERSION', '1st'));
-        if ($v != '1st' && $v != self::SW_VERSION) {
+        if($v != '1st' && $v != self::SW_VERSION){
             $this->getLogger()->notice('You are using old configs, deleting them.Make sure to delete old arenas if aren\'t working');
             @unlink($this->getDataFolder() . 'SW_configs.yml');
             @unlink($this->getDataFolder() . 'SW_lang.yml');
             $this->saveResource('SW_configs.yml', true);
-        } elseif ($v == '1st') {
+        }elseif($v == '1st'){
             $this->saveResource('SW_configs.yml', true);
         }
         unset($v);
@@ -226,7 +229,7 @@ class SWmain extends PluginBase
         $this->lang = $this->lang->getAll();
         file_put_contents($this->getDataFolder() . 'SW_lang.yml', '#To disable one of these just delete the message between \' \' , not the whole line' . PHP_EOL . '#You can use " @ " to set colors and _EOL_ as EndOfLine' . PHP_EOL . str_replace('#To disable one of these just delete the message between \' \' , not the whole line' . PHP_EOL . '#You can use " @ " to set colors and _EOL_ as EndOfLine' . PHP_EOL, '', file_get_contents($this->getDataFolder() . 'SW_lang.yml')));
         $newlang = [];
-        foreach ($this->lang as $key => $val) {
+        foreach($this->lang as $key => $val){
             $newlang[$key] = str_replace('  ', ' ', str_replace('_EOL_', "\n", str_replace('@', '§', trim($val))));
         }
         $this->lang = $newlang;
@@ -237,19 +240,19 @@ class SWmain extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(new SWlistener($this), $this);
 
         //Calls loadArenas() & loadSigns() to loads arenas & signs...
-        if (!($this->loadSigns() && $this->loadArenas())) {
+        if(!($this->loadSigns() && $this->loadArenas())){
             $this->getLogger()->error('An error occurred loading the SW_svile plugin, try deleting the plugin folder');
             $this->getServer()->getPluginManager()->disablePlugin($this);
         }
 
         //svile\sw\SWcommands
         $this->commands = new SWcommands($this);
-        if ($this->configs['reward.winning.players']) {
+        if($this->configs['reward.winning.players']){
             //\svile\sw\utils\SWeconomy
             $this->economy = new \svile\sw\utils\SWeconomy($this);
-            if ($this->economy->getApiVersion()) {
+            if($this->economy->getApiVersion()){
                 $this->getLogger()->info('§aUsing: §f' . $this->economy->getApiVersion(true) . '§a as economy api');
-            } else {
+            }else{
                 $this->getLogger()->critical('I can\'t find an economy plugin, the reward feature will be disabled');
                 $this->getLogger()->critical('Supported economy plugins:');
                 $this->getLogger()->critical('EconomyAPI §42.0.9');
@@ -262,16 +265,24 @@ class SWmain extends PluginBase
         $this->getLogger()->info(str_replace('\n', PHP_EOL, @gzinflate(@base64_decode("\x70\x5a\x42\x4e\x43\x6f\x4d\x77\x45\x45\x61\x76knVBs3dVS8VFWym00I0gUaZJMD8Sk1JP5D08WUlqFm7bWb7vzTcwtarVMotl7na/zLoMubNMmwwt83N8cQGRn3\x67fYBNoE/EdBFBDZFMa7YZgMGuHMcPYrlEqAW+qikQSLoJrGfhIwJ56lnZaRqvklrl200gD8tK38I1v/fQgZkyuuuvBXriKR9\x6f1QYNwlCvUTiis+D5SVPnhXBz//NcH"))));
     }
 
-
-    public function onDisable()
-    {
-        foreach ($this->arenas as $name => $arena)
+    /**
+     * @throws \InvalidStateException
+     * @return void
+     */
+    public function onDisable() : void{
+        foreach($this->arenas as $name => $arena)
             $arena->stop(true);
     }
 
-
-    public function onCommand(CommandSender $sender, Command $command, $label, array $args)
-    {
+    /**
+     * @param CommandSender $sender
+     * @param Command       $command
+     * @param string        $label
+     * @param array         $args
+     * @return bool
+     * @throws \InvalidStateException
+     */
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
         $this->commands->onCommand($sender, $command, $label, $args);
         return true;
     }
@@ -289,11 +300,10 @@ class SWmain extends PluginBase
     /**
      * @return bool
      */
-    public function loadArenas()
-    {
-        foreach (scandir($this->getDataFolder() . 'arenas/') as $arenadir) {
-            if ($arenadir != '..' && $arenadir != '.' && is_dir($this->getDataFolder() . 'arenas/' . $arenadir)) {
-                if (is_file($this->getDataFolder() . 'arenas/' . $arenadir . '/settings.yml')) {
+    public function loadArenas() : bool{
+        foreach(scandir($this->getDataFolder() . 'arenas/') as $arenadir){
+            if($arenadir != '..' && $arenadir != '.' && is_dir($this->getDataFolder() . 'arenas/' . $arenadir)){
+                if(is_file($this->getDataFolder() . 'arenas/' . $arenadir . '/settings.yml')){
                     $config = new Config($this->getDataFolder() . 'arenas/' . $arenadir . '/settings.yml', CONFIG::YAML, [
                         'name' => 'default',
                         'slot' => 0,
@@ -305,7 +315,7 @@ class SWmain extends PluginBase
                     ]);
                     $this->arenas[$config->get('name')] = new SWarena($this, $config->get('name'), ($config->get('slot') + 0), $config->get('world'), ($config->get('countdown') + 0), ($config->get('maxGameTime') + 0), ($config->get('void_Y') + 0));
                     unset($config);
-                } else {
+                }else{
                     return false;
                     break;
                 }
@@ -318,13 +328,12 @@ class SWmain extends PluginBase
     /**
      * @return bool
      */
-    public function loadSigns()
-    {
+    public function loadSigns() : bool{
         $this->signs = [];
         $r = $this->db->query("SELECT * FROM signs;");
-        while ($array = $r->fetchArray(SQLITE3_ASSOC))
+        while($array = $r->fetchArray(SQLITE3_ASSOC))
             $this->signs[$array['x'] . ':' . $array['y'] . ':' . $array['z'] . ':' . $array['world']] = $array['arena'];
-        if (empty($this->signs) && !empty($array))
+        if(empty($this->signs) && !empty($array))
             return false;
         else
             return true;
@@ -333,26 +342,25 @@ class SWmain extends PluginBase
 
     /**
      * @param string $SWname
-     * @param int $x
-     * @param int $y
-     * @param int $z
+     * @param int    $x
+     * @param int    $y
+     * @param int    $z
      * @param string $world
-     * @param bool $delete
-     * @param bool $all
+     * @param bool   $delete
+     * @param bool   $all
      * @return bool
      */
-    public function setSign($SWname, $x, $y, $z, $world, $delete = false, $all = true)
-    {
-        if ($delete) {
-            if ($all)
+    public function setSign($SWname, $x, $y, $z, $world, $delete = false, $all = true) : bool{
+        if($delete){
+            if($all)
                 $this->db->query("DELETE FROM signs;");
             else
                 $this->db->query("DELETE FROM signs WHERE arena='$SWname';");
-            if ($this->loadSigns())
+            if($this->loadSigns())
                 return true;
             else
                 return false;
-        } else {
+        }else{
             $stmt = $this->db->prepare("INSERT OR REPLACE INTO signs (arena, x, y, z, world) VALUES (:arena, :x, :y, :z, :world);");
             $stmt->bindValue(":arena", $SWname);
             $stmt->bindValue(":x", $x);
@@ -360,7 +368,7 @@ class SWmain extends PluginBase
             $stmt->bindValue(":z", $z);
             $stmt->bindValue(":world", $world);
             $stmt->execute();
-            if ($this->loadSigns())
+            if($this->loadSigns())
                 return true;
             else
                 return false;
@@ -369,38 +377,38 @@ class SWmain extends PluginBase
 
 
     /**
-     * @param bool $all
+     * @param bool   $all
      * @param string $SWname
-     * @param int $players
-     * @param int $slot
+     * @param int    $players
+     * @param int    $slot
      * @param string $state
+     * @return void
      */
-    public function refreshSigns($all = true, $SWname = '', $players = 0, $slot = 0, $state = '§fTap to join')
-    {
-        if (!$all) {
+    public function refreshSigns($all = true, $SWname = '', $players = 0, $slot = 0, $state = '§fTap to join') : void{
+        if(!$all){
             $ex = explode(':', array_search($SWname, $this->signs));
-            if (count($ex) == 0b100) {
+            if(count($ex) == 0b100){
                 $this->getServer()->loadLevel($ex[0b11]);
-                if ($this->getServer()->getLevelByName($ex[0b11]) != null) {
+                if($this->getServer()->getLevelByName($ex[0b11]) != null){
                     $tile = $this->getServer()->getLevelByName($ex[0b11])->getTile(new Vector3($ex[0], $ex[1], $ex[0b10]));
-                    if ($tile != null && $tile instanceof Sign) {
+                    if($tile != null && $tile instanceof Sign){
                         $text = $tile->getText();
                         $tile->setText($text[0], $text[1], TextFormat::GREEN . $players . TextFormat::BOLD . TextFormat::DARK_GRAY . '/' . TextFormat::RESET . TextFormat::GREEN . $slot, $state);
-                    } else {
+                    }else{
                         $this->getLogger()->critical('Can\'t get ' . $SWname . ' sign.Error finding sign on level: ' . $ex[0b11] . ' x:' . $ex[0] . ' y:' . $ex[1] . ' z:' . $ex[2]);
                     }
                 }
             }
-        } else {
-            foreach ($this->signs as $key => $val) {
+        }else{
+            foreach($this->signs as $key => $val){
                 $ex = explode(':', $key);
                 $this->getServer()->loadLevel($ex[0b11]);
-                if ($this->getServer()->getLevelByName($ex[0b11]) instanceof \pocketmine\level\Level) {
+                if($this->getServer()->getLevelByName($ex[0b11]) instanceof \pocketmine\level\Level){
                     $tile = $this->getServer()->getLevelByName($ex[0b11])->getTile(new Vector3($ex[0], $ex[1], $ex[2]));
-                    if ($tile instanceof Sign) {
+                    if($tile instanceof Sign){
                         $text = $tile->getText();
                         $tile->setText($text[0], $text[1], TextFormat::GREEN . $this->arenas[$val]->getSlot(true) . TextFormat::BOLD . TextFormat::DARK_GRAY . '/' . TextFormat::RESET . TextFormat::GREEN . $this->arenas[$val]->getSlot(), $text[3]);
-                    } else {
+                    }else{
                         $this->getLogger()->critical('Can\'t get ' . $val . ' sign.Error finding sign on level: ' . $ex[0b11] . ' x:' . $ex[0] . ' y:' . $ex[1] . ' z:' . $ex[2]);
                     }
                 }
@@ -413,10 +421,9 @@ class SWmain extends PluginBase
      * @param string $playerName
      * @return bool
      */
-    public function inArena($playerName = '')
-    {
-        foreach ($this->arenas as $a) {
-            if ($a->inArena($playerName)) {
+    public function inArena($playerName = '') : bool{
+        foreach($this->arenas as $a){
+            if($a->inArena($playerName)){
                 return true;
             }
         }
@@ -427,8 +434,7 @@ class SWmain extends PluginBase
     /**
      * @return array
      */
-    public function getChestContents() //TODO: **rewrite** this and let the owner decide the contents of the chest
-    {
+    public function getChestContents() : array{ //TODO: **rewrite** this and let the owner decide the contents of the chest
         $items = array(
             //ARMOR
             'armor' => array(
@@ -537,7 +543,7 @@ class SWmain extends PluginBase
             //BLOCKS
             'block' => array(
                 Item::STONE,
-                Item::WOODEN_PLANK,
+                Item::WOODEN_PLANKS,
                 Item::COBBLESTONE,
                 Item::DIRT
             ),
@@ -559,15 +565,15 @@ class SWmain extends PluginBase
         );
 
         $templates = [];
-        for ($i = 0; $i < 10; $i++) {
+        for($i = 0; $i < 10; $i++){
 
             $armorq = mt_rand(0, 1);
             $armortype = $items['armor'][mt_rand(0, (count($items['armor']) - 1))];
             $armor1 = array($armortype[mt_rand(0, (count($armortype) - 1))], 1);
-            if ($armorq) {
+            if($armorq){
                 $armortype = $items['armor'][mt_rand(0, (count($items['armor']) - 1))];
                 $armor2 = array($armortype[mt_rand(0, (count($armortype) - 1))], 1);
-            } else {
+            }else{
                 $armor2 = array(0, 1);
             }
             unset($armorq, $armortype);
@@ -581,17 +587,17 @@ class SWmain extends PluginBase
             unset($ftype);
 
             $add = mt_rand(0, 1);
-            if ($add) {
+            if($add){
                 $tr = $items['throwable'][mt_rand(0, (count($items['throwable']) - 1))];
-                if (count($tr) == 2) {
+                if(count($tr) == 2){
                     $throwable1 = array($tr[1], mt_rand(10, 20));
                     $throwable2 = array($tr[0], 1);
-                } else {
+                }else{
                     $throwable1 = array(0, 1);
                     $throwable2 = array($tr[0], mt_rand(5, 10));
                 }
                 $other = array(0, 1);
-            } else {
+            }else{
                 $throwable1 = array(0, 1);
                 $throwable2 = array(0, 1);
                 $ot = $items['other'][mt_rand(0, (count($items['other']) - 1))];

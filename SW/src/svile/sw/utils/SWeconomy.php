@@ -38,19 +38,20 @@
  *
  */
 
-namespace svile\sw\utils;
+declare(strict_types=1);
 
+namespace svile\sw\utils;
 
 use svile\sw\SWmain;
 use pocketmine\plugin\Plugin;
 use pocketmine\Player;
 
+class SWeconomy{
 
-class SWeconomy
-{
     const EconomyAPI = 1;
     const PocketMoney = 2;
     const MassiveEconomy = 3;
+
     /** @var int */
     private $ver = 0;
     /** @var SWmain */
@@ -58,24 +59,26 @@ class SWeconomy
     /** @var bool|\pocketmine\plugin\Plugin */
     private $api;
 
-
-    public function __construct(SWmain $plugin)
-    {
+    /**'
+     * SWeconomy constructor.
+     * @param SWmain $plugin
+     */
+    public function __construct(SWmain $plugin){
         $this->pg = $plugin;
         $api = $this->pg->getServer()->getPluginManager()->getPlugin('EconomyAPI');
-        if ($api != false && $api instanceof Plugin && $api->getDescription()->getVersion() == '2.0.9') {
+        if($api != false && $api instanceof Plugin && $api->getDescription()->getVersion() == '2.0.9'){
             $this->ver = self::EconomyAPI;
             $this->api = $api;
             return;
         }
         $api = $this->pg->getServer()->getPluginManager()->getPlugin('PocketMoney');
-        if ($api != false && $api instanceof Plugin && $api->getDescription()->getVersion() == '4.0.1') {
+        if($api != false && $api instanceof Plugin && $api->getDescription()->getVersion() == '4.0.1'){
             $this->ver = self::PocketMoney;
             $this->api = $api;
             return;
         }
         $api = $this->pg->getServer()->getPluginManager()->getPlugin('MassiveEconomy');
-        if ($api != false && $api instanceof Plugin && $api->getDescription()->getVersion() == '1.0 R3') {
+        if($api != false && $api instanceof Plugin && $api->getDescription()->getVersion() == '1.0 R3'){
             $this->ver = self::MassiveEconomy;
             $this->api = $api;
             return;
@@ -86,8 +89,7 @@ class SWeconomy
     /**
      * @return bool|\pocketmine\plugin\Plugin
      */
-    public function getApi()
-    {
+    public function getApi(){
         return $this->api;
     }
 
@@ -96,26 +98,25 @@ class SWeconomy
      * @param bool $string
      * @return int|string
      */
-    public function getApiVersion($string = false)
-    {
-        switch ($this->ver) {
+    public function getApiVersion($string = false){
+        switch($this->ver){
             case 1:
-                if ($string)
+                if($string)
                     return 'EconomyAPI';
                 return self::EconomyAPI;
                 break;
             case 2:
-                if ($string)
+                if($string)
                     return 'PocketMoney';
                 return self::PocketMoney;
                 break;
             case 3:
-                if ($string)
+                if($string)
                     return 'MassiveEconomy';
                 return self::MassiveEconomy;
                 break;
             default:
-                if ($string)
+                if($string)
                     return 'Not Found';
                 return 0;
                 break;
@@ -125,22 +126,21 @@ class SWeconomy
 
     /**
      * @param Player $player
-     * @param int $amount
+     * @param int    $amount
      * @return bool
      */
-    public function addMoney(Player $player, $amount = 0)
-    {
-        switch ($this->ver) {
+    public function addMoney(Player $player, $amount = 0) : bool{
+        switch($this->ver){
             case 1:
-                if ($this->api->addMoney($player, $amount, true))
+                if($this->api->addMoney($player, $amount, true))
                     return true;
                 break;
             case 2:
-                if ($this->api->grantMoney($player->getName(), $amount))
+                if($this->api->grantMoney($player->getName(), $amount))
                     return true;
                 break;
             case 3:
-                if ($this->api->payPlayer($player->getName(), $amount))
+                if($this->api->payPlayer($player->getName(), $amount))
                     return true;
                 break;
             default:
@@ -153,22 +153,21 @@ class SWeconomy
 
     /**
      * @param Player $player
-     * @param int $amount
+     * @param int    $amount
      * @return bool
      */
-    public function takeMoney(Player $player, $amount = 0)
-    {
-        switch ($this->ver) {
+    public function takeMoney(Player $player, $amount = 0) : bool{
+        switch($this->ver){
             case 1:
-                if ($this->api->reduceMoney($player, $amount, true))
+                if($this->api->reduceMoney($player, $amount, true))
                     return true;
                 break;
             case 2:
-                if ($this->api->grantMoney($player->getName(), -$amount))
+                if($this->api->grantMoney($player->getName(), -$amount))
                     return true;
                 break;
             case 3:
-                if ($this->api->takeMoney($player, $amount))
+                if($this->api->takeMoney($player, $amount))
                     return true;
                 break;
             default:
@@ -183,18 +182,17 @@ class SWeconomy
      * @param Player $player
      * @return bool|int
      */
-    public function getMoney(Player $player)
-    {
-        switch ($this->ver) {
+    public function getMoney(Player $player){
+        switch($this->ver){
             case 1:
                 $money = $this->api->myMoney($player);
-                if ($money != false)
+                if($money != false)
                     return (int)$money;
                 break;
             case 2:
             case 3:
                 $money = $this->api->getMoney($player->getName());
-                if ($money != false)
+                if($money != false)
                     return (int)$money;
                 break;
             default:
