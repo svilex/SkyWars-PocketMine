@@ -1,5 +1,5 @@
-name: SW_svile
-author: svile
+name: sw_Mex
+author: AndersonWakeBR
 description: SkyWars plugin
 main: svile\sw\SWmain
 version: 0.7dev
