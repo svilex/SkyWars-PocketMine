@@ -71,7 +71,7 @@ class SWcommands
      * @param array $args
      * @return bool
      */
-    public function onCommand(CommandSender $sender, Command $command, $label, array $args)
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args)
     {
 		if(!$sender instanceof Player)
 			return false;
@@ -136,8 +136,6 @@ class SWcommands
                             if ($a->closePlayer($sender, true))
                                 break;
                         }
-                    } else {
-                        $sender->sendMessage('This command is only avaible in game');
                     }
 				break;
 
@@ -407,7 +405,7 @@ class SWcommands
                         if ($sender->getServer()->getWorldManager()->loadWorld($ex[3])) {
                             $block = $sender->getServer()->getWorldManager()->getWorldByName($ex[3])->getBlock(new Vector3((int)$ex[0], (int)$ex[1], (int)$ex[2]));
                             if ($block->getId() == 63 || $block->getId() == 68)
-                                $sender->getServer()->getWorldManager()->getWorldByName($ex[3])->setBlock((new Vector3((int)$ex[0], (int)$ex[1], (int)$ex[2])), BlockFactory::getInstance()->get(0));
+                                $sender->getServer()->getWorldManager()->getWorldByName($ex[3])->setBlock((new Vector3((int)$ex[0], (int)$ex[1], (int)$ex[2])), VanillaBlocks::AIR());
                         }
                     }
                 }

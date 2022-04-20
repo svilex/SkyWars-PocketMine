@@ -83,6 +83,7 @@ final class SWarena
     private $players = [];
     /** @var array */
     private $spectators = [];
+    private $saveCage = [];
 
 
     /**
@@ -403,7 +404,7 @@ final class SWarena
             return false;
         }
         //Sound
-        $player->getWorld()->addSound($player->getPosition()->asVector3(), (new \pocketmine\world\sound\EndermanTeleportSound($player)));
+        $player->getWorld()->addSound($player->getPosition()->asVector3(), (new \pocketmine\world\sound\EndermanTeleportSound()));
 
         //Removes player things
         $player->setGamemode(GameMode::SURVIVAL());

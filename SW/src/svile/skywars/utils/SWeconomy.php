@@ -99,28 +99,38 @@ class SWeconomy
      */
     public function getApiVersion($string = false)
     {
+        $select = 0;
         switch ($this->ver) {
             case 1:
-                if ($string)
-                    return 'EconomyAPI';
-                return self::EconomyAPI;
+                if ($string){
+                    $select = 'EconomyAPI';
+                } else {
+                    $select = self::EconomyAPI;
+                }
                 break;
             case 2:
-                if ($string)
-                    return 'PocketMoney';
-                return self::PocketMoney;
+                if ($string){
+                    $select = 'PocketMoney';
+                } else {
+                    $select = self::PocketMoney;
+                }
                 break;
             case 3:
-                if ($string)
-                    return 'MassiveEconomy';
-                return self::MassiveEconomy;
+                if ($string){
+                    $select = 'MassiveEconomy';
+                } else {
+                    $select = self::MassiveEconomy;
+                }
                 break;
             default:
-                if ($string)
-                    return 'Not Found';
-                return 0;
+                if ($string){
+                    $select = 'Not Found';
+                } else {
+                    $select = 0;
+                }
                 break;
         }
+        return $select;
     }
 
 
@@ -133,21 +143,25 @@ class SWeconomy
     {
         switch ($this->ver) {
             case 1:
-                if ($this->api->addMoney($player, $amount, true))
+                if ($this->api !== null && $this->api->addMoney($player, $amount, true)){
                     return true;
+                }
                 break;
             case 2:
-                if ($this->api->grantMoney($player->getName(), $amount))
+                if ($this->api !== null && $this->api->grantMoney($player->getName(), $amount)){
                     return true;
+                }
                 break;
             case 3:
-                if ($this->api->payPlayer($player->getName(), $amount))
+                if ($this->api !== null && $this->api->payPlayer($player->getName(), $amount)){
                     return true;
+                }
                 break;
             default:
                 return false;
                 break;
         }
+        
         return false;
     }
 

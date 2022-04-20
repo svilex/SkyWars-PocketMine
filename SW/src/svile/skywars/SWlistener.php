@@ -277,7 +277,7 @@ class SWlistener implements Listener
                     $z = (int)$pl->getPosition()->getFloorZ();
                     $radius = (int)$this->pg->configs['knockBack.radius.from.sign'];
                     //If is inside the sign radius, knockBack
-                    if (($x >= ($ex[0] - $radius) && $x <= ($ex[0] + $radius)) && ($z >= ($ex[2] - $radius) && $z <= ($ex[2] + $radius)) && ($y >= ($ex[1] - $radius) && $y <= ($ex[1] + $radius))) {
+                    if (($x >= (intval($ex[0]) - $radius) && $x <= (intval($ex[0]) + $radius)) && ($z >= (intval($ex[2]) - $radius) && $z <= (intval($ex[2]) + $radius)) && ($y >= (intval($ex[1]) - $radius) && $y <= (intval($ex[1]) + $radius))) {
                         //If the block is not a sign, break
                         $block = $pl->getWorld()->getBlock(new Vector3($ex[0], $ex[1], $ex[2]));
                         if ($block->getId() != 63 && $block->getId() != 68)
@@ -375,11 +375,11 @@ class SWlistener implements Listener
                             $pl->knockBack(0, $vector->x, $vector->z, ($i / 0xa));
                         } else {
                             //knockBack sign center
-                            $pl->knockBack(0, ($pl->x - ($block->x + 0.5)), ($pl->z - ($block->z + 0.5)), ($i / 0xa));
+                            $pl->knockBack(0, ($pl->getPosition()->x - ($block->getPosition()->x + 0.5)), ($pl->getPosition()->z - ($block->getPosition()->z + 0.5)), ($i / 0xa));
                         }
                         break;
                     }
-                    unset($ex, $pl, $x, $y, $z, $radius, $block, $i, $yaw);
+                    unset($ex, $pl, $x, $y, $z, $radius);
                 }
             }
         }
@@ -405,6 +405,7 @@ class SWlistener implements Listener
                     $cause = $event->getEntity()->getLastDamageCause()->getCause();
                     $ev = $event->getEntity()->getLastDamageCause();
                     $count = '[' . $a->getSlot(true) . '/' . $a->getSlot() . ']';
+                    $message = str_replace('{COUNT}', '[' . $a->getSlot(true) . '/' . $a->getSlot() . ']', str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['game.left']));
 
                     switch ($cause){
 
@@ -497,7 +498,8 @@ class SWlistener implements Listener
                             $ev->cancel();
                             //FAKE KILL PLAYER MSG
                             $count = '[' . ($a->getSlot(true) - 1) . '/' . $a->getSlot() . ']';
-
+                            $message = str_replace('{COUNT}', '[' . $a->getSlot(true) . '/' . $a->getSlot() . ']', str_replace('{PLAYER}', $p->getDisplayName(), $this->pg->lang['game.left']));
+                            
                             switch ($cause){
 
 

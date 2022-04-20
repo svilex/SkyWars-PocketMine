@@ -75,7 +75,7 @@ class SWmain extends PluginBase
     public $lang;
     /** @var \SQLite3 */
     private $db;
-    /** @var \svile\skywars\utils\SWeconomy */
+    /** @var null | \svile\skywars\utils\SWeconomy */
     public $economy;
 
     public function onEnable(): void
@@ -119,7 +119,7 @@ class SWmain extends PluginBase
                   \___| \___/ |_| |_||_|  |_| \__, ||___/(_) \__, ||_| |_| |_||_|
                                               |___/          |___/
         */
-        $this->configs = new Config($this->getDataFolder() . 'SW_configs.yml', Config::YAML, [
+        $configs = new Config($this->getDataFolder() . 'SW_configs.yml', Config::YAML, [
             'CONFIG_VERSION' => self::SW_VERSION,
             'banned.commands.while.in.game' => array('/hub', '/lobby', '/spawn', '/tpa', '/tp', '/tpaccept', '/back', '/home', '/f', '/kill'),
             'start.when.full' => true,
@@ -153,7 +153,7 @@ class SWmain extends PluginBase
             'world.compress.tar' => false,
             'world.reset.from.tar' => true
         ]);
-        $this->configs = $this->configs->getAll();
+        $this->configs = $configs->getAll();
 
         /*
                   _                                                   _
@@ -163,7 +163,7 @@ class SWmain extends PluginBase
                  |_|  \__,_| |_| |_|  \__, | (_)  \__, | |_| |_| |_| |_|
                                       |___/       |___/
         */
-        $this->lang = new Config($this->getDataFolder() . 'SW_lang.yml', Config::YAML, [
+        $lang = new Config($this->getDataFolder() . 'SW_lang.yml', Config::YAML, [
             'banned.command.msg' => '@b→@cYou can\'t use this command here',
             'sign.game.full' => '@b→@cThis game is full, please wait',
             'sign.game.running' => '@b→@cThe game is running, please wait',
@@ -183,14 +183,13 @@ class SWmain extends PluginBase
             'winner.reward.msg' => '@f→@bYou won @f{VALUE}$_EOL_@f→@7Your money: @f{MONEY}$'
         ]);
 
-        touch($this->getDataFolder() . 'SW_lang.yml');
-        $this->lang = $this->lang->getAll();
-        file_put_contents($this->getDataFolder() . 'SW_lang.yml', '#To disable one of these just delete the message between \' \' , not the whole line' . PHP_EOL . '#You can use " @ " to set colors and _EOL_ as EndOfLine' . PHP_EOL . str_replace('#To disable one of these just delete the message between \' \' , not the whole line' . PHP_EOL . '#You can use " @ " to set colors and _EOL_ as EndOfLine' . PHP_EOL, '', file_get_contents($this->getDataFolder() . 'SW_lang.yml')));
+        $this->lang = $lang->getAll();
        
         $newlang = [];
         foreach ($this->lang as $key => $val) {
             $newlang[$key] = str_replace('  ', ' ', str_replace('_EOL_', "\n", str_replace('@', '§', trim($val))));
         }
+
         $this->lang = $newlang;
         unset($newlang);
 
@@ -269,7 +268,6 @@ class SWmain extends PluginBase
                     unset($config);
                 } else {
                     return false;
-                    break;
                 }
             }
         }
@@ -286,7 +284,7 @@ class SWmain extends PluginBase
         $r = $this->db->query("SELECT * FROM signs;");
         while ($array = $r->fetchArray(SQLITE3_ASSOC))
             $this->signs[$array['x'] . ':' . $array['y'] . ':' . $array['z'] . ':' . $array['world']] = $array['arena'];
-        if (empty($this->signs) && !empty($array))
+        if (empty($this->signs))
             return false;
         else
             return true;
