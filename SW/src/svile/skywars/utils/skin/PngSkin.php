@@ -100,7 +100,7 @@ class PngSkin extends Skin
             for ($x = 0; $x < 64; $x++) {
                 $rgb = substr($bytes, $i, 4);
                 $i += 4;
-                $color = @imagecolorallocatealpha($img, ord($rgb{0}), ord($rgb{1}), ord($rgb{2}), (((~((int)ord($rgb{3}))) & 0xff) >> 1));
+                $color = @imagecolorallocatealpha($img, ord($rgb[0]), ord($rgb[1]), ord($rgb[2]), (((~((int)ord($rgb[3]))) & 0xff) >> 1));
                 @imagesetpixel($img, $x, $y, $color);
             }
         }
