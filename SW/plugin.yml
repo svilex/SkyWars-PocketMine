@@ -1,11 +1,16 @@
-name: SW_svile
-author: svile
+name: SkyWars
+authors: [svile,Laith98Dev]
 description: SkyWars plugin
-main: svile\sw\SWmain
-version: 0.7dev
-api: [3.0.0-ALPHA4]
+main: svile\skywars\SWmain
+version: 1.8.0
+api: [4.0.0]
 load: STARTUP
 
 commands:
  sw:
   description: SkyWars main command
+  permission: skywars.command
+
+permissions:
+  skywars.command:
+    default: op
