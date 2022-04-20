@@ -41,7 +41,7 @@
 
 namespace svile\skywars\utils\skin;
 
-
+use pocketmine\entity\Skin as EntitySkin;
 use pocketmine\player\Player;
 
 
@@ -161,17 +161,18 @@ abstract class Skin
         if (!$this->ok || !$this->load())
             return false;
         (bool)$slim ? $slim = 'Standard_CustomSlim' : $slim = 'Standard_Custom';
-        $p->setSkin($this->getBytes(), $slim);
+        // $p->setSkin($this->getBytes(), $slim);
+        $p->setSkin(new EntitySkin($slim, $this->getBytes()));
         //From ClearSky , needed for Genisys ...
         //---
-        foreach ($p->getServer()->getOnlinePlayers() as $player) {
-            $p->getServer()->removePlayerListData($player->getUniqueId());
-        }
-        foreach ($p->getServer()->getOnlinePlayers() as $player) {
-            $p->getServer()->sendFullPlayerListData($player);
-        }
+        // foreach ($p->getServer()->getOnlinePlayers() as $player) {
+        //     $p->getServer()->removePlayerListData($player->getUniqueId());
+        // }
+        // foreach ($p->getServer()->getOnlinePlayers() as $player) {
+        //     $p->getServer()->sendFullPlayerListData($player);
+        // }
         //---
-        $p->despawnFromAll();
+        $p->flagForDespawn();
         $p->spawnToAll();
         return true;
     }

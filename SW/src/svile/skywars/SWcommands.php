@@ -67,11 +67,11 @@ class SWcommands
     /**
      * @param CommandSender $sender
      * @param Command $command
-     * @param $label
+     * @param string $label
      * @param array $args
      * @return bool
      */
-    public function onCommand(CommandSender $sender, Command $command, string $label, array $args)
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool
     {
 		if(!$sender instanceof Player)
 			return false;
