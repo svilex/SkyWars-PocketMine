@@ -50,8 +50,6 @@ use pocketmine\player\Player;
 class SWeconomy
 {
     const EconomyAPI = 1;
-    const PocketMoney = 2;
-    const MassiveEconomy = 3;
 
     /** @var int */
     private $ver = 0;
@@ -69,23 +67,12 @@ class SWeconomy
             return;
         }
         // also should add BedrockEconomy
-        $api = $this->pg->getServer()->getPluginManager()->getPlugin('PocketMoney');// who still use this?
-        if ($api !== null && $api->getDescription()->getVersion() == '4.0.1') {
-            $this->ver = self::PocketMoney;
-            $this->api = $api;
-            return;
-        }
-        $api = $this->pg->getServer()->getPluginManager()->getPlugin('MassiveEconomy');// who still use this?
-        if ($api !== null && $api->getDescription()->getVersion() == '1.0 R3') {
-            $this->ver = self::MassiveEconomy;
-            $this->api = $api;
-            return;
-        }
+        
     }
 
 
     /**
-     * @return bool|\pocketmine\plugin\Plugin
+     * @return bool|Plugin
      */
     public function getApi()
     {
@@ -106,20 +93,6 @@ class SWeconomy
                     $select = 'EconomyAPI';
                 } else {
                     $select = self::EconomyAPI;
-                }
-                break;
-            case 2:
-                if ($string){
-                    $select = 'PocketMoney';
-                } else {
-                    $select = self::PocketMoney;
-                }
-                break;
-            case 3:
-                if ($string){
-                    $select = 'MassiveEconomy';
-                } else {
-                    $select = self::MassiveEconomy;
                 }
                 break;
             default:
@@ -147,16 +120,6 @@ class SWeconomy
                     return true;
                 }
                 break;
-            case 2:
-                if ($this->api !== null && $this->api->grantMoney($player->getName(), $amount)){
-                    return true;
-                }
-                break;
-            case 3:
-                if ($this->api !== null && $this->api->payPlayer($player->getName(), $amount)){
-                    return true;
-                }
-                break;
         }
 
         return false;
@@ -175,16 +138,6 @@ class SWeconomy
                 if ($this->api !== null && $this->api->reduceMoney($player, $amount, true))
                     return true;
                 break;
-            case 2:
-                if ($this->api !== null && $this->api->grantMoney($player->getName(), -$amount))
-                    return true;
-                break;
-            case 3:
-                if ($this->api !== null && $this->api->takeMoney($player, $amount))
-                    return true;
-                break;
-            default:
-                break;
         }
         return false;
     }
@@ -200,16 +153,7 @@ class SWeconomy
             case 1:
                 $money = $this->api->myMoney($player);
                 if ($money != false)
-                    return (int)$money;
-                break;
-            case 2:
-            case 3:
-                $money = $this->api->getMoney($player->getName());
-                if ($money != false)
-                    return (int)$money;
-                break;
-            default:
-                return false;
+                    return intval($money);
                 break;
         }
         return false;
