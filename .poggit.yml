@@ -1,0 +1,8 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/Laith98Dev/SkyWars-svile
+build-by-default: true
+branches:
+- master
+projects:
+  SW:
+    path: SW/
+...
