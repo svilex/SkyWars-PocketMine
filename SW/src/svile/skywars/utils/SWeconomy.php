@@ -46,6 +46,9 @@ use svile\skywars\SWmain;
 use pocketmine\plugin\Plugin;
 use pocketmine\player\Player;
 
+use onebone\economyapi\EconomyAPI;
+use PocketMoney\PocketMoney;
+use MassiveEconomy\MassiveEconomyAPI;
 
 class SWeconomy
 {
@@ -55,27 +58,27 @@ class SWeconomy
 
     /** @var int */
     private $ver = 0;
-    /** @var null|\pocketmine\plugin\Plugin */
+    /** @var null|Plugin */
     private $api = null;
 
 
     public function __construct(
         private SWmain $pg
     ){
-        $api = $this->pg->getServer()->getPluginManager()->getPlugin('EconomyAPI');
+        $api = $pg->getServer()->getPluginManager()->getPlugin('EconomyAPI');
         if ($api !== null && $api->getDescription()->getVersion() == '5.7.3-PM4') {// lasted version
             $this->ver = self::EconomyAPI;
             $this->api = $api;
             return;
         }
         // also should add BedrockEconomy
-        $api = $this->pg->getServer()->getPluginManager()->getPlugin('PocketMoney');// who still use this?
+        $api = $pg->getServer()->getPluginManager()->getPlugin('PocketMoney');// who still use this?
         if ($api !== null && $api->getDescription()->getVersion() == '4.0.1') {
             $this->ver = self::PocketMoney;
             $this->api = $api;
             return;
         }
-        $api = $this->pg->getServer()->getPluginManager()->getPlugin('MassiveEconomy');// who still use this?
+        $api = $pg->getServer()->getPluginManager()->getPlugin('MassiveEconomy');// who still use this?
         if ($api !== null && $api->getDescription()->getVersion() == '1.0 R3') {
             $this->ver = self::MassiveEconomy;
             $this->api = $api;
@@ -85,7 +88,7 @@ class SWeconomy
 
 
     /**
-     * @return bool|\pocketmine\plugin\Plugin
+     * @return null|\pocketmine\plugin\Plugin
      */
     public function getApi()
     {
@@ -141,19 +144,24 @@ class SWeconomy
      */
     public function addMoney(Player $player, $amount = 0)
     {
+        if(($api = $this->api) == null)
+            return false;
         switch ($this->ver) {
             case 1:
-                if ($this->api !== null && $this->api->addMoney($player, $amount, true)){
+                /** @var EconomyAPI $api */
+                if ($api->addMoney($player, $amount, true)){
                     return true;
                 }
                 break;
             case 2:
-                if ($this->api !== null && $this->api->grantMoney($player->getName(), $amount)){
+                 /** @var PocketMoney $api */
+                if ($api->grantMoney($player->getName(), $amount)){
                     return true;
                 }
                 break;
             case 3:
-                if ($this->api !== null && $this->api->payPlayer($player->getName(), $amount)){
+                /** @var MassiveEconomyAPI $api */
+                if ($api->payPlayer($player->getName(), $amount)){
                     return true;
                 }
                 break;
@@ -170,17 +178,22 @@ class SWeconomy
      */
     public function takeMoney(Player $player, $amount = 0)
     {
+        if(($api = $this->api) == null)
+            return false;
         switch ($this->ver) {
             case 1:
-                if ($this->api !== null && $this->api->reduceMoney($player, $amount, true))
+                /** @var EconomyAPI $api */
+                if ($api->reduceMoney($player, $amount, true))
                     return true;
                 break;
             case 2:
-                if ($this->api !== null && $this->api->grantMoney($player->getName(), -$amount))
+                /** @var PocketMoney $api */
+                if ($api->grantMoney($player->getName(), -$amount))
                     return true;
                 break;
             case 3:
-                if ($this->api !== null && $this->api->takeMoney($player, $amount))
+                /** @var MassiveEconomyAPI $api */
+                if ($api->takeMoney($player, $amount))
                     return true;
                 break;
         }
@@ -194,21 +207,24 @@ class SWeconomy
      */
     public function getMoney(Player $player)
     {
-        if($this->api == null)
-            return;
+        if(($api = $this->api) == null)
+            return false;
         switch ($this->ver) {
             case 1:
-                $money = $this->api->myMoney($player);
+                /** @var EconomyAPI $api */
+                $money = $api->myMoney($player);
                 if ($money != false)
-                    return (int)$money;
+                    return intval($money);
                 break;
             case 2:
             case 3:
-                $money = $this->api->getMoney($player->getName());
+                /** @var MassiveEconomyAPI|PocketMoney $api */
+                $money = $api->getMoney($player->getName());
                 if ($money != false)
-                    return (int)$money;
+                    return intval($money);
                 break;
         }
+
         return false;
     }
 }
