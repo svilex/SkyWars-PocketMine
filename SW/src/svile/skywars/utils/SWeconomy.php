@@ -81,8 +81,6 @@ class SWeconomy
             $this->api = $api;
             return;
         }
-
-        $this->economy = null;
     }
 
 
