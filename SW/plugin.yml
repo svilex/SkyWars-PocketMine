@@ -14,3 +14,10 @@ commands:
 permissions:
   skywars.command:
     default: op
+  skywars.command.join:
+    default: true
+  skywars.command.quit:
+    default: true
+  skywars.removesign:
+    default: op
+  
