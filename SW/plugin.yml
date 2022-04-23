@@ -19,6 +19,8 @@ permissions:
     default: true
   skywars.command.quit:
     default: true
+  skywars.setsign:
+    default: op
   skywars.removesign:
     default: op
   

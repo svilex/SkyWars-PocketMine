@@ -161,7 +161,6 @@ class SWcommands
                 //Checks if the world is default
                 if ($sender->getServer()->getConfigGroup()->getConfigString('level-name', 'world') == $world || $sender->getServer()->getWorldManager()->getDefaultWorld()->getFolderName() == $world /* || $sender->getServer()->getWorldManager()->getDefaultWorld()->getFolderName() == $world */) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'You can\'t create an arena in the default world');
-                    unset($fworld, $world);
                     break;
                 }
 
@@ -171,7 +170,6 @@ class SWcommands
                         $sender->sendMessage(TextFormat::RED . '→' . TextFormat::RED . 'You can\'t create 2 arenas in the same world try:');
                         $sender->sendMessage(TextFormat::RED . '→' . TextFormat::WHITE . '/sw list' . TextFormat::RED . ' for a list of arenas');
                         $sender->sendMessage(TextFormat::RED . '→' . TextFormat::WHITE . '/sw delete' . TextFormat::RED . ' to delete an arena');
-                        unset($fworld, $world);
                         break 2;
                     }
                 }
@@ -181,7 +179,6 @@ class SWcommands
                     if (explode(':', $loc)[3] == $world) {
                         $sender->sendMessage(TextFormat::RED . '→' . TextFormat::RED . 'You can\'t create an arena in the same world of a join sign:');
                         $sender->sendMessage(TextFormat::RED . '→' . TextFormat::WHITE . '/sw signdelete' . TextFormat::RED . ' to delete signs');
-                        unset($fworld, $world);
                         break 2;
                     }
                 }
@@ -190,14 +187,12 @@ class SWcommands
                 $SWname = array_shift($args);
                 if (!($SWname && preg_match('/^[a-z0-9]+[a-z0-9]$/i', $SWname) && strlen($SWname) < 16 && strlen($SWname) > 0b10)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[SWname]' . TextFormat::RED . ' must consists of a-z 0-9 (min3-max15)');
-                    unset($fworld, $world, $SWname);
                     break;
                 }
 
                 //Checks if the arena already exists
                 if (array_key_exists($SWname, $this->pg->arenas)) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena with name: ' . TextFormat::WHITE . $SWname . TextFormat::RED . ' already exist');
-                    unset($fworld, $world, $SWname);
                     break;
                 }
 
@@ -205,7 +200,6 @@ class SWcommands
                 $slot = array_shift($args);
                 if (!($slot && is_numeric($slot) && is_int(($slot + 0)) && $slot < 0x33 && $slot > 1)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[slots]' . TextFormat::RED . ' must be an integer >= 50 and >= 2');
-                    unset($fworld, $world, $SWname, $slot);
                     break;
                 }
                 $slot += 0;
@@ -214,7 +208,6 @@ class SWcommands
                 $countdown = array_shift($args);
                 if (!($countdown && is_numeric($countdown) && is_int(($countdown + 0)) && $countdown > 0b1001 && $countdown < 0x12d)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[countdown]' . TextFormat::RED . ' must be an integer <= 300 seconds (5 minutes) and >= 10');
-                    unset($fworld, $world, $SWname, $slot, $countdown);
                     break;
                 }
                 $countdown += 0;
@@ -223,7 +216,6 @@ class SWcommands
                 $maxtime = array_shift($args);
                 if (!($maxtime && is_numeric($maxtime) && is_int(($maxtime + 0)) && $maxtime > 0x12b && $maxtime < 0x259)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[maxGameTime]' . TextFormat::RED . ' must be an integer <= 600 (10 minutes) and >= 300');
-                    unset($fworld, $world, $SWname, $slot, $countdown, $maxtime);
                     break;
                 }
                 $maxtime += 0;
@@ -238,7 +230,6 @@ class SWcommands
                     if($level_data instanceof BaseNbtWorldData){
                         $level_data->getCompoundTag()->setString("LevelName", $fworld);
                     }
-                    unset($fworld, $world, $SWname, $slot, $countdown, $maxtime, $provider);
                     break;
                 }
 
@@ -274,25 +265,35 @@ class SWcommands
                 $void = ($last - 1);
 
                 $sender->teleport($sender->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
-                foreach ($sender->getServer()->getWorldManager()->getWorldByName($world)->getPlayers() as $p)
-                    $p->kick('Please re-join');
+                foreach ($sender->getServer()->getWorldManager()->getWorldByName($world)->getPlayers() as $p){
+                    // $p->kick('Please re-join'); why kick tp jus?
+                    $p->teleport($this->pg->getServer()->getWorldManager()->getDefaultWorld()->getSafeSpawn());
+                }
                 $sender->getServer()->getWorldManager()->unloadWorld($sender->getServer()->getWorldManager()->getWorldByName($world));
 
                 //From here @vars are: $SWname , $slot , $world
                 // { TAR.GZ
-                @mkdir($this->pg->getDataFolder() . 'arenas/' . $SWname);
-                $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $world . '.tar');
-                $tar->startBuffering();
-                $tar->buildFromDirectory(realpath($sender->getServer()->getDataPath() . 'worlds/' . $world));
-                if ($this->pg->configs['world.compress.tar'])
-                    $tar->compress(\Phar::GZ);
-                $tar->stopBuffering();
-                if ($this->pg->configs['world.compress.tar']) {
-                    $tar = null;
-                    @unlink($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $world . '.tar');
+                try {
+                    mkdir($this->pg->getDataFolder() . 'arenas/' . $SWname);
+                    $tar = new \PharData($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $world . '.tar');
+                    $tar->startBuffering();
+                    $tar->buildFromDirectory(realpath($sender->getServer()->getDataPath() . 'worlds/' . $world));
+                    if ($this->pg->configs['world.compress.tar'])
+                        $tar->compress(\Phar::GZ);
+                    $tar->stopBuffering();
+                    if ($this->pg->configs['world.compress.tar']) {
+                        $tar = null;
+                        unlink($this->pg->getDataFolder() . 'arenas/' . $SWname . '/' . $world . '.tar');
+                    }
+                    unset($tar);
+                    $sender->getServer()->getWorldManager()->loadWorld($world);
+                } catch (\Exception $e){
+                    rmdir($this->pg->getDataFolder() . 'arenas/' . $SWname);
+                    $this->pg->getLogger()->error($e->getMessage());
+                    $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . "An error while try to make a backup, please check console and contact with developer!");
+                    return false;
                 }
-                unset($tar);
-                $sender->getServer()->getWorldManager()->loadWorld($world);
+
                 // END TAR.GZ }
 
                 //SWarena object
@@ -300,7 +301,6 @@ class SWcommands
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Arena: ' . TextFormat::DARK_GREEN . $SWname . TextFormat::GREEN . ' created successfully!');
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Now set spawns with ' . TextFormat::WHITE . '/sw setspawn [slot]');
                 $sender->teleport($sender->getServer()->getWorldManager()->getWorldByName($world)->getSpawnLocation());
-                unset($fworld, $world, $SWname, $slot, $countdown, $maxtime, $provider, $void);
                 break;
 
 
@@ -328,14 +328,12 @@ class SWcommands
                 }
                 if (!($SWname && preg_match('/^[a-z0-9]+[a-z0-9]$/i', $SWname) && strlen($SWname) < 16 && strlen($SWname) > 2 && array_key_exists($SWname, $this->pg->arenas))) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena not found here, try ' . TextFormat::WHITE . '/sw create');
-                    unset($SWname);
                     break;
                 }
 
                 $slot = array_shift($args);
                 if (!($slot && is_numeric($slot) && is_int(($slot + 0)) && $slot < 0x33 && $slot > 0)) {
                     $sender->sendMessage(TextFormat::WHITE . '→' . TextFormat::AQUA . '[slot]' . TextFormat::RED . ' must be an integer <= than 50 and >= 1');
-                    unset($SWname, $slot);
                     break;
                 }
                 $slot += 0;
@@ -387,13 +385,11 @@ class SWcommands
                 $SWname = array_shift($args);
                 if (!($SWname && preg_match('/^[a-z0-9]+[a-z0-9]$/i', $SWname) && strlen($SWname) < 16 && strlen($SWname) > 2 && array_key_exists($SWname, $this->pg->arenas))) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena: ' . TextFormat::WHITE . $SWname . TextFormat::RED . ' doesn\'t exist');
-                    unset($SWname);
                     break;
                 }
 
                 if (!(is_dir($this->pg->getDataFolder() . 'arenas/' . $SWname) && is_file($this->pg->getDataFolder() . 'arenas/' . $SWname . '/settings.yml'))) {
                     $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena files doesn\'t exists');
-                    unset($SWname);
                     break;
                 }
 
@@ -419,7 +415,6 @@ class SWcommands
                 }
                 @rmdir($this->pg->getDataFolder() . 'arenas/' . $SWname);
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Arena: ' . TextFormat::DARK_GREEN . $SWname . TextFormat::GREEN . ' Deleted !');
-                unset($SWname, $loc, $name, $ex, $block);
                 break;
 
 
@@ -453,10 +448,8 @@ class SWcommands
                         //Deleting signs from db & array
                         $this->pg->setSign($SWname, 0, 0, 0, 'world', true);
                         $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Deleted all SW signs !');
-                        unset($SWname, $loc, $name, $ex, $block);
                     } else {
                         $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::RED . 'Arena: ' . TextFormat::WHITE . $SWname . TextFormat::RED . ' doesn\'t exist');
-                        unset($SWname);
                     }
                     break;
                 }
@@ -473,7 +466,6 @@ class SWcommands
                 }
                 $this->pg->setSign($SWname, 0, 0, 0, 'world', true, false);
                 $sender->sendMessage(TextFormat::AQUA . '→' . TextFormat::GREEN . 'Deleted signs for arena: ' . TextFormat::DARK_GREEN . $SWname);
-                unset($SWname, $loc, $name, $ex, $block);
                 break;
 
 

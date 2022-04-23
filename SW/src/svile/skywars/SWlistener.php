@@ -44,6 +44,8 @@ namespace svile\skywars;
 use pocketmine\block\BaseSign;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\utils\SignText;
+use pocketmine\entity\Attribute;
+use pocketmine\entity\AttributeFactory;
 use pocketmine\event\Listener;
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -83,9 +85,16 @@ class SWlistener implements Listener
 
     public function onSignChange(SignChangeEvent $ev)
     {
-		$text = $ev->getSign()->getText();
-        if ($text->getLine(0) != 'sw' || !$ev->getPlayer()->hasPermission("sw.setsign"))
+		$text = $ev->getNewText();
+		// $text = $ev->getSign()->getText();
+        if ($text->getLine(0) !== 'sw'){
+            var_dump("line " . $text->getLine(0));
             return;
+        }
+        if (!$ev->getPlayer()->hasPermission("skywars.setsign")){
+            var_dump("permission");
+            return;
+        }
 
         //Checks if the arena exists
         $SWname = TextFormat::clean(trim($text->getLine(1)));
@@ -123,6 +132,7 @@ class SWlistener implements Listener
 		}
 
         $block = $ev->getBlock();
+        var_dump($block::class);
         if(!$block instanceof BaseSign)
             return;
 
@@ -250,6 +260,9 @@ class SWlistener implements Listener
 
     public function onMove(PlayerMoveEvent $ev)
     {
+        $player = $ev->getPlayer();
+        $from = $ev->getFrom();
+		$to = $ev->getTo();
         foreach ($this->pg->arenas as $a) {
             if ($a->inArena($ev->getPlayer()->getName())) {
                 if ($a->GAME_STATE == 0) {
@@ -268,122 +281,73 @@ class SWlistener implements Listener
         }
         //Checks if knockBack is enabled
         if ($this->pg->configs['sign.knockBack']) {
-            foreach ($this->pg->signs as $key => $val) {
-                $ex = explode(':', $key);
-                $pl = $ev->getPlayer();
-                if ($pl->getWorld()->getFolderName() == $ex[3]) {
-                    $x = (int)$pl->getPosition()->getFloorX();
-                    $y = (int)$pl->getPosition()->getFloorY();
-                    $z = (int)$pl->getPosition()->getFloorZ();
-                    $radius = (int)$this->pg->configs['knockBack.radius.from.sign'];
-                    //If is inside the sign radius, knockBack
-                    if (($x >= (intval($ex[0]) - $radius) && $x <= (intval($ex[0]) + $radius)) && ($z >= (intval($ex[2]) - $radius) && $z <= (intval($ex[2]) + $radius)) && ($y >= (intval($ex[1]) - $radius) && $y <= (intval($ex[1]) + $radius))) {
-                        //If the block is not a sign, break
-                        $block = $pl->getWorld()->getBlock(new Vector3($ex[0], $ex[1], $ex[2]));
-                        if ($block->getId() != 63 && $block->getId() != 68)
-                            break;
-                        //Max $i should be 90 to avoid bugs-lag, yes 90 is a magic number :P
-                        $i = (int)$this->pg->configs['knockBack.intensity'];
-                        if ($this->pg->configs['knockBack.follow.sign.direction']) {
-                            //Finds sign yaw
-                            switch ($block->getId()):
-                                case 68:
-                                case BlockLegacyIds::SIGN_POST:
-                                case BlockLegacyIds::WALL_SIGN:
-                                case BlockLegacyIds::SPRUCE_WALL_SIGN:
-                                case BlockLegacyIds::JUNGLE_WALL_SIGN:
-                                case BlockLegacyIds::ACACIA_WALL_SIGN:
-                                case BlockLegacyIds::DARKOAK_WALL_SIGN:
-                                    switch ($block->getMeta()) {
-                                        case 3:
-                                            $yaw = 0;
-                                            break;
-                                        case 4:
-                                            $yaw = 0x5a;
-                                            break;
-                                        case 2:
-                                            $yaw = 0xb4;
-                                            break;
-                                        case 5:
-                                            $yaw = 0x10e;
-                                            break;
-                                        default:
-                                            $yaw = 0;
-                                            break;
-                                    }
-                                    break;
-                                case 63:
-                                    switch ($block->getMeta()) {
-                                        case 0:
-                                            $yaw = 0;
-                                            break;
-                                        case 1:
-                                            $yaw = 22.5;
-                                            break;
-                                        case 2:
-                                            $yaw = 0x2d;
-                                            break;
-                                        case 3:
-                                            $yaw = 67.5;
-                                            break;
-                                        case 4:
-                                            $yaw = 0x5a;
-                                            break;
-                                        case 5:
-                                            $yaw = 112.5;
-                                            break;
-                                        case 6:
-                                            $yaw = 0x87;
-                                            break;
-                                        case 7:
-                                            $yaw = 157.5;
-                                            break;
-                                        case 8:
-                                            $yaw = 0xb4;
-                                            break;
-                                        case 9:
-                                            $yaw = 202.5;
-                                            break;
-                                        case 10:
-                                            $yaw = 0xe1;
-                                            break;
-                                        case 11:
-                                            $yaw = 247.5;
-                                            break;
-                                        case 12:
-                                            $yaw = 0x10e;
-                                            break;
-                                        case 13:
-                                            $yaw = 292.5;
-                                            break;
-                                        case 14:
-                                            $yaw = 315;
-                                            break;
-                                        case 15:
-                                            $yaw = 337.5;
-                                            break;
-                                        default:
-                                            $yaw = 0;
-                                            break;
-                                    }
-                                    break;
-                                default:
-                                    $yaw = 0;
-                            endswitch;
-                            //knockBack sign direction
-                            $vector = (new Vector3(-sin(deg2rad($yaw)), 0, cos(deg2rad($yaw))))->normalize();
-                            $pl->knockBack(0, $vector->x, $vector->z, ($i / 0xa));
-                        } else {
-                            //knockBack sign center
-                            $pl->knockBack(0, ($pl->getPosition()->x - ($block->getPosition()->x + 0.5)), ($pl->getPosition()->z - ($block->getPosition()->z + 0.5)), ($i / 0xa));
-                        }
-                        break;
-                    }
-                    unset($ex, $pl, $x, $y, $z, $radius);
-                }
+            $radius = intval($this->pg->configs['knockBack.radius.from.sign']);
+            foreach ($this->getNearbySigns($to->asPosition(), $radius) as $pos) {
+                $i = intval($this->pg->configs['knockBack.intensity']);
+                $direction = $player->getDirectionVector();
+                $dx = $direction->getX();
+                $dz = $direction->getZ();
+                $this->knockBack($player, 0, -$dx, -$dz, 0.3);// huh did u remember that? 'pm3 knockback better'
+                break;
             }
         }
     }
+
+    public function getNearbySigns(Position $pos, int $radius, &$arena = null)
+    {
+        $pos->x = floor($pos->x);
+        $pos->y = floor($pos->y);
+        $pos->z = floor($pos->z);
+
+        $level = $pos->getWorld()->getFolderName();
+
+        $minX = $pos->x - $radius;
+        $minY = $pos->y - $radius;
+        $minZ = $pos->z - $radius;
+
+        $maxX = $pos->x + $radius;
+        $maxY = $pos->y + $radius;
+        $maxZ = $pos->z + $radius;
+				
+		$signs = [];
+
+        foreach ($this->pg->signs as $key => $val) {
+            $ex = explode(':', $key);
+            if ($pos->getWorld()->getFolderName() == $ex[3]) {
+                $pos_ = new Position(intval($ex[0]), intval($ex[1]), intval($ex[2]), $pos->getWorld());
+                if($pos_->distance($pos) <= $radius){
+                    $signs[] = $pos_;
+                }
+            }
+        }
+		
+		return $signs;
+    }
+	
+	public function knockBack(Player $attacker, float $damage, float $x, float $z, float $base = 0.4) : void{
+		$f = sqrt($x * $x + $z * $z);
+		if($f <= 0){
+			return;
+		}
+		if(mt_rand() / mt_getrandmax() > AttributeFactory::getInstance()->mustGet(Attribute::KNOCKBACK_RESISTANCE)->getValue()){
+			$f = 1 / $f;
+
+			$motion = clone $attacker->getMotion();
+
+			$motion->x /= 2;
+			$motion->y /= 2;
+			$motion->z /= 2;
+			$motion->x += $x * $f * $base;
+			$motion->y += $base;
+			$motion->z += $z * $f * $base;
+
+			if($motion->y > $base){
+				$motion->y = $base;
+			}
+
+			$attacker->setMotion($motion);
+		}
+	}
 
 
     public function onQuit(PlayerQuitEvent $ev)

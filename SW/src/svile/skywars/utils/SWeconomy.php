@@ -56,7 +56,6 @@ class SWeconomy
     /** @var null|Plugin */
     private $api = null;
 
-
     public function __construct(
         private SWmain $pg
     ){

@@ -163,7 +163,6 @@ final class SWarena
         $this->maxtime = ($config->get('maxGameTime') + 0);
         $this->spawns = $config->get('spawns');
         $this->void = ($config->get('void_Y') + 0);
-        unset($config);
         $this->players = [];
         $this->spectators = [];
         $this->time = 0;
@@ -171,8 +170,6 @@ final class SWarena
 
         //Reset Sign
         $this->pg->refreshSigns(false, $this->SWname, 0, $this->slot);
-        if (@array_shift($this->pg->getDescription()->getAuthors()) != "svile" || $this->pg->getDescription()->getName() != "SW_svile" || $this->pg->getDescription()->getVersion() != SWmain::SW_VERSION)
-            sleep(mt_rand(0x12c, 0x258));
         return true;
     }
 
@@ -467,10 +464,13 @@ final class SWarena
     {
         if (in_array($playerName, $this->spectators)) {
             unset($this->spectators[array_search($playerName, $this->spectators)]);
-            foreach ($this->players as $name => $spawn) {
-                if ((($p = $this->pg->getServer()->getPlayerByPrefix($name)) instanceof Player) && (($s = $this->pg->getServer()->getPlayerByPrefix($playerName)) instanceof Player))
-                    $p->showPlayer($s);
+            if (($s = $this->pg->getServer()->getPlayerByPrefix($playerName)) instanceof Player){
+                $s->setGamemode(GameMode::SURVIVAL());
             }
+            // foreach ($this->players as $name => $spawn) {
+            //     if ((($p = $this->pg->getServer()->getPlayerByPrefix($name)) instanceof Player) && (($s = $this->pg->getServer()->getPlayerByPrefix($playerName)) instanceof Player))
+            //         $p->showPlayer($s);
+            // }
             return true;
         }
         if (!array_key_exists($playerName, $this->players))
@@ -484,10 +484,10 @@ final class SWarena
                 $p->sendMessage(str_replace('{COUNT}', '[' . $this->getSlot(true) . '/' . $this->slot . ']', str_replace('{PLAYER}', $playerName, $this->pg->lang['game.left'])));
         if ($spectate && !in_array($playerName, $this->spectators))
             $this->spectators[] = $playerName;
-        foreach ($this->spectators as $sp) {
-            if ((($p = $this->pg->getServer()->getPlayerByPrefix($playerName)) instanceof Player) && (($s = $this->pg->getServer()->getPlayerByPrefix($sp)) instanceof Player))
-                $p->showPlayer($s);
-        }
+        // foreach ($this->spectators as $sp) {
+        //     if ((($p = $this->pg->getServer()->getPlayerByPrefix($playerName)) instanceof Player) && (($s = $this->pg->getServer()->getPlayerByPrefix($sp)) instanceof Player))
+        //         $p->showPlayer($s);
+        // }
         return true;
     }
 
@@ -529,10 +529,10 @@ final class SWarena
                 $p->teleport($p->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
             } elseif ($this->GAME_STATE > 0 && 1 < count($this->players)) {
                 $p->setGamemode(GameMode::SPECTATOR());
-                foreach ($this->players as $dname => $spawn) {
-                    if (($d = $this->pg->getServer()->getPlayerByPrefix($dname)) instanceof Player)
-                        $d->hidePlayer($p);
-                }
+                // foreach ($this->players as $dname => $spawn) {
+                //     if (($d = $this->pg->getServer()->getPlayerByPrefix($dname)) instanceof Player)
+                //         $d->hidePlayer($p);
+                // }
                 $idmeta = explode(':', $this->pg->configs['spectator.quit.item']);
                 $p->getInventory()->setHeldItemIndex(0);
                 $p->getInventory()->setItemInHand(ItemFactory::getInstance()->get((int)$idmeta[0], (int)$idmeta[1], 1));

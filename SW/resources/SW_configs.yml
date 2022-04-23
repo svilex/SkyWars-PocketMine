@@ -37,7 +37,7 @@ banned.commands.while.in.game:
 start.when.full: true
 
 # The countdown will only run when there will be N players in the arena.
-needed.players.to.run.countdown: 1
+needed.players.to.run.countdown: 2
 
 # ------------------------------------------HEALTH------------------------------------------
 #              1 = half a heart
