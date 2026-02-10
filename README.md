@@ -3,6 +3,7 @@
 ---
 ### About
 This is a [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) (or forks) plugin which allows you to simply create multiple SkyWars mini-games ! :grin:
+Now archived, hasn't been updated for 10+ years, find a better alternative...
 
 **This plugin was tested (and works) on:**
 
@@ -21,7 +22,7 @@ _Benefits: You will be credited in the source code as a generous **donor**_ :smi
 
 **GOAL: :moneybag: €8 / €20**
 
-- ![Paypal](https://raw.githubusercontent.com/svilex/res/master/paypal.png) Paypal: [**Donate**](https://www.paypal.me/svile) :money_with_wings:
+- ![Paypal](https://raw.githubusercontent.com/svilex/res/master/paypal.png) Paypal: [**Donate**](https://www.paypal.me/) :money_with_wings:
 
 ---
 ### Releases - Downloads
@@ -101,15 +102,6 @@ Command | Description
 - [Italiano]() no video yet
 
 ###### Have you made a video? Contact me to put it here:exclamation:
-
----
-### Contacts
-
-- **Kik:** \_svile\_<br/>
-- **Telegram_Gruop:** :link: https://telegram.me/svile<br/>
-- **E-mail:** thesville@gmail.com<br/>
-
-###### _fell free to make pull requests and to contact me for any help_.
 
 
 
